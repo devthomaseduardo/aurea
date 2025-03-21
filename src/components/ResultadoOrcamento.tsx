@@ -1,8 +1,9 @@
 
 import React, { useRef } from 'react';
-import { Clock, DollarSign, Download, Clipboard, Share2, Check } from 'lucide-react';
-import { ResultadoOrcamento, DadosProjeto } from '../lib/calculadora';
+import { Clock, DollarSign, Download, Clipboard, Share2, Check, FileText, FileSignature } from 'lucide-react';
+import { ResultadoOrcamento, DadosProjeto, gerarContrato } from '../lib/calculadora';
 import { toast } from "@/components/ui/use-toast";
+import ComparacaoMercado from './ComparacaoMercado';
 
 interface ResultadoOrcamentoProps {
   resultado: ResultadoOrcamento;
@@ -14,10 +15,15 @@ const ResultadoOrcamentoComponent: React.FC<ResultadoOrcamentoProps> = ({ result
   const [copiado, setCopiado] = React.useState(false);
 
   const formatarMoeda = (valor: number) => {
-    return valor.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    });
+    return resultado.moeda === 'BRL'
+      ? valor.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        })
+      : valor.toLocaleString('en-US', {
+          style: 'currency',
+          currency: 'USD'
+        });
   };
 
   const gerarPDF = () => {
@@ -85,6 +91,24 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
     });
   };
 
+  const baixarContrato = () => {
+    const contratoTexto = gerarContrato(projeto, resultado);
+    const blob = new Blob([contratoTexto], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `contrato-${projeto.nome.replace(/\s+/g, '-').toLowerCase()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Contrato baixado!",
+      description: "O arquivo de texto com o contrato foi baixado com sucesso.",
+    });
+  };
+
   return (
     <div className="animate-fade-in" ref={resultadoRef}>
       <h3 className="text-xl font-semibold mb-6">Orçamento Gerado</h3>
@@ -144,6 +168,24 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
           </div>
         </div>
         
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            onClick={baixarContrato}
+            className="flex items-center justify-center p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
+          >
+            <FileText className="h-5 w-5 text-primary mr-2" />
+            <span>Baixar Contrato</span>
+          </button>
+          
+          <button
+            onClick={gerarPDF}
+            className="flex items-center justify-center p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
+          >
+            <FileSignature className="h-5 w-5 text-primary mr-2" />
+            <span>Baixar Orçamento</span>
+          </button>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-gray-300 transition-all hover:shadow-md">
             <h5 className="font-semibold mb-4 flex items-center">
@@ -181,6 +223,12 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
             </p>
           </div>
         </div>
+        
+        <ComparacaoMercado
+          comparacoes={resultado.comparacoesMercado}
+          valorHora={projeto.valorHora}
+          moeda={resultado.moeda}
+        />
         
         <div className="bg-white p-6 rounded-2xl border border-gray-200">
           <h5 className="font-semibold mb-4">Requisitos do Cliente</h5>

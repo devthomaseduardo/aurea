@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, DollarSign, Clock, PlusCircle, MinusCircle } from 'lucide-react';
-import { DadosProjeto, Requisito, tecnologiasPadrao, calcularOrcamento, ResultadoOrcamento } from '../lib/calculadora';
+import { DadosProjeto, Requisito, tecnologiasPadrao, calcularOrcamento, ResultadoOrcamento, Moeda } from '../lib/calculadora';
 import ResultadoOrcamentoComponent from './ResultadoOrcamento';
+import AssinaturaEletronica from './AssinaturaEletronica';
 
 const ProjetoForm = () => {
   const [projeto, setProjeto] = useState<DadosProjeto>({
@@ -19,6 +20,7 @@ const ProjetoForm = () => {
       outrosServicos: [],
     },
     valorHora: 80, // Valor padrão
+    moeda: 'BRL', // Moeda padrão
   });
 
   const [novoRequisito, setNovoRequisito] = useState({
@@ -152,6 +154,22 @@ const ProjetoForm = () => {
     estimarTempoAutomatico();
   }, [novoRequisito.complexidade]);
 
+  // Atualizar a assinatura do freelancer
+  const definirAssinaturaFreelancer = (assinatura: string) => {
+    setProjeto(prev => ({
+      ...prev,
+      assinaturaFreelancer: assinatura,
+    }));
+  };
+
+  // Atualizar a assinatura do cliente
+  const definirAssinaturaCliente = (assinatura: string) => {
+    setProjeto(prev => ({
+      ...prev,
+      assinaturaCliente: assinatura,
+    }));
+  };
+
   return (
     <section id="calcular" className="px-6 md:px-12 py-24 bg-gradient-to-b from-white to-blue-50">
       <div className="max-w-4xl mx-auto">
@@ -221,23 +239,41 @@ const ProjetoForm = () => {
                       />
                     </div>
                     
-                    <div>
-                      <label htmlFor="valorHora" className="block text-sm font-medium mb-2">
-                        Valor por Hora (R$)
-                      </label>
-                      <div className="relative">
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                          <DollarSign className="h-5 w-5 text-gray-400" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="valorHora" className="block text-sm font-medium mb-2">
+                          Valor por Hora
+                        </label>
+                        <div className="relative">
+                          <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                            <DollarSign className="h-5 w-5 text-gray-400" />
+                          </div>
+                          <input
+                            type="number"
+                            id="valorHora"
+                            value={projeto.valorHora}
+                            onChange={(e) => setProjeto(prev => ({ ...prev, valorHora: parseFloat(e.target.value) || 0 }))}
+                            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                            placeholder="80"
+                            min="0"
+                          />
                         </div>
-                        <input
-                          type="number"
-                          id="valorHora"
-                          value={projeto.valorHora}
-                          onChange={(e) => setProjeto(prev => ({ ...prev, valorHora: parseFloat(e.target.value) || 0 }))}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
-                          placeholder="80"
-                          min="0"
-                        />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="moeda" className="block text-sm font-medium mb-2">
+                          Moeda
+                        </label>
+                        <select
+                          id="moeda"
+                          value={projeto.moeda}
+                          onChange={(e) => setProjeto(prev => ({ ...prev, moeda: e.target.value as Moeda }))}
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition appearance-none bg-no-repeat"
+                          style={{ backgroundPosition: 'right 1rem center', backgroundImage: 'url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMUw2IDYgMTEgMSIgc3Ryb2tlPSIjNjg3MDhEIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==)' }}
+                        >
+                          <option value="BRL">Real (R$)</option>
+                          <option value="USD">Dólar ($)</option>
+                        </select>
                       </div>
                     </div>
                     
@@ -563,7 +599,31 @@ const ProjetoForm = () => {
               )}
               
               {formStep === 4 && resultado && (
-                <ResultadoOrcamentoComponent resultado={resultado} projeto={projeto} />
+                <>
+                  <ResultadoOrcamentoComponent 
+                    resultado={resultado} 
+                    projeto={projeto}
+                  />
+                  
+                  <div className="mt-10 space-y-6">
+                    <h3 className="text-xl font-semibold">Assinaturas</h3>
+                    <p className="text-sm text-gray-600">
+                      As assinaturas serão incluídas nos documentos de contrato e orçamento.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <AssinaturaEletronica 
+                        onChange={definirAssinaturaFreelancer}
+                        label="Sua assinatura (Freelancer)"
+                      />
+                      
+                      <AssinaturaEletronica 
+                        onChange={definirAssinaturaCliente}
+                        label="Assinatura do Cliente"
+                      />
+                    </div>
+                  </div>
+                </>
               )}
             </div>
             
