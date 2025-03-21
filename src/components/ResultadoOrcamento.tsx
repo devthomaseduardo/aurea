@@ -1,9 +1,10 @@
-
 import React, { useRef } from 'react';
 import { Clock, DollarSign, Download, Clipboard, Share2, Check, FileText, FileSignature, ShieldCheck } from 'lucide-react';
 import { ResultadoOrcamento, DadosProjeto, gerarContrato, modelosPropostas } from '../lib/calculadora';
 import { toast } from "@/components/ui/use-toast";
 import ComparacaoMercado from './ComparacaoMercado';
+import { gerarCartaProposta } from './CartaProposta';
+import html2pdf from 'html2pdf.js';
 
 interface ResultadoOrcamentoProps {
   resultado: ResultadoOrcamento;
@@ -27,10 +28,56 @@ const ResultadoOrcamentoComponent: React.FC<ResultadoOrcamentoProps> = ({ result
   };
 
   const gerarPDF = () => {
-    // Este é um placeholder para a funcionalidade de geração de PDF
+    if (!resultadoRef.current) {
+      toast({
+        title: "Erro ao gerar PDF",
+        description: "Não foi possível encontrar o conteúdo do orçamento.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const element = resultadoRef.current;
+    const opt = {
+      margin: 10,
+      filename: `orcamento-${projeto.nome.replace(/\s+/g, '-').toLowerCase()}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
     toast({
-      title: "Funcionalidade em desenvolvimento",
-      description: "O download do PDF estará disponível em breve!",
+      title: "Gerando PDF",
+      description: "Aguarde enquanto preparamos seu documento..."
+    });
+
+    const clonedElement = element.cloneNode(true) as HTMLElement;
+    
+    const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+    const head = document.createElement('head');
+    styles.forEach(style => head.appendChild(style.cloneNode(true)));
+    
+    const tempContainer = document.createElement('div');
+    tempContainer.appendChild(head);
+    tempContainer.appendChild(clonedElement);
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    document.body.appendChild(tempContainer);
+
+    html2pdf().from(clonedElement).set(opt).save().then(() => {
+      document.body.removeChild(tempContainer);
+      toast({
+        title: "PDF gerado com sucesso!",
+        description: "O arquivo foi baixado com sucesso."
+      });
+    }).catch(error => {
+      console.error("Erro ao gerar PDF:", error);
+      document.body.removeChild(tempContainer);
+      toast({
+        title: "Erro ao gerar PDF",
+        description: "Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.",
+        variant: "destructive"
+      });
     });
   };
 
@@ -96,7 +143,6 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
   };
 
   const compartilharOrcamento = () => {
-    // Este é um placeholder para a funcionalidade de compartilhamento
     toast({
       title: "Funcionalidade em desenvolvimento",
       description: "O compartilhamento estará disponível em breve!",
@@ -121,7 +167,24 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
     });
   };
 
-  // Obter o valor da proposta selecionada
+  const baixarCartaProposta = () => {
+    const cartaTexto = gerarCartaProposta(projeto, resultado);
+    const blob = new Blob([cartaTexto], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `proposta-${projeto.nome.replace(/\s+/g, '-').toLowerCase()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Carta proposta baixada!",
+      description: "O arquivo com a carta proposta foi baixado com sucesso.",
+    });
+  };
+
   const valorProposta = resultado.valoresPropostas[projeto.modeloProposta] || resultado.custoTotal;
   const modeloSelecionado = modelosPropostas.find(m => m.modelo === projeto.modeloProposta) || modelosPropostas[1];
 
@@ -188,7 +251,7 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={baixarContrato}
             className="flex items-center justify-center p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
@@ -202,7 +265,15 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
             className="flex items-center justify-center p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
           >
             <FileSignature className="h-5 w-5 text-primary mr-2" />
-            <span>Baixar Orçamento</span>
+            <span>Baixar Orçamento em PDF</span>
+          </button>
+          
+          <button
+            onClick={baixarCartaProposta}
+            className="flex items-center justify-center p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
+          >
+            <FileSignature className="h-5 w-5 text-primary mr-2" />
+            <span>Baixar Carta Proposta</span>
           </button>
         </div>
         
