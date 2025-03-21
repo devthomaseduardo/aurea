@@ -1,69 +1,107 @@
-# Welcome to your Lovable project
 
-## Project info
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/calculator.svg" alt="Calculadora Freelancer" width="100" height="100"/>
+</p>
 
-**URL**: https://lovable.dev/projects/5874ced8-08fb-4cb6-a3b1-15a6372ccb47
+<h1 align="center">Calculadora de Orçamentos para Freelancers</h1>
 
-## How can I edit this code?
+<p align="center">
+  <strong>Uma ferramenta profissional para freelancers criarem orçamentos precisos e competitivos</strong>
+</p>
 
-There are several ways of editing your application.
+<p align="center">
+  <a href="#funcionalidades">Funcionalidades</a> •
+  <a href="#tecnologias">Tecnologias</a> •
+  <a href="#como-usar">Como Usar</a> •
+  <a href="#instalação">Instalação</a> •
+  <a href="#demonstração">Demonstração</a> •
+  <a href="#contribuição">Contribuição</a> •
+  <a href="#licença">Licença</a>
+</p>
 
-**Use Lovable**
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18.3.1-blue?logo=react" alt="React"/>
+  <img src="https://img.shields.io/badge/TypeScript-5.0.0-blue?logo=typescript" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/Tailwind-3.0.0-blue?logo=tailwindcss" alt="Tailwind CSS"/>
+  <img src="https://img.shields.io/badge/Version-1.0.0-success" alt="Version"/>
+</p>
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/5874ced8-08fb-4cb6-a3b1-15a6372ccb47) and start prompting.
+<br/>
 
-Changes made via Lovable will be committed automatically to this repo.
+## 💼 Funcionalidades
 
-**Use your preferred IDE**
+- **Cálculo Detalhado de Orçamentos**: Estime horas, dias e custos com base nos requisitos do projeto
+- **Comparação com o Mercado**: Compare suas taxas com as plataformas mais populares de freelancers
+- **Geração de Contratos**: Crie contratos profissionais personalizados automaticamente
+- **Suporte a Múltiplas Moedas**: Trabalhe com valores em Real (BRL) ou Dólar (USD)
+- **Assinatura Eletrônica**: Permita que clientes assinem digitalmente os documentos
+- **Análise de Tecnologias**: Ajuste os custos conforme as tecnologias utilizadas no projeto
+- **Cálculo de Serviços Adicionais**: Inclua custos de hospedagem, domínio, autenticação e mais
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🚀 Tecnologias
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Este projeto foi desenvolvido utilizando um conjunto moderno de ferramentas e bibliotecas:
 
-Follow these steps:
+- [React](https://reactjs.org/) - Biblioteca JavaScript para construção de interfaces
+- [TypeScript](https://www.typescriptlang.org/) - Superset tipado de JavaScript
+- [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utilitário
+- [shadcn/ui](https://ui.shadcn.com/) - Componentes de UI reutilizáveis
+- [React Router](https://reactrouter.com/) - Navegação e roteamento
+- [Recharts](https://recharts.org/) - Biblioteca de gráficos responsivos
+- [React Hook Form](https://react-hook-form.com/) - Gerenciamento eficiente de formulários
+- [Zod](https://zod.dev/) - Validação de esquemas TypeScript
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🧠 Como Usar
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+A calculadora foi projetada para ser intuitiva e fácil de usar:
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Preencha os detalhes do projeto (nome, descrição)
+2. Adicione os requisitos do cliente, com estimativas de tempo
+3. Selecione as tecnologias que serão utilizadas
+4. Configure serviços adicionais (hospedagem, autenticação, etc.)
+5. Defina seu valor/hora e a moeda desejada
+6. Visualize o orçamento detalhado e a comparação com o mercado
+7. Gere o contrato para download ou assinatura eletrônica
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+## 💻 Instalação
+
+Para executar este projeto localmente, siga os passos abaixo:
+
+```bash
+# Clonar o repositório
+git clone https://github.com/seu-usuario/calculadora-freelancer.git
+
+# Navegar até o diretório do projeto
+cd calculadora-freelancer
+
+# Instalar as dependências
+npm install
+
+# Iniciar o servidor de desenvolvimento
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🔍 Demonstração
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Acesse a [versão online da calculadora](https://calculadora-freelancer.vercel.app) para experimentar todas as funcionalidades.
 
-**Use GitHub Codespaces**
+## 🤝 Contribuição
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou enviar um pull request.
 
-## What technologies are used for this project?
+1. Faça um fork do projeto
+2. Crie sua branch de feature (`git checkout -b feature/nova-funcionalidade`)
+3. Faça commit das suas alterações (`git commit -m 'Adiciona nova funcionalidade'`)
+4. Faça push para a branch (`git push origin feature/nova-funcionalidade`)
+5. Abra um Pull Request
 
-This project is built with .
+## 📝 Licença
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/5874ced8-08fb-4cb6-a3b1-15a6372ccb47) and click on Share -> Publish.
+<p align="center">
+  Desenvolvido com ❤️ por [Seu Nome]
+</p>
 
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
