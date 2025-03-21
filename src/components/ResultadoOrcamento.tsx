@@ -1,7 +1,7 @@
 
 import React, { useRef } from 'react';
-import { Clock, DollarSign, Download, Clipboard, Share2, Check, FileText, FileSignature } from 'lucide-react';
-import { ResultadoOrcamento, DadosProjeto, gerarContrato } from '../lib/calculadora';
+import { Clock, DollarSign, Download, Clipboard, Share2, Check, FileText, FileSignature, ShieldCheck } from 'lucide-react';
+import { ResultadoOrcamento, DadosProjeto, gerarContrato, modelosPropostas } from '../lib/calculadora';
 import { toast } from "@/components/ui/use-toast";
 import ComparacaoMercado from './ComparacaoMercado';
 
@@ -48,10 +48,16 @@ const ResultadoOrcamentoComponent: React.FC<ResultadoOrcamentoProps> = ({ result
     if (projeto.configuracao.apis) servicos.push('Integração com APIs');
     projeto.configuracao.outrosServicos.forEach(servico => servicos.push(servico));
     
+    const modeloPropostaInfo = modelosPropostas.find(m => m.modelo === projeto.modeloProposta) || modelosPropostas[1];
+    const valorProposta = resultado.valoresPropostas[projeto.modeloProposta] || resultado.custoTotal;
+    
     const textoOrcamento = `
 ORÇAMENTO: ${projeto.nome}
 -----------------------------------------
 ${projeto.descricao}
+
+CONTRATANTE: ${projeto.contratante.nome || '[Nome do Cliente]'}
+CONTRATADO: ${projeto.contratado.nome || '[Nome do Freelancer]'}
 
 TEMPO ESTIMADO:
 - ${resultado.totalDias} dias (${resultado.totalHoras} horas)
@@ -62,12 +68,18 @@ ${tecnologiasSelecionadas || 'Nenhuma tecnologia específica informada'}
 SERVIÇOS INCLUÍDOS:
 ${servicos.length > 0 ? servicos.join('\n') : 'Nenhum serviço adicional'}
 
+MODELO DE PROPOSTA:
+${modeloPropostaInfo.descricao}
+
+Benefícios:
+${modeloPropostaInfo.beneficios.map(b => `- ${b}`).join('\n')}
+
 CUSTOS:
 - Custo base: ${formatarMoeda(resultado.custoBase)}
 - Tecnologias: ${formatarMoeda(resultado.custoTecnologias)}
 - Serviços: ${formatarMoeda(resultado.custoServicos)}
 
-VALOR TOTAL: ${formatarMoeda(resultado.custoTotal)}
+VALOR TOTAL: ${formatarMoeda(valorProposta)}
 
 REQUISITOS DO CLIENTE:
 ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
@@ -108,6 +120,10 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
       description: "O arquivo de texto com o contrato foi baixado com sucesso.",
     });
   };
+
+  // Obter o valor da proposta selecionada
+  const valorProposta = resultado.valoresPropostas[projeto.modeloProposta] || resultado.custoTotal;
+  const modeloSelecionado = modelosPropostas.find(m => m.modelo === projeto.modeloProposta) || modelosPropostas[1];
 
   return (
     <div className="animate-fade-in" ref={resultadoRef}>
@@ -162,7 +178,11 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
               <DollarSign className="h-10 w-10 text-green-500 mr-4" />
               <div>
                 <p className="text-sm text-gray-500">Valor Total</p>
-                <p className="text-2xl font-bold">{formatarMoeda(resultado.custoTotal)}</p>
+                <p className="text-2xl font-bold">{formatarMoeda(valorProposta)}</p>
+                <p className="text-sm text-gray-500">
+                  Modelo {projeto.modeloProposta === 'basico' ? 'Básico' : 
+                         projeto.modeloProposta === 'padrao' ? 'Padrão' : 'Premium'}
+                </p>
               </div>
             </div>
           </div>
@@ -184,6 +204,39 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
             <FileSignature className="h-5 w-5 text-primary mr-2" />
             <span>Baixar Orçamento</span>
           </button>
+        </div>
+        
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 hover:shadow-md transition-all">
+          <h4 className="font-semibold mb-4">Modelo de Proposta Selecionado</h4>
+          <div className="flex items-center mb-3">
+            <div className={`w-10 h-10 rounded-full ${
+              projeto.modeloProposta === 'basico' ? 'bg-blue-100' :
+              projeto.modeloProposta === 'padrao' ? 'bg-green-100' :
+              'bg-purple-100'
+            } flex items-center justify-center mr-3`}>
+              <ShieldCheck className={`h-5 w-5 ${
+                projeto.modeloProposta === 'basico' ? 'text-blue-600' :
+                projeto.modeloProposta === 'padrao' ? 'text-green-600' :
+                'text-purple-600'
+              }`} />
+            </div>
+            <div>
+              <h5 className="font-medium">
+                {projeto.modeloProposta === 'basico' ? 'Básico' :
+                 projeto.modeloProposta === 'padrao' ? 'Padrão' :
+                 'Premium'}
+              </h5>
+              <p className="text-sm text-gray-500">{modeloSelecionado.descricao}</p>
+            </div>
+          </div>
+          <ul className="space-y-2 mt-4 pl-4">
+            {modeloSelecionado.beneficios.map((beneficio, index) => (
+              <li key={index} className="flex items-start">
+                <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700">{beneficio}</span>
+              </li>
+            ))}
+          </ul>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -221,6 +274,32 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
                (projeto.configuracao.apis ? 1 : 0) +
                projeto.configuracao.outrosServicos.length} serviços incluídos
             </p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className={`p-4 border rounded-xl ${
+            projeto.modeloProposta === 'basico' ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'
+          }`}>
+            <h5 className="font-medium mb-2">Básico</h5>
+            <p className="text-2xl font-bold mb-2">{formatarMoeda(resultado.valoresPropostas.basico)}</p>
+            <p className="text-xs text-gray-500">-15% do valor padrão</p>
+          </div>
+          
+          <div className={`p-4 border rounded-xl ${
+            projeto.modeloProposta === 'padrao' ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200'
+          }`}>
+            <h5 className="font-medium mb-2">Padrão</h5>
+            <p className="text-2xl font-bold mb-2">{formatarMoeda(resultado.valoresPropostas.padrao)}</p>
+            <p className="text-xs text-gray-500">Valor base</p>
+          </div>
+          
+          <div className={`p-4 border rounded-xl ${
+            projeto.modeloProposta === 'premium' ? 'bg-purple-50 border-purple-200' : 'bg-white border-gray-200'
+          }`}>
+            <h5 className="font-medium mb-2">Premium</h5>
+            <p className="text-2xl font-bold mb-2">{formatarMoeda(resultado.valoresPropostas.premium)}</p>
+            <p className="text-xs text-gray-500">+25% do valor padrão</p>
           </div>
         </div>
         
@@ -273,6 +352,25 @@ ${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-2xl border border-gray-200">
+          <h5 className="font-semibold mb-4">Dados do Contrato</h5>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h6 className="font-medium mb-2">Contratante</h6>
+              <p className="text-gray-700 mb-1"><strong>Nome:</strong> {projeto.contratante.nome || '[Não informado]'}</p>
+              <p className="text-gray-700 mb-1"><strong>Documento:</strong> {projeto.contratante.documento || '[Não informado]'}</p>
+              <p className="text-gray-700"><strong>Endereço:</strong> {projeto.contratante.endereco || '[Não informado]'}</p>
+            </div>
+            
+            <div>
+              <h6 className="font-medium mb-2">Contratado</h6>
+              <p className="text-gray-700 mb-1"><strong>Nome:</strong> {projeto.contratado.nome || '[Não informado]'}</p>
+              <p className="text-gray-700 mb-1"><strong>Documento:</strong> {projeto.contratado.documento || '[Não informado]'}</p>
+              <p className="text-gray-700"><strong>Endereço:</strong> {projeto.contratado.endereco || '[Não informado]'}</p>
+            </div>
           </div>
         </div>
       </div>

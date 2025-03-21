@@ -33,6 +33,27 @@ export type ComparacaoMercado = {
   moeda: Moeda;
 };
 
+export type InformacaoContratante = {
+  nome: string;
+  documento: string;
+  endereco: string;
+};
+
+export type InformacaoContratado = {
+  nome: string;
+  documento: string;
+  endereco: string;
+};
+
+export type ModeloProposta = 'basico' | 'padrao' | 'premium';
+
+export type ValoresProposta = {
+  modelo: ModeloProposta;
+  multiplicador: number;
+  descricao: string;
+  beneficios: string[];
+};
+
 export type DadosProjeto = {
   nome: string;
   descricao: string;
@@ -43,6 +64,9 @@ export type DadosProjeto = {
   moeda: Moeda;
   assinaturaCliente?: string;
   assinaturaFreelancer?: string;
+  contratante: InformacaoContratante;
+  contratado: InformacaoContratado;
+  modeloProposta: ModeloProposta;
 };
 
 export type ResultadoOrcamento = {
@@ -55,7 +79,50 @@ export type ResultadoOrcamento = {
   requisitosCliente: string[];
   comparacoesMercado: ComparacaoMercado[];
   moeda: Moeda;
+  valoresPropostas: {
+    basico: number;
+    padrao: number;
+    premium: number;
+  };
 };
+
+// Definição dos modelos de proposta
+export const modelosPropostas: ValoresProposta[] = [
+  {
+    modelo: 'basico',
+    multiplicador: 0.85,
+    descricao: 'Modelo Básico - Funcionalidades essenciais para o seu projeto',
+    beneficios: [
+      'Entrega das funcionalidades essenciais',
+      'Suporte básico por 30 dias',
+      'Uma revisão após a entrega'
+    ]
+  },
+  {
+    modelo: 'padrao',
+    multiplicador: 1,
+    descricao: 'Modelo Padrão - Equilíbrio entre custo e benefícios',
+    beneficios: [
+      'Todas as funcionalidades planejadas',
+      'Suporte por 60 dias',
+      'Três revisões após a entrega',
+      'Treinamento básico para uso do sistema'
+    ]
+  },
+  {
+    modelo: 'premium',
+    multiplicador: 1.25,
+    descricao: 'Modelo Premium - Experiência completa e suporte estendido',
+    beneficios: [
+      'Todas as funcionalidades com prioridade máxima',
+      'Suporte por 90 dias',
+      'Revisões ilimitadas por 30 dias',
+      'Treinamento completo para toda equipe',
+      'Documentação detalhada do sistema',
+      'Otimização de performance'
+    ]
+  }
+];
 
 // Valores fictícios para cálculo
 const CUSTO_DOMINIO = 50;
@@ -144,8 +211,15 @@ export const calcularOrcamento = (dados: DadosProjeto): ResultadoOrcamento => {
   
   custoServicos += dados.configuracao.outrosServicos.length * CUSTO_OUTROS_SERVICOS;
   
-  // Calcular custo total
+  // Calcular custo total padrão
   const custoTotal = custoBase + custoTecnologias + custoServicos;
+  
+  // Calcular variações de preço para os três modelos
+  const valoresPropostas = {
+    basico: custoTotal * 0.85,
+    padrao: custoTotal,
+    premium: custoTotal * 1.25
+  };
   
   // Gerar lista de requisitos para o cliente
   const requisitosCliente = gerarRequisitosCliente(dados);
@@ -174,7 +248,8 @@ export const calcularOrcamento = (dados: DadosProjeto): ResultadoOrcamento => {
     custoTotal,
     requisitosCliente,
     comparacoesMercado,
-    moeda: dados.moeda
+    moeda: dados.moeda,
+    valoresPropostas
   };
 };
 
@@ -243,6 +318,8 @@ export const gerarContrato = (dados: DadosProjeto, resultado: ResultadoOrcamento
   };
 
   const hoje = new Date().toLocaleDateString('pt-BR');
+  const modeloSelecionado = modelosPropostas.find(modelo => modelo.modelo === dados.modeloProposta) || modelosPropostas[1];
+  const valorProposta = resultado.valoresPropostas[dados.modeloProposta] || resultado.custoTotal;
   
   return `
 CONTRATO DE PRESTAÇÃO DE SERVIÇOS
@@ -250,13 +327,13 @@ CONTRATO DE PRESTAÇÃO DE SERVIÇOS
 
 Entre as partes:
 
-CONTRATANTE: [Nome do Cliente]
-CNPJ/CPF: [Número do Documento]
-Endereço: [Endereço do Cliente]
+CONTRATANTE: ${dados.contratante.nome || '[Nome do Cliente]'}
+CNPJ/CPF: ${dados.contratante.documento || '[Número do Documento]'}
+Endereço: ${dados.contratante.endereco || '[Endereço do Cliente]'}
 
-CONTRATADO: [Nome do Freelancer]
-CNPJ/CPF: [Número do Documento]
-Endereço: [Endereço do Freelancer]
+CONTRATADO: ${dados.contratado.nome || '[Nome do Freelancer]'}
+CNPJ/CPF: ${dados.contratado.documento || '[Número do Documento]'}
+Endereço: ${dados.contratado.endereco || '[Endereço do Freelancer]'}
 
 As partes acima identificadas têm, entre si, justo e acertado o presente Contrato de Prestação de Serviços, que se regerá pelas cláusulas seguintes e pelas condições descritas no presente.
 
@@ -270,42 +347,83 @@ Descrição do Projeto: ${dados.descricao}
 Requisitos:
 ${dados.requisitos.map((req, i) => `${i+1}. ${req.descricao} (${req.estimativaHoras} horas)`).join('\n')}
 
+MODELO DE PROPOSTA ESCOLHIDO
+----------------------------
+
+Modelo: ${modeloSelecionado.descricao}
+
+Benefícios inclusos:
+${modeloSelecionado.beneficios.map((beneficio, i) => `- ${beneficio}`).join('\n')}
+
 OBRIGAÇÕES DO CONTRATADO
 ------------------------
 
 Cláusula 2ª. O CONTRATADO se compromete a:
 - Desenvolver o projeto conforme os requisitos especificados
 - Cumprir os prazos estipulados
-- Realizar ajustes e correções necessárias
+- Realizar ajustes e correções necessárias dentro do escopo do projeto
 - Manter confidencialidade sobre todas as informações do projeto
+- Fornecer suporte técnico conforme definido no modelo de proposta escolhido
+- Transferir os direitos autorais do código-fonte ao CONTRATANTE após pagamento integral
+- Documentar adequadamente o projeto para facilitar manutenções futuras
 
 OBRIGAÇÕES DO CONTRATANTE
 -------------------------
 
 Cláusula 3ª. O CONTRATANTE se compromete a:
-- Fornecer todas as informações necessárias para o desenvolvimento
-- Realizar os pagamentos conforme estipulado
+- Fornecer todas as informações necessárias para o desenvolvimento em tempo hábil
+- Realizar os pagamentos conforme estipulado no presente contrato
 - Realizar a aprovação dos entregáveis em tempo hábil
+- Não modificar o código fonte sem prévia comunicação ao CONTRATADO durante o período de garantia
 - Fornecer os seguintes itens:
 ${resultado.requisitosCliente.map((req, i) => `  ${i+1}. ${req}`).join('\n')}
 
 VALOR E FORMA DE PAGAMENTO
 --------------------------
 
-Cláusula 4ª. Pelos serviços prestados, o CONTRATANTE pagará ao CONTRATADO o valor total de ${formatarMoeda(resultado.custoTotal)}, a ser pago da seguinte forma:
-- 40% (${formatarMoeda(resultado.custoTotal * 0.4)}) na assinatura do contrato
-- 30% (${formatarMoeda(resultado.custoTotal * 0.3)}) na entrega parcial
-- 30% (${formatarMoeda(resultado.custoTotal * 0.3)}) na entrega final
+Cláusula 4ª. Pelos serviços prestados, o CONTRATANTE pagará ao CONTRATADO o valor total de ${formatarMoeda(valorProposta)}, a ser pago da seguinte forma:
+- 40% (${formatarMoeda(valorProposta * 0.4)}) na assinatura do contrato
+- 30% (${formatarMoeda(valorProposta * 0.3)}) na entrega parcial
+- 30% (${formatarMoeda(valorProposta * 0.3)}) na entrega final
+
+DETALHAMENTO DOS CUSTOS
+-----------------------
+
+O valor total de ${formatarMoeda(valorProposta)} é composto por:
+- Custo base do desenvolvimento: ${formatarMoeda(resultado.custoBase)}
+- Custo adicional de tecnologias: ${formatarMoeda(resultado.custoTecnologias)}
+- Custo de serviços adicionais: ${formatarMoeda(resultado.custoServicos)}
+- Ajuste conforme modelo de proposta escolhido: ${formatarMoeda(valorProposta - resultado.custoTotal)}
 
 PRAZO
 -----
 
-Cláusula 5ª. O prazo para conclusão dos serviços é de ${resultado.totalDias} dias úteis, contados a partir da data de assinatura deste contrato e do recebimento de todos os requisitos necessários.
+Cláusula 5ª. O prazo para conclusão dos serviços é de ${resultado.totalDias} dias úteis, contados a partir da data de assinatura deste contrato e do recebimento de todos os requisitos necessários listados na Cláusula 3ª.
+
+ENTREGAS PARCIAIS
+----------------
+
+Para garantir a transparência e acompanhamento do projeto, serão realizadas entregas parciais conforme cronograma abaixo:
+- 1ª Entrega (30% do projeto): em até ${Math.ceil(resultado.totalDias * 0.3)} dias úteis
+- 2ª Entrega (60% do projeto): em até ${Math.ceil(resultado.totalDias * 0.6)} dias úteis
+- Entrega Final (100% do projeto): em até ${resultado.totalDias} dias úteis
+
+TESTES E HOMOLOGAÇÃO
+-------------------
+
+Após cada entrega, o CONTRATANTE terá o prazo de 5 dias úteis para realizar testes e solicitar ajustes. Esse período não será contabilizado no prazo total do projeto.
+
+GARANTIA
+-------
+
+Cláusula 6ª. O CONTRATADO oferece garantia de ${dados.modeloProposta === 'basico' ? '30' : dados.modeloProposta === 'padrao' ? '60' : '90'} dias sobre o funcionamento do software, contados a partir da data de entrega final.
 
 RESCISÃO
 -------
 
-Cláusula 6ª. O presente contrato poderá ser rescindido por qualquer uma das partes, mediante notificação expressa, com 10 dias de antecedência.
+Cláusula 7ª. O presente contrato poderá ser rescindido por qualquer uma das partes, mediante notificação expressa, com 10 dias de antecedência.
+
+Em caso de rescisão, o CONTRATANTE deverá pagar pelos serviços já realizados e entregues, na proporção do valor total.
 
 CONSIDERAÇÕES FINAIS
 -------------------
@@ -316,9 +434,11 @@ Local e data: ________________, ${hoje}
 
 
 _________________________________
-CONTRATANTE
+CONTRATANTE: ${dados.contratante.nome || '[Nome do Cliente]'}
+
 
 _________________________________
-CONTRATADO
+CONTRATADO: ${dados.contratado.nome || '[Nome do Freelancer]'}
 `;
 };
+

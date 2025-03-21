@@ -1,7 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, DollarSign, Clock, PlusCircle, MinusCircle } from 'lucide-react';
-import { DadosProjeto, Requisito, tecnologiasPadrao, calcularOrcamento, ResultadoOrcamento, Moeda } from '../lib/calculadora';
+import { Plus, Trash2, DollarSign, Clock, PlusCircle, MinusCircle, FileText, ShieldCheck, Award } from 'lucide-react';
+import { 
+  DadosProjeto, 
+  Requisito, 
+  tecnologiasPadrao, 
+  calcularOrcamento, 
+  ResultadoOrcamento, 
+  Moeda,
+  modelosPropostas,
+  ModeloProposta
+} from '../lib/calculadora';
 import ResultadoOrcamentoComponent from './ResultadoOrcamento';
 import AssinaturaEletronica from './AssinaturaEletronica';
 
@@ -21,6 +29,17 @@ const ProjetoForm = () => {
     },
     valorHora: 80, // Valor padrão
     moeda: 'BRL', // Moeda padrão
+    contratante: {
+      nome: '',
+      documento: '',
+      endereco: ''
+    },
+    contratado: {
+      nome: '',
+      documento: '',
+      endereco: ''
+    },
+    modeloProposta: 'padrao'
   });
 
   const [novoRequisito, setNovoRequisito] = useState({
@@ -124,7 +143,6 @@ const ProjetoForm = () => {
   }, [formStep]);
 
   const estimarTempoAutomatico = () => {
-    // Estes são valores simplificados para o exemplo
     let estimativaDias = 1;
     let estimativaHoras = 8;
     
@@ -154,7 +172,13 @@ const ProjetoForm = () => {
     estimarTempoAutomatico();
   }, [novoRequisito.complexidade]);
 
-  // Atualizar a assinatura do freelancer
+  const selecionarModeloProposta = (modelo: ModeloProposta) => {
+    setProjeto(prev => ({
+      ...prev,
+      modeloProposta: modelo
+    }));
+  };
+
   const definirAssinaturaFreelancer = (assinatura: string) => {
     setProjeto(prev => ({
       ...prev,
@@ -162,7 +186,6 @@ const ProjetoForm = () => {
     }));
   };
 
-  // Atualizar a assinatura do cliente
   const definirAssinaturaCliente = (assinatura: string) => {
     setProjeto(prev => ({
       ...prev,
@@ -183,7 +206,7 @@ const ProjetoForm = () => {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="p-8">
             <div className="flex justify-between mb-8">
-              {[1, 2, 3, 4].map((step) => (
+              {[1, 2, 3, 4, 5].map((step) => (
                 <div key={step} className="flex flex-col items-center">
                   <div 
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border transition-all ${
@@ -200,7 +223,8 @@ const ProjetoForm = () => {
                     {step === 1 && 'Básico'}
                     {step === 2 && 'Requisitos'}
                     {step === 3 && 'Tecnologias'}
-                    {step === 4 && 'Resultado'}
+                    {step === 4 && 'Partes'}
+                    {step === 5 && 'Resultado'}
                   </span>
                 </div>
               ))}
@@ -598,7 +622,200 @@ const ProjetoForm = () => {
                 </div>
               )}
               
-              {formStep === 4 && resultado && (
+              {formStep === 4 && (
+                <div className="animate-fade-in">
+                  <h3 className="text-xl font-semibold mb-6">Dados do Contrato</h3>
+                  
+                  <div className="space-y-8">
+                    <div>
+                      <h4 className="text-lg font-medium mb-4">Dados do Contratante (Cliente)</h4>
+                      <div className="space-y-4">
+                        <div>
+                          <label htmlFor="cliente-nome" className="block text-sm font-medium mb-2">
+                            Nome / Razão Social
+                          </label>
+                          <input
+                            type="text"
+                            id="cliente-nome"
+                            value={projeto.contratante.nome}
+                            onChange={(e) => setProjeto(prev => ({ 
+                              ...prev, 
+                              contratante: {
+                                ...prev.contratante,
+                                nome: e.target.value
+                              }
+                            }))}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                            placeholder="Nome completo ou razão social"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label htmlFor="cliente-documento" className="block text-sm font-medium mb-2">
+                            CPF / CNPJ
+                          </label>
+                          <input
+                            type="text"
+                            id="cliente-documento"
+                            value={projeto.contratante.documento}
+                            onChange={(e) => setProjeto(prev => ({ 
+                              ...prev, 
+                              contratante: {
+                                ...prev.contratante,
+                                documento: e.target.value
+                              }
+                            }))}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                            placeholder="000.000.000-00 ou 00.000.000/0001-00"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label htmlFor="cliente-endereco" className="block text-sm font-medium mb-2">
+                            Endereço Completo
+                          </label>
+                          <textarea
+                            id="cliente-endereco"
+                            value={projeto.contratante.endereco}
+                            onChange={(e) => setProjeto(prev => ({ 
+                              ...prev, 
+                              contratante: {
+                                ...prev.contratante,
+                                endereco: e.target.value
+                              }
+                            }))}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition h-20 resize-none"
+                            placeholder="Rua, número, complemento, bairro, cidade, estado, CEP"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-lg font-medium mb-4">Dados do Contratado (Freelancer)</h4>
+                      <div className="space-y-4">
+                        <div>
+                          <label htmlFor="freelancer-nome" className="block text-sm font-medium mb-2">
+                            Nome / Razão Social
+                          </label>
+                          <input
+                            type="text"
+                            id="freelancer-nome"
+                            value={projeto.contratado.nome}
+                            onChange={(e) => setProjeto(prev => ({ 
+                              ...prev, 
+                              contratado: {
+                                ...prev.contratado,
+                                nome: e.target.value
+                              }
+                            }))}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                            placeholder="Seu nome completo ou razão social"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label htmlFor="freelancer-documento" className="block text-sm font-medium mb-2">
+                            CPF / CNPJ
+                          </label>
+                          <input
+                            type="text"
+                            id="freelancer-documento"
+                            value={projeto.contratado.documento}
+                            onChange={(e) => setProjeto(prev => ({ 
+                              ...prev, 
+                              contratado: {
+                                ...prev.contratado,
+                                documento: e.target.value
+                              }
+                            }))}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                            placeholder="000.000.000-00 ou 00.000.000/0001-00"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label htmlFor="freelancer-endereco" className="block text-sm font-medium mb-2">
+                            Endereço Completo
+                          </label>
+                          <textarea
+                            id="freelancer-endereco"
+                            value={projeto.contratado.endereco}
+                            onChange={(e) => setProjeto(prev => ({ 
+                              ...prev, 
+                              contratado: {
+                                ...prev.contratado,
+                                endereco: e.target.value
+                              }
+                            }))}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition h-20 resize-none"
+                            placeholder="Rua, número, complemento, bairro, cidade, estado, CEP"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-lg font-medium mb-4">Modelo de Proposta</h4>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Selecione um dos modelos de proposta abaixo para oferecer ao cliente.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {modelosPropostas.map((modelo) => (
+                          <div 
+                            key={modelo.modelo} 
+                            className={`border rounded-xl p-5 cursor-pointer transition-all hover:shadow-md ${
+                              projeto.modeloProposta === modelo.modelo 
+                                ? 'border-primary bg-primary/5'
+                                : 'border-gray-200'
+                            }`}
+                            onClick={() => selecionarModeloProposta(modelo.modelo)}
+                          >
+                            <div className="flex justify-between items-start mb-3">
+                              <h5 className="font-semibold capitalize">
+                                {modelo.modelo === 'basico' ? 'Básico' : 
+                                modelo.modelo === 'padrao' ? 'Padrão' : 'Premium'}
+                              </h5>
+                              <div 
+                                className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                                  projeto.modeloProposta === modelo.modelo
+                                    ? 'border-primary bg-primary text-white'
+                                    : 'border-gray-300'
+                                }`}
+                              >
+                                {projeto.modeloProposta === modelo.modelo && (
+                                  <span className="text-xs">✓</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center mb-3">
+                              <span className="text-lg font-bold">
+                                {modelo.modelo === 'basico' ? '-15%' : 
+                                modelo.modelo === 'padrao' ? '100%' : '+25%'}
+                              </span>
+                              <span className="text-sm text-gray-500 ml-1">
+                                {modelo.modelo === 'basico' ? 'do valor padrão' : 
+                                modelo.modelo === 'padrao' ? 'valor padrão' : 'do valor padrão'}
+                              </span>
+                            </div>
+                            <ul className="text-sm space-y-2">
+                              {modelo.beneficios.map((beneficio, index) => (
+                                <li key={index} className="flex items-start">
+                                  <span className="text-green-500 mr-2">✓</span>
+                                  <span>{beneficio}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {formStep === 5 && resultado && (
                 <>
                   <ResultadoOrcamentoComponent 
                     resultado={resultado} 
@@ -614,12 +831,12 @@ const ProjetoForm = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <AssinaturaEletronica 
                         onChange={definirAssinaturaFreelancer}
-                        label="Sua assinatura (Freelancer)"
+                        label={`Assinatura do Contratado (${projeto.contratado.nome || 'Freelancer'})`}
                       />
                       
                       <AssinaturaEletronica 
                         onChange={definirAssinaturaCliente}
-                        label="Assinatura do Cliente"
+                        label={`Assinatura do Contratante (${projeto.contratante.nome || 'Cliente'})`}
                       />
                     </div>
                   </div>
@@ -638,7 +855,7 @@ const ProjetoForm = () => {
                 </button>
               )}
               
-              {formStep < 4 && (
+              {formStep < 5 && (
                 <button
                   type="button"
                   onClick={handleNextStep}
