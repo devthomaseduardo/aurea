@@ -102,6 +102,6 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICE
 ---
 
 <p align="center">
-  Desenvolvido com ❤️ por [Seu Nome]
+  Desenvolvido com ❤️ por Thomas Eduardo 
 </p>
 
