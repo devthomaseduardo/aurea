@@ -1,6 +1,7 @@
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/calculator.svg" alt="Calculadora Freelancer" width="100" height="100"/>
+  <img width="1920" height="1440" alt="alanista" src="https://github.com/user-attachments/assets/bc4fbb09-d4b5-4cbf-b62f-7ebe0fb60005" />
+
 </p>
 
 <h1 align="center">Calculadora de Orçamentos para Freelancers</h1>
