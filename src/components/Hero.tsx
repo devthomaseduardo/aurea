@@ -1,49 +1,107 @@
 
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, Zap, TrendingUp, Shield } from 'lucide-react';
 
 const Hero = () => {
   const scrollToCalculator = () => {
-    const calculatorSection = document.getElementById('calcular');
-    if (calculatorSection) {
-      calculatorSection.scrollIntoView({ behavior: 'smooth' });
-    }
+    document.getElementById('calcular')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <section id="inicio" className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 md:px-12 py-24 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-white -z-10"></div>
-      <div className="absolute top-40 left-20 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-20 -z-10"></div>
-      <div className="absolute bottom-40 right-20 w-80 h-80 bg-purple-200 rounded-full blur-3xl opacity-20 -z-10"></div>
-      
-      <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-up">
-        <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-          Calcule o orçamento perfeito para seus projetos freelancer
+    <section
+      id="inicio"
+      className="relative min-h-[92vh] flex flex-col items-center justify-center px-6 md:px-12 py-32 overflow-hidden"
+    >
+      {/* ── Background Orbs ── */}
+      <div
+        className="absolute top-[-15%] left-[-10%] w-[700px] h-[700px] rounded-full opacity-30 animate-pulse-glow pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(100,80,255,0.25) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+        }}
+      />
+      <div
+        className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full opacity-20 animate-pulse-glow pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(56,120,255,0.2) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+          animationDelay: '2s',
+        }}
+      />
+      {/* Subtle grid pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.025] pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
+      />
+
+      {/* ── Content ── */}
+      <div className="relative z-10 max-w-4xl mx-auto text-center">
+
+        {/* Badge */}
+        <div className="animate-fade-up flex justify-center mb-8">
+          <span className="badge-pill">
+            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
+            Versão 2.0 — Agora com análise avançada
+          </span>
+        </div>
+
+        {/* Heading */}
+        <h1 className="animate-fade-up delay-100 text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-6">
+          <span className="gradient-text-subtle">Orçamentos que</span>
+          <br />
+          <span className="gradient-text">vencem contratos</span>
         </h1>
-        
-        <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-          Uma ferramenta completa para analisar requisitos e criar orçamentos detalhados para seus clientes.
+
+        {/* Subheading */}
+        <p className="animate-fade-up delay-200 text-lg md:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed font-light mb-10">
+          A ferramenta que transforma requisitos complexos em propostas comerciais precisas. Calcule, analise e impressione seus clientes com orçamentos de nível profissional.
         </p>
-        
-        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-          <button 
+
+        {/* CTAs */}
+        <div className="animate-fade-up delay-300 flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <button
             onClick={scrollToCalculator}
-            className="btn-hover-effect bg-primary text-white px-8 py-4 rounded-full text-lg font-medium shadow-lg hover:shadow-xl transition-all"
+            className="btn-primary text-white px-8 py-4 text-base"
           >
-            Começar a calcular
+            <Zap className="w-4 h-4" />
+            Calcular meu projeto
           </button>
-          
-          <a 
+          <a
             href="#como-funciona"
-            className="btn-hover-effect bg-white text-foreground px-8 py-4 rounded-full text-lg font-medium shadow-md hover:shadow-lg border border-gray-100 transition-all"
+            className="btn-ghost px-8 py-4 text-base"
           >
-            Como funciona
+            Ver como funciona
           </a>
         </div>
+
+        {/* Social Proof Stats */}
+        <div className="animate-fade-up delay-400 grid grid-cols-3 gap-4 max-w-lg mx-auto">
+          {[
+            { icon: Zap, value: '2× mais rápido', label: 'para fechar propostas' },
+            { icon: TrendingUp, value: '40% mais', label: 'precisão nos valores' },
+            { icon: Shield, value: '100% grátis', label: 'sem limites de uso' },
+          ].map(({ icon: Icon, value, label }) => (
+            <div key={label} className="text-center">
+              <div className="flex justify-center mb-1.5">
+                <Icon className="w-4 h-4 text-violet-400" />
+              </div>
+              <div className="text-white font-bold text-sm">{value}</div>
+              <div className="text-white/35 text-xs mt-0.5">{label}</div>
+            </div>
+          ))}
+        </div>
       </div>
-      
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <ArrowDown className="text-primary w-6 h-6" />
-      </div>
+
+      {/* Scroll indicator */}
+      <button
+        onClick={scrollToCalculator}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/20 hover:text-white/50 transition-colors"
+      >
+        <ArrowDown className="w-5 h-5 animate-bounce" />
+      </button>
     </section>
   );
 };

@@ -1,450 +1,333 @@
+
 import React, { useRef } from 'react';
-import { Clock, DollarSign, Download, Clipboard, Share2, Check, FileText, FileSignature, ShieldCheck } from 'lucide-react';
+import {
+  Clock, DollarSign, Download, Clipboard, Check, FileText,
+  FileSignature, ShieldCheck, TrendingUp, AlertCircle, Zap,
+  Calendar, ArrowRight, Star, Award, BarChart2,
+} from 'lucide-react';
 import { ResultadoOrcamento, DadosProjeto, gerarContrato, modelosPropostas } from '../lib/calculadora';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from '@/components/ui/use-toast';
 import ComparacaoMercado from './ComparacaoMercado';
 import { gerarCartaProposta } from './CartaProposta';
 import html2pdf from 'html2pdf.js';
 
-interface ResultadoOrcamentoProps {
+interface Props {
   resultado: ResultadoOrcamento;
   projeto: DadosProjeto;
 }
 
-const ResultadoOrcamentoComponent: React.FC<ResultadoOrcamentoProps> = ({ resultado, projeto }) => {
+const REGIME_LABELS: Record<string, string> = {
+  pf:                  'Pessoa Física',
+  mei:                 'MEI',
+  pj_simples:          'PJ Simples Nacional',
+  pj_lucro_presumido:  'PJ Lucro Presumido',
+};
+
+const MODELO_BADGE: Record<string, { color: string; icon: React.ElementType; label: string }> = {
+  basico:  { color: 'text-sky-400 border-sky-400/30 bg-sky-400/10',     icon: ShieldCheck, label: 'Básico'   },
+  padrao:  { color: 'text-emerald-400 border-emerald-400/30 bg-emerald-400/10', icon: Award,       label: 'Padrão'   },
+  premium: { color: 'text-violet-400 border-violet-400/30 bg-violet-400/10',   icon: Star,        label: 'Premium'  },
+};
+
+const ResultadoOrcamentoComponent: React.FC<Props> = ({ resultado, projeto }) => {
   const resultadoRef = useRef<HTMLDivElement>(null);
   const [copiado, setCopiado] = React.useState(false);
 
-  const formatarMoeda = (valor: number) => {
-    return resultado.moeda === 'BRL'
-      ? valor.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
-        })
-      : valor.toLocaleString('en-US', {
-          style: 'currency',
-          currency: 'USD'
-        });
-  };
+  const fmt = (valor: number) =>
+    resultado.moeda === 'BRL'
+      ? valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      : valor.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+  const valorProposta = resultado.valoresPropostas[projeto.modeloProposta] ?? resultado.custoTotal;
+  const modeloSelecionado = modelosPropostas.find(m => m.modelo === projeto.modeloProposta) ?? modelosPropostas[1];
+  const badge = MODELO_BADGE[projeto.modeloProposta] ?? MODELO_BADGE.padrao;
+  const BadgeIcon = badge.icon;
 
   const gerarPDF = () => {
-    if (!resultadoRef.current) {
-      toast({
-        title: "Erro ao gerar PDF",
-        description: "Não foi possível encontrar o conteúdo do orçamento.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const element = resultadoRef.current;
+    if (!resultadoRef.current) return;
     const opt = {
       margin: 10,
       filename: `orcamento-${projeto.nome.replace(/\s+/g, '-').toLowerCase()}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     };
-
-    toast({
-      title: "Gerando PDF",
-      description: "Aguarde enquanto preparamos seu documento..."
-    });
-
-    const clonedElement = element.cloneNode(true) as HTMLElement;
-    
-    const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
-    const head = document.createElement('head');
-    styles.forEach(style => head.appendChild(style.cloneNode(true)));
-    
-    const tempContainer = document.createElement('div');
-    tempContainer.appendChild(head);
-    tempContainer.appendChild(clonedElement);
-    tempContainer.style.position = 'absolute';
-    tempContainer.style.left = '-9999px';
-    document.body.appendChild(tempContainer);
-
-    html2pdf().from(clonedElement).set(opt).save().then(() => {
-      document.body.removeChild(tempContainer);
-      toast({
-        title: "PDF gerado com sucesso!",
-        description: "O arquivo foi baixado com sucesso."
-      });
-    }).catch(error => {
-      console.error("Erro ao gerar PDF:", error);
-      document.body.removeChild(tempContainer);
-      toast({
-        title: "Erro ao gerar PDF",
-        description: "Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.",
-        variant: "destructive"
-      });
+    toast({ title: 'Gerando PDF…', description: 'Aguarde um momento.' });
+    const clone = resultadoRef.current.cloneNode(true) as HTMLElement;
+    const tmp = document.createElement('div');
+    tmp.style.position = 'absolute';
+    tmp.style.left = '-9999px';
+    tmp.appendChild(clone);
+    document.body.appendChild(tmp);
+    html2pdf().from(clone).set(opt).save().then(() => {
+      document.body.removeChild(tmp);
+      toast({ title: 'PDF gerado!', description: 'O arquivo foi baixado com sucesso.' });
+    }).catch(() => {
+      document.body.removeChild(tmp);
+      toast({ title: 'Erro ao gerar PDF', variant: 'destructive' } as any);
     });
   };
 
   const copiarOrcamento = () => {
-    const tecnologiasSelecionadas = projeto.tecnologias
-      .filter(tec => tec.selecionada)
-      .map(tec => tec.nome)
-      .join(', ');
-    
-    const servicos = [];
-    if (projeto.configuracao.dominio) servicos.push('Domínio');
-    if (projeto.configuracao.hospedagem) servicos.push('Hospedagem');
-    if (projeto.configuracao.autenticacao) servicos.push('Sistema de Autenticação');
-    if (projeto.configuracao.pagamentos) servicos.push('Gateway de Pagamento');
-    if (projeto.configuracao.apis) servicos.push('Integração com APIs');
-    projeto.configuracao.outrosServicos.forEach(servico => servicos.push(servico));
-    
-    const modeloPropostaInfo = modelosPropostas.find(m => m.modelo === projeto.modeloProposta) || modelosPropostas[1];
-    const valorProposta = resultado.valoresPropostas[projeto.modeloProposta] || resultado.custoTotal;
-    
-    const textoOrcamento = `
-ORÇAMENTO: ${projeto.nome}
------------------------------------------
-${projeto.descricao}
-
-CONTRATANTE: ${projeto.contratante.nome || '[Nome do Cliente]'}
-CONTRATADO: ${projeto.contratado.nome || '[Nome do Freelancer]'}
-
-TEMPO ESTIMADO:
-- ${resultado.totalDias} dias (${resultado.totalHoras} horas)
-
-TECNOLOGIAS:
-${tecnologiasSelecionadas || 'Nenhuma tecnologia específica informada'}
-
-SERVIÇOS INCLUÍDOS:
-${servicos.length > 0 ? servicos.join('\n') : 'Nenhum serviço adicional'}
-
-MODELO DE PROPOSTA:
-${modeloPropostaInfo.descricao}
-
-Benefícios:
-${modeloPropostaInfo.beneficios.map(b => `- ${b}`).join('\n')}
-
-CUSTOS:
-- Custo base: ${formatarMoeda(resultado.custoBase)}
-- Tecnologias: ${formatarMoeda(resultado.custoTecnologias)}
-- Serviços: ${formatarMoeda(resultado.custoServicos)}
-
-VALOR TOTAL: ${formatarMoeda(valorProposta)}
-
-REQUISITOS DO CLIENTE:
-${resultado.requisitosCliente.map((req, i) => `${i+1}. ${req}`).join('\n')}
-    `;
-    
-    navigator.clipboard.writeText(textoOrcamento);
+    const texto = `ORÇAMENTO: ${projeto.nome}\n\nValor Total: ${fmt(valorProposta)}\nTempo: ${resultado.totalDias} dias (${resultado.totalHoras}h)\nModelo: ${modeloSelecionado.descricao}`;
+    navigator.clipboard.writeText(texto);
     setCopiado(true);
     setTimeout(() => setCopiado(false), 2000);
-    
-    toast({
-      title: "Orçamento copiado!",
-      description: "O texto foi copiado para sua área de transferência.",
-    });
-  };
-
-  const compartilharOrcamento = () => {
-    toast({
-      title: "Funcionalidade em desenvolvimento",
-      description: "O compartilhamento estará disponível em breve!",
-    });
+    toast({ title: 'Copiado!', description: 'Orçamento copiado para a área de transferência.' });
   };
 
   const baixarContrato = () => {
-    const contratoTexto = gerarContrato(projeto, resultado);
-    const blob = new Blob([contratoTexto], { type: 'text/plain' });
+    const blob = new Blob([gerarContrato(projeto, resultado)], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `contrato-${projeto.nome.replace(/\s+/g, '-').toLowerCase()}.txt`;
-    document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    toast({
-      title: "Contrato baixado!",
-      description: "O arquivo de texto com o contrato foi baixado com sucesso.",
-    });
+    toast({ title: 'Contrato baixado!' });
   };
 
   const baixarCartaProposta = () => {
-    const cartaTexto = gerarCartaProposta(projeto, resultado);
-    const blob = new Blob([cartaTexto], { type: 'text/plain' });
+    const blob = new Blob([gerarCartaProposta(projeto, resultado)], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `proposta-${projeto.nome.replace(/\s+/g, '-').toLowerCase()}.txt`;
-    document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    toast({
-      title: "Carta proposta baixada!",
-      description: "O arquivo com a carta proposta foi baixado com sucesso.",
-    });
+    toast({ title: 'Carta proposta baixada!' });
   };
 
-  const valorProposta = resultado.valoresPropostas[projeto.modeloProposta] || resultado.custoTotal;
-  const modeloSelecionado = modelosPropostas.find(m => m.modelo === projeto.modeloProposta) || modelosPropostas[1];
+  // Breakdown bars
+  const breakdownItems = [
+    { label: 'Desenvolvimento', value: resultado.custoBase,          color: 'from-violet-500 to-indigo-500' },
+    { label: 'Tecnologias',     value: resultado.custoTecnologias,   color: 'from-blue-500 to-cyan-500'    },
+    { label: 'Serviços',        value: resultado.custoServicos,       color: 'from-emerald-500 to-teal-500' },
+    { label: 'Buffer segurança',value: resultado.custoBuffer,         color: 'from-amber-500 to-orange-500' },
+    { label: 'Impostos',        value: resultado.custoImpostos,       color: 'from-rose-500 to-pink-500'    },
+  ];
+  const totalBreakdown = breakdownItems.reduce((a, i) => a + i.value, 0);
 
   return (
-    <div className="animate-fade-in" ref={resultadoRef}>
-      <h3 className="text-xl font-semibold mb-6">Orçamento Gerado</h3>
-      
-      <div className="space-y-8">
-        <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
-          <div className="flex justify-between items-center mb-4">
-            <h4 className="text-lg font-semibold">{projeto.nome}</h4>
-            <div className="flex space-x-2">
-              <button 
-                onClick={gerarPDF}
-                className="p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
-                title="Baixar PDF"
-              >
-                <Download className="h-5 w-5 text-gray-600" />
-              </button>
-              <button 
-                onClick={copiarOrcamento}
-                className="p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
-                title="Copiar para área de transferência"
-              >
-                {copiado ? (
-                  <Check className="h-5 w-5 text-green-600" />
-                ) : (
-                  <Clipboard className="h-5 w-5 text-gray-600" />
-                )}
-              </button>
-              <button 
-                onClick={compartilharOrcamento}
-                className="p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
-                title="Compartilhar"
-              >
-                <Share2 className="h-5 w-5 text-gray-600" />
-              </button>
-            </div>
-          </div>
-          
-          <p className="text-sm text-gray-600 mb-6">{projeto.descricao}</p>
-          
-          <div className="flex flex-col md:flex-row md:divide-x divide-blue-200 gap-6">
-            <div className="flex-1 flex items-center">
-              <Clock className="h-10 w-10 text-blue-500 mr-4" />
-              <div>
-                <p className="text-sm text-gray-500">Tempo Estimado</p>
-                <p className="text-2xl font-bold">{resultado.totalDias} dias</p>
-                <p className="text-sm text-gray-500">({resultado.totalHoras} horas)</p>
-              </div>
-            </div>
-            
-            <div className="flex-1 flex items-center md:pl-6">
-              <DollarSign className="h-10 w-10 text-green-500 mr-4" />
-              <div>
-                <p className="text-sm text-gray-500">Valor Total</p>
-                <p className="text-2xl font-bold">{formatarMoeda(valorProposta)}</p>
-                <p className="text-sm text-gray-500">
-                  Modelo {projeto.modeloProposta === 'basico' ? 'Básico' : 
-                         projeto.modeloProposta === 'padrao' ? 'Padrão' : 'Premium'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button
-            onClick={baixarContrato}
-            className="flex items-center justify-center p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
-          >
-            <FileText className="h-5 w-5 text-primary mr-2" />
-            <span>Baixar Contrato</span>
-          </button>
-          
-          <button
-            onClick={gerarPDF}
-            className="flex items-center justify-center p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
-          >
-            <FileSignature className="h-5 w-5 text-primary mr-2" />
-            <span>Baixar Orçamento em PDF</span>
-          </button>
-          
-          <button
-            onClick={baixarCartaProposta}
-            className="flex items-center justify-center p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
-          >
-            <FileSignature className="h-5 w-5 text-primary mr-2" />
-            <span>Baixar Carta Proposta</span>
-          </button>
-        </div>
-        
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 hover:shadow-md transition-all">
-          <h4 className="font-semibold mb-4">Modelo de Proposta Selecionado</h4>
-          <div className="flex items-center mb-3">
-            <div className={`w-10 h-10 rounded-full ${
-              projeto.modeloProposta === 'basico' ? 'bg-blue-100' :
-              projeto.modeloProposta === 'padrao' ? 'bg-green-100' :
-              'bg-purple-100'
-            } flex items-center justify-center mr-3`}>
-              <ShieldCheck className={`h-5 w-5 ${
-                projeto.modeloProposta === 'basico' ? 'text-blue-600' :
-                projeto.modeloProposta === 'padrao' ? 'text-green-600' :
-                'text-purple-600'
-              }`} />
-            </div>
+    <div className="animate-fade-in space-y-6" ref={resultadoRef}>
+
+      {/* ── Header Card ── */}
+      <div
+        className="rounded-2xl p-6 relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, rgba(120,100,255,0.12) 0%, rgba(30,30,80,0.5) 100%)',
+          border: '1px solid rgba(120,100,255,0.2)',
+        }}
+      >
+        {/* Glow */}
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-20 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, hsl(252,87%,67%) 0%, transparent 70%)', filter: 'blur(40px)', transform: 'translate(30%,-30%)' }} />
+
+        <div className="relative z-10">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
             <div>
-              <h5 className="font-medium">
-                {projeto.modeloProposta === 'basico' ? 'Básico' :
-                 projeto.modeloProposta === 'padrao' ? 'Padrão' :
-                 'Premium'}
-              </h5>
-              <p className="text-sm text-gray-500">{modeloSelecionado.descricao}</p>
+              <div className={`inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full border mb-3 ${badge.color}`}>
+                <BadgeIcon className="w-3.5 h-3.5" />
+                Proposta {badge.label}
+              </div>
+              <h3 className="text-2xl font-black text-white tracking-tight">{projeto.nome}</h3>
+              <p className="text-white/40 text-sm mt-1 max-w-lg">{projeto.descricao}</p>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex gap-2 flex-shrink-0">
+              {[
+                { Icon: copiado ? Check : Clipboard, fn: copiarOrcamento, title: 'Copiar', active: copiado },
+                { Icon: Download,      fn: gerarPDF,           title: 'PDF'     },
+                { Icon: FileText,      fn: baixarContrato,     title: 'Contrato'},
+                { Icon: FileSignature, fn: baixarCartaProposta,title: 'Proposta'},
+              ].map(({ Icon, fn, title, active }) => (
+                <button
+                  key={title}
+                  onClick={fn}
+                  title={title}
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all text-sm ${
+                    active ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30' : 'text-white/50 hover:text-white'
+                  }`}
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                >
+                  <Icon className="w-4 h-4" />
+                </button>
+              ))}
             </div>
           </div>
-          <ul className="space-y-2 mt-4 pl-4">
-            {modeloSelecionado.beneficios.map((beneficio, index) => (
-              <li key={index} className="flex items-start">
-                <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">{beneficio}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-gray-300 transition-all hover:shadow-md">
-            <h5 className="font-semibold mb-4 flex items-center">
-              <span className="bg-blue-100 text-blue-700 w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">1</span>
-              Custo Base
-            </h5>
-            <p className="text-2xl font-bold">{formatarMoeda(resultado.custoBase)}</p>
-            <p className="text-sm text-gray-500 mt-1">Baseado nas horas estimadas</p>
-          </div>
-          
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-gray-300 transition-all hover:shadow-md">
-            <h5 className="font-semibold mb-4 flex items-center">
-              <span className="bg-purple-100 text-purple-700 w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">2</span>
-              Tecnologias
-            </h5>
-            <p className="text-2xl font-bold">{formatarMoeda(resultado.custoTecnologias)}</p>
-            <p className="text-sm text-gray-500 mt-1">
-              {projeto.tecnologias.filter(t => t.selecionada).length} tecnologias selecionadas
-            </p>
-          </div>
-          
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-gray-300 transition-all hover:shadow-md">
-            <h5 className="font-semibold mb-4 flex items-center">
-              <span className="bg-green-100 text-green-700 w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">3</span>
-              Serviços Adicionais
-            </h5>
-            <p className="text-2xl font-bold">{formatarMoeda(resultado.custoServicos)}</p>
-            <p className="text-sm text-gray-500 mt-1">
-              {(projeto.configuracao.dominio ? 1 : 0) +
-               (projeto.configuracao.hospedagem ? 1 : 0) +
-               (projeto.configuracao.autenticacao ? 1 : 0) +
-               (projeto.configuracao.pagamentos ? 1 : 0) +
-               (projeto.configuracao.apis ? 1 : 0) +
-               projeto.configuracao.outrosServicos.length} serviços incluídos
-            </p>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className={`p-4 border rounded-xl ${
-            projeto.modeloProposta === 'basico' ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'
-          }`}>
-            <h5 className="font-medium mb-2">Básico</h5>
-            <p className="text-2xl font-bold mb-2">{formatarMoeda(resultado.valoresPropostas.basico)}</p>
-            <p className="text-xs text-gray-500">-15% do valor padrão</p>
-          </div>
-          
-          <div className={`p-4 border rounded-xl ${
-            projeto.modeloProposta === 'padrao' ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200'
-          }`}>
-            <h5 className="font-medium mb-2">Padrão</h5>
-            <p className="text-2xl font-bold mb-2">{formatarMoeda(resultado.valoresPropostas.padrao)}</p>
-            <p className="text-xs text-gray-500">Valor base</p>
-          </div>
-          
-          <div className={`p-4 border rounded-xl ${
-            projeto.modeloProposta === 'premium' ? 'bg-purple-50 border-purple-200' : 'bg-white border-gray-200'
-          }`}>
-            <h5 className="font-medium mb-2">Premium</h5>
-            <p className="text-2xl font-bold mb-2">{formatarMoeda(resultado.valoresPropostas.premium)}</p>
-            <p className="text-xs text-gray-500">+25% do valor padrão</p>
-          </div>
-        </div>
-        
-        <ComparacaoMercado
-          comparacoes={resultado.comparacoesMercado}
-          valorHora={projeto.valorHora}
-          moeda={resultado.moeda}
-        />
-        
-        <div className="bg-white p-6 rounded-2xl border border-gray-200">
-          <h5 className="font-semibold mb-4">Requisitos do Cliente</h5>
-          <ul className="space-y-2">
-            {resultado.requisitosCliente.map((requisito, index) => (
-              <li key={index} className="flex items-start">
-                <span className="bg-gray-100 text-gray-700 min-w-6 h-6 rounded-full inline-flex items-center justify-center mr-3 text-xs mt-0.5">
-                  {index + 1}
-                </span>
-                <span className="text-gray-700">{requisito}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        
-        <div className="bg-white p-6 rounded-2xl border border-gray-200">
-          <h5 className="font-semibold mb-4">Requisitos Detalhados</h5>
-          <div className="divide-y">
-            {projeto.requisitos.map((requisito, index) => (
-              <div key={requisito.id} className="py-3">
-                <div className="flex justify-between">
-                  <div className="flex items-center">
-                    <span className="bg-primary text-white min-w-6 h-6 rounded-full inline-flex items-center justify-center mr-3 text-xs">
-                      {index + 1}
-                    </span>
-                    <span className="font-medium">{requisito.descricao}</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-gray-500 text-sm">{requisito.estimativaHoras} horas</span>
-                  </div>
-                </div>
-                <div className="ml-9 mt-1">
-                  <span className={`inline-block px-2 py-1 rounded-full text-xs ${
-                    requisito.complexidade === 'baixa' ? 'bg-green-100 text-green-700' : 
-                    requisito.complexidade === 'media' ? 'bg-yellow-100 text-yellow-700' : 
-                    'bg-red-100 text-red-700'
-                  }`}>
-                    {requisito.complexidade === 'baixa' ? 'Baixa complexidade' : 
-                     requisito.complexidade === 'media' ? 'Média complexidade' : 
-                     'Alta complexidade'}
-                  </span>
-                </div>
+
+          {/* KPI Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { icon: Clock,     label: 'Duração',      value: `${resultado.totalDias}d`,      sub: `${resultado.totalHoras} horas` },
+              { icon: DollarSign,label: 'Valor Total',  value: fmt(valorProposta),              sub: modeloSelecionado.descricao.split(' — ')[0] },
+              { icon: BarChart2, label: 'Complexidade', value: `${resultado.scoreComplexidade}%`, sub: resultado.scoreComplexidade > 70 ? 'Alta' : resultado.scoreComplexidade > 40 ? 'Média' : 'Baixa' },
+              { icon: TrendingUp,label: 'Recomendado',  value: MODELO_BADGE[resultado.recomendacaoModelo].label, sub: 'pelo sistema' },
+            ].map(({ icon: Icon, label, value, sub }) => (
+              <div key={label}
+                className="rounded-xl p-4 text-center"
+                style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <Icon className="w-4 h-4 text-violet-400 mx-auto mb-2" />
+                <div className="text-white font-bold text-sm leading-tight">{value}</div>
+                <div className="text-white/35 text-xs mt-0.5">{sub}</div>
               </div>
             ))}
-          </div>
-        </div>
-        
-        <div className="bg-white p-6 rounded-2xl border border-gray-200">
-          <h5 className="font-semibold mb-4">Dados do Contrato</h5>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h6 className="font-medium mb-2">Contratante</h6>
-              <p className="text-gray-700 mb-1"><strong>Nome:</strong> {projeto.contratante.nome || '[Não informado]'}</p>
-              <p className="text-gray-700 mb-1"><strong>Documento:</strong> {projeto.contratante.documento || '[Não informado]'}</p>
-              <p className="text-gray-700"><strong>Endereço:</strong> {projeto.contratante.endereco || '[Não informado]'}</p>
-            </div>
-            
-            <div>
-              <h6 className="font-medium mb-2">Contratado</h6>
-              <p className="text-gray-700 mb-1"><strong>Nome:</strong> {projeto.contratado.nome || '[Não informado]'}</p>
-              <p className="text-gray-700 mb-1"><strong>Documento:</strong> {projeto.contratado.documento || '[Não informado]'}</p>
-              <p className="text-gray-700"><strong>Endereço:</strong> {projeto.contratado.endereco || '[Não informado]'}</p>
-            </div>
           </div>
         </div>
       </div>
+
+      {/* ── Cost Breakdown ── */}
+      <div className="glass-card rounded-2xl p-6">
+        <h4 className="text-sm font-bold uppercase tracking-widest text-white/40 mb-5">Composição do Orçamento</h4>
+        <div className="space-y-3">
+          {breakdownItems.map(item => (
+            <div key={item.label}>
+              <div className="flex justify-between text-sm mb-1.5">
+                <span className="text-white/60">{item.label}</span>
+                <span className="text-white font-medium font-mono">{fmt(item.value)}</span>
+              </div>
+              <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                <div
+                  className={`h-full rounded-full bg-gradient-to-r ${item.color} transition-all duration-700`}
+                  style={{ width: `${totalBreakdown > 0 ? (item.value / totalBreakdown) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+          ))}
+          <div className="flex justify-between text-base font-bold pt-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+            <span className="text-white">Total do Projeto</span>
+            <span className="gradient-text font-mono">{fmt(valorProposta)}</span>
+          </div>
+          <p className="text-white/25 text-xs">
+            Regime tributário: {REGIME_LABELS[projeto.configuracao.regimeTributario ?? 'mei']} · Alíquota {(resultado.aliquotaImpostos * 100).toFixed(1)}% · Buffer {projeto.configuracao.bufferSeguranca ?? 20}%
+          </p>
+        </div>
+      </div>
+
+      {/* ── Tier Comparison ── */}
+      <div className="glass-card rounded-2xl p-6">
+        <h4 className="text-sm font-bold uppercase tracking-widest text-white/40 mb-5">Opções de Proposta</h4>
+        <div className="grid grid-cols-3 gap-3">
+          {(['basico', 'padrao', 'premium'] as const).map(key => {
+            const b = MODELO_BADGE[key];
+            const Icon = b.icon;
+            const selected = projeto.modeloProposta === key;
+            const recommended = resultado.recomendacaoModelo === key;
+            return (
+              <div
+                key={key}
+                className={`rounded-xl p-4 text-center transition-all ${selected ? b.color + ' border' : ''}`}
+                style={selected
+                  ? {}
+                  : { background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }
+                }
+              >
+                {recommended && (
+                  <div className="text-[10px] text-violet-400 font-bold uppercase tracking-widest mb-1">✦ Recomendado</div>
+                )}
+                <Icon className={`w-4 h-4 mx-auto mb-2 ${selected ? '' : 'text-white/30'}`} />
+                <div className={`text-xs font-semibold mb-1 ${selected ? '' : 'text-white/40'}`}>{b.label}</div>
+                <div className={`font-bold text-sm font-mono ${selected ? '' : 'text-white/60'}`}>
+                  {fmt(resultado.valoresPropostas[key])}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Payment Schedule ── */}
+      <div className="glass-card rounded-2xl p-6">
+        <h4 className="text-sm font-bold uppercase tracking-widest text-white/40 mb-5 flex items-center gap-2">
+          <Calendar className="w-4 h-4" /> Cronograma de Pagamento
+        </h4>
+        <div className="space-y-3">
+          {resultado.entregas.map((entrega, i) => (
+            <div key={i} className="flex items-center gap-4">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                style={{ background: 'linear-gradient(135deg, hsl(243,75%,66%), hsl(213,90%,60%))' }}
+              >
+                {entrega.numero}
+              </div>
+              <div className="flex-1">
+                <div className="text-white/70 text-sm">{entrega.descricao}</div>
+                <div className="text-white/30 text-xs">
+                  {entrega.prazoEmDias === 0 ? 'Na assinatura' : `Dia ${entrega.prazoEmDias} útil`}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-white font-bold text-sm font-mono">{fmt(entrega.valor)}</div>
+                <div className="text-white/30 text-xs">{entrega.percentual}%</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Benefits ── */}
+      <div className="glass-card rounded-2xl p-6">
+        <h4 className="text-sm font-bold uppercase tracking-widest text-white/40 mb-5 flex items-center gap-2">
+          <Zap className="w-4 h-4" /> Incluído no Plano {badge.label}
+        </h4>
+        <ul className="space-y-2.5">
+          {modeloSelecionado.beneficios.map((b, i) => (
+            <li key={i} className="flex items-center gap-3 text-sm text-white/60">
+              <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              {b}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* ── Requisitos Detalhados ── */}
+      <div className="glass-card rounded-2xl p-6">
+        <h4 className="text-sm font-bold uppercase tracking-widest text-white/40 mb-5">Escopo Detalhado</h4>
+        <div className="space-y-2">
+          {projeto.requisitos.map((req, i) => {
+            const complexColors: Record<string, string> = {
+              alta:  'text-rose-400 bg-rose-400/10 border-rose-400/20',
+              media: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
+              baixa: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
+            };
+            return (
+              <div key={req.id}
+                className="flex items-center gap-3 rounded-xl px-4 py-3"
+                style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <span className="text-xs text-white/20 font-mono w-4 flex-shrink-0">{String(i + 1).padStart(2, '0')}</span>
+                <span className="text-white/70 text-sm flex-1">{req.descricao}</span>
+                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${complexColors[req.complexidade]}`}>
+                  {req.complexidade.charAt(0).toUpperCase() + req.complexidade.slice(1)}
+                </span>
+                <span className="text-white/30 text-xs font-mono flex-shrink-0">{req.estimativaHoras}h</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Client Requirements ── */}
+      <div className="glass-card rounded-2xl p-6">
+        <h4 className="text-sm font-bold uppercase tracking-widest text-white/40 mb-5 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" /> O que o cliente precisa fornecer
+        </h4>
+        <ul className="space-y-2">
+          {resultado.requisitosCliente.map((r, i) => (
+            <li key={i} className="flex items-start gap-3 text-sm text-white/50">
+              <ArrowRight className="w-4 h-4 text-violet-400 flex-shrink-0 mt-0.5" />
+              {r}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* ── Market comparison ── */}
+      <ComparacaoMercado
+        comparacoes={resultado.comparacoesMercado}
+        valorHora={projeto.valorHora}
+        moeda={resultado.moeda}
+      />
     </div>
   );
 };

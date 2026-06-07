@@ -15,29 +15,38 @@ import AssinaturaEletronica from './AssinaturaEletronica';
 
 const ProjetoForm = () => {
   const [projeto, setProjeto] = useState<DadosProjeto>({
-    nome: '',
-    descricao: '',
-    requisitos: [],
+    nome: 'Landing Page + Dashboard SaaS',
+    descricao: 'Desenvolvimento de uma landing page institucional de alto padrão com seção de preços e dashboard administrativo para gestão de usuários e métricas em tempo real.',
+    requisitos: [
+      { id: '1', descricao: 'Design e implementação da Landing Page responsiva', complexidade: 'alta', estimativaDias: 5, estimativaHoras: 40 },
+      { id: '2', descricao: 'Sistema de autenticação com login social (Google/GitHub)', complexidade: 'alta', estimativaDias: 3, estimativaHoras: 24 },
+      { id: '3', descricao: 'Dashboard com gráficos e métricas em tempo real', complexidade: 'alta', estimativaDias: 4, estimativaHoras: 32 },
+      { id: '4', descricao: 'Painel de gestão de usuários (CRUD)', complexidade: 'media', estimativaDias: 2, estimativaHoras: 16 },
+      { id: '5', descricao: 'Integração com API de pagamentos (Stripe)', complexidade: 'alta', estimativaDias: 3, estimativaHoras: 24 },
+      { id: '6', descricao: 'Deploy em Cloud com CI/CD configurado', complexidade: 'media', estimativaDias: 2, estimativaHoras: 16 },
+    ],
     tecnologias: tecnologiasPadrao,
     configuracao: {
-      dominio: false,
-      hospedagem: false,
-      autenticacao: false,
-      pagamentos: false,
-      apis: false,
-      outrosServicos: [],
+      dominio: true,
+      hospedagem: true,
+      autenticacao: true,
+      pagamentos: true,
+      apis: true,
+      outrosServicos: ['SEO técnico e otimização de performance'],
+      bufferSeguranca: 20,
+      regimeTributario: 'mei' as const,
     },
-    valorHora: 80, // Valor padrão
-    moeda: 'BRL', // Moeda padrão
+    valorHora: 120,
+    moeda: 'BRL',
     contratante: {
-      nome: '',
-      documento: '',
-      endereco: ''
+      nome: 'Empresa Exemplo Ltda',
+      documento: '12.345.678/0001-99',
+      endereco: 'Av. Paulista, 1000 — São Paulo, SP'
     },
     contratado: {
-      nome: '',
-      documento: '',
-      endereco: ''
+      nome: 'Thomas Eduardo',
+      documento: '000.000.000-00',
+      endereco: 'Rua do Freelancer, 42 — São Paulo, SP'
     },
     modeloProposta: 'padrao'
   });
@@ -194,32 +203,55 @@ const ProjetoForm = () => {
   };
 
   return (
-    <section id="calcular" className="px-6 md:px-12 py-24 bg-gradient-to-b from-white to-blue-50">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16 animate-fade-up">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Calculadora de Orçamento</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Preencha os detalhes do seu projeto para gerar um orçamento personalizado e completo.
+    <section id="calcular" className="relative px-6 md:px-12 py-32">
+      {/* Section ambient light */}
+      <div
+        className="absolute bottom-0 right-0 w-[600px] h-[400px] pointer-events-none opacity-[0.06]"
+        style={{ background: 'radial-gradient(ellipse, hsl(243,75%,66%) 0%, transparent 70%)', filter: 'blur(80px)' }}
+      />
+      <div className="max-w-4xl mx-auto relative z-10">
+        <div className="text-center mb-16">
+          <span className="badge-pill mb-5 inline-flex">
+            Calculadora Profissional
+          </span>
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight gradient-text-subtle mb-4">Calculadora de <span className="gradient-text">Orçamento</span></h2>
+          <p className="text-white/40 text-lg max-w-2xl mx-auto font-light">
+            Preencha os detalhes do seu projeto para gerar um orçamento personalizado e incrivelmente completo.
           </p>
         </div>
         
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="p-8">
-            <div className="flex justify-between mb-8">
+        <div className="glass-card rounded-3xl overflow-hidden" style={{ borderColor: 'rgba(120,100,255,0.1)' }}>
+          <div className="p-8 md:p-10">
+            {/* Step Indicator */}
+            <div className="flex items-center justify-between mb-10 relative">
+              <div className="absolute top-5 left-0 right-0 h-px" style={{ background: 'rgba(255,255,255,0.05)' }} />
               {[1, 2, 3, 4, 5].map((step) => (
-                <div key={step} className="flex flex-col items-center">
-                  <div 
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border transition-all ${
+                <div key={step} className="flex flex-col items-center relative z-10">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
                       step === formStep
-                        ? 'bg-primary text-white border-primary'
+                        ? 'text-white'
                         : step < formStep
-                        ? 'bg-primary/20 text-primary border-primary/20'
-                        : 'bg-gray-100 text-gray-400 border-gray-200'
+                        ? 'text-violet-400'
+                        : 'text-white/20'
                     }`}
+                    style={{
+                      background: step === formStep
+                        ? 'linear-gradient(135deg, hsl(243,75%,66%), hsl(213,90%,60%))'
+                        : step < formStep
+                        ? 'rgba(120,100,255,0.15)'
+                        : 'rgba(255,255,255,0.04)',
+                      border: step === formStep
+                        ? 'none'
+                        : step < formStep
+                        ? '1px solid rgba(120,100,255,0.3)'
+                        : '1px solid rgba(255,255,255,0.06)',
+                      boxShadow: step === formStep ? '0 0 20px rgba(120,100,255,0.4)' : 'none',
+                    }}
                   >
                     {step}
                   </div>
-                  <span className="text-xs mt-2 text-gray-500">
+                  <span className={`text-xs mt-2 font-medium ${ step === formStep ? 'text-white/70' : step < formStep ? 'text-violet-400/60' : 'text-white/15' }`}>
                     {step === 1 && 'Básico'}
                     {step === 2 && 'Requisitos'}
                     {step === 3 && 'Tecnologias'}
@@ -233,11 +265,12 @@ const ProjetoForm = () => {
             <div className={`${animateNext ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
               {formStep === 1 && (
                 <div className="animate-fade-in">
-                  <h3 className="text-xl font-semibold mb-6">Informações Básicas do Projeto</h3>
+                  <h3 className="text-xl font-bold mb-1 text-white">Informações Básicas</h3>
+                  <p className="text-white/35 text-sm mb-8">Defina as informações fundamentais do seu projeto.</p>
                   
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="nome" className="block text-sm font-medium mb-2">
+                      <label htmlFor="nome" className="block text-xs font-semibold uppercase tracking-widest mb-2 text-white/40">
                         Nome do Projeto
                       </label>
                       <input
@@ -245,27 +278,27 @@ const ProjetoForm = () => {
                         id="nome"
                         value={projeto.nome}
                         onChange={(e) => setProjeto(prev => ({ ...prev, nome: e.target.value }))}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                        className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition text-white placeholder-white/30"
                         placeholder="Ex: Site Institucional da Empresa X"
                       />
                     </div>
                     
                     <div>
-                      <label htmlFor="descricao" className="block text-sm font-medium mb-2">
+                      <label htmlFor="descricao" className="block text-xs font-semibold uppercase tracking-widest mb-2 text-white/40">
                         Descrição do Projeto
                       </label>
                       <textarea
                         id="descricao"
                         value={projeto.descricao}
                         onChange={(e) => setProjeto(prev => ({ ...prev, descricao: e.target.value }))}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition h-32 resize-none"
+                        className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition h-32 resize-none text-white placeholder-white/30"
                         placeholder="Descreva brevemente o objetivo e escopo do projeto..."
                       />
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="valorHora" className="block text-sm font-medium mb-2">
+                        <label htmlFor="valorHora" className="block text-xs font-semibold uppercase tracking-widest mb-2 text-white/40">
                           Valor por Hora
                         </label>
                         <div className="relative">
@@ -277,7 +310,7 @@ const ProjetoForm = () => {
                             id="valorHora"
                             value={projeto.valorHora}
                             onChange={(e) => setProjeto(prev => ({ ...prev, valorHora: parseFloat(e.target.value) || 0 }))}
-                            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                            className="w-full pl-10 pr-4 py-3 bg-black/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition text-white placeholder-white/30"
                             placeholder="80"
                             min="0"
                           />
@@ -285,24 +318,62 @@ const ProjetoForm = () => {
                       </div>
                       
                       <div>
-                        <label htmlFor="moeda" className="block text-sm font-medium mb-2">
+                        <label htmlFor="moeda" className="block text-sm font-medium mb-2 text-white">
                           Moeda
                         </label>
                         <select
                           id="moeda"
                           value={projeto.moeda}
                           onChange={(e) => setProjeto(prev => ({ ...prev, moeda: e.target.value as Moeda }))}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition appearance-none bg-no-repeat"
-                          style={{ backgroundPosition: 'right 1rem center', backgroundImage: 'url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMUw2IDYgMTEgMSIgc3Ryb2tlPSIjNjg3MDhEIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==)' }}
+                          className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition appearance-none text-white"
+                          style={{ backgroundPosition: 'right 1rem center', backgroundImage: 'url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMUw2IDYgMTEgMSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==)' }}
                         >
-                          <option value="BRL">Real (R$)</option>
-                          <option value="USD">Dólar ($)</option>
+                          <option value="BRL" className="bg-background text-white">Real (R$)</option>
+                          <option value="USD" className="bg-background text-white">Dólar ($)</option>
                         </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="regime" className="block text-xs font-semibold uppercase tracking-widest mb-2 text-white/40">
+                          Regime Tributário
+                        </label>
+                        <select
+                          id="regime"
+                          value={projeto.configuracao.regimeTributario ?? 'mei'}
+                          onChange={(e) => setProjeto(prev => ({ ...prev, configuracao: { ...prev.configuracao, regimeTributario: e.target.value as any } }))}
+                          className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition text-white"
+                          style={{ backgroundPosition: 'right 1rem center' }}
+                        >
+                          <option value="pf" className="bg-background">Pessoa Física (27,5%)</option>
+                          <option value="mei" className="bg-background">MEI (5%)</option>
+                          <option value="pj_simples" className="bg-background">PJ Simples Nacional (14,5%)</option>
+                          <option value="pj_lucro_presumido" className="bg-background">PJ Lucro Presumido (16,5%)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label htmlFor="buffer" className="block text-xs font-semibold uppercase tracking-widest mb-2 text-white/40">
+                          Buffer de Segurança
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="number"
+                            id="buffer"
+                            value={projeto.configuracao.bufferSeguranca ?? 20}
+                            onChange={(e) => setProjeto(prev => ({ ...prev, configuracao: { ...prev.configuracao, bufferSeguranca: parseInt(e.target.value) || 0 } }))}
+                            className="w-full px-4 py-3 pr-12 bg-black/20 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition text-white"
+                            min="0" max="100"
+                          />
+                          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 text-sm">%</span>
+                        </div>
+                        <p className="text-white/20 text-xs mt-1">Margem extra para imprevistos (recomendado: 15–30%)</p>
                       </div>
                     </div>
                     
                     <div>
-                      <p className="block text-sm font-medium mb-4">Serviços Adicionais</p>
+                      <p className="block text-xs font-semibold uppercase tracking-widest mb-4 text-white/40">Serviços Adicionais</p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="flex items-center">

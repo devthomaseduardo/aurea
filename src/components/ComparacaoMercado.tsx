@@ -1,102 +1,91 @@
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { ComparacaoMercado as TipoComparacaoMercado } from '../lib/calculadora';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { ComparacaoMercado as Comparacao, Moeda } from '../lib/calculadora';
 
-interface ComparacaoMercadoProps {
-  comparacoes: TipoComparacaoMercado[];
+interface Props {
+  comparacoes: Comparacao[];
   valorHora: number;
-  moeda: 'BRL' | 'USD';
+  moeda: Moeda;
 }
 
-const ComparacaoMercado: React.FC<ComparacaoMercadoProps> = ({ comparacoes, valorHora, moeda }) => {
-  const formatarMoeda = (valor: number) => {
-    return moeda === 'BRL' 
-      ? `R$ ${valor.toFixed(2)}`
-      : `$ ${valor.toFixed(2)}`;
+const ComparacaoMercado: React.FC<Props> = ({ comparacoes, valorHora, moeda }) => {
+  const fmt = (v: number) =>
+    moeda === 'BRL'
+      ? v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      : v.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+  const getStatus = (valorMedio: number) => {
+    if (valorHora > valorMedio * 1.1) return 'acima';
+    if (valorHora < valorMedio * 0.9) return 'abaixo';
+    return 'equivalente';
   };
 
-  const simboloMoeda = moeda === 'BRL' ? 'R$' : '$';
-
-  // Preparar dados para o gráfico
-  const dadosGrafico = comparacoes.map(comp => ({
-    plataforma: comp.plataforma,
-    mínimo: comp.valorMinimo,
-    médio: comp.valorMedio,
-    máximo: comp.valorMaximo,
-    seuValor: valorHora
-  }));
+  const statusConfig = {
+    acima:       { icon: TrendingUp,   color: 'text-emerald-400', bg: 'bg-emerald-400/10 border-emerald-400/20', label: 'Acima da média'   },
+    abaixo:      { icon: TrendingDown, color: 'text-rose-400',    bg: 'bg-rose-400/10 border-rose-400/20',       label: 'Abaixo da média'  },
+    equivalente: { icon: Minus,        color: 'text-amber-400',   bg: 'bg-amber-400/10 border-amber-400/20',     label: 'Na média'         },
+  };
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-6">
-      <h5 className="font-semibold mb-4">Comparação com o Mercado</h5>
-      
-      <div className="h-80 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={dadosGrafico}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="plataforma" />
-            <YAxis label={{ value: `Valor/Hora (${simboloMoeda})`, angle: -90, position: 'insideLeft' }} />
-            <Tooltip formatter={(value) => formatarMoeda(Number(value))} />
-            <Legend />
-            <Bar dataKey="mínimo" fill="#8884d8" name={`Valor Mínimo (${simboloMoeda})`} />
-            <Bar dataKey="médio" fill="#82ca9d" name={`Valor Médio (${simboloMoeda})`} />
-            <Bar dataKey="máximo" fill="#ffc658" name={`Valor Máximo (${simboloMoeda})`} />
-            <Bar dataKey="seuValor" fill="#ff8042" name={`Seu Valor (${simboloMoeda})`} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      
-      <div className="mt-6">
-        <h6 className="font-medium mb-2">Análise de Competitividade</h6>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {comparacoes.map((comp, index) => (
-            <div 
-              key={index} 
-              className="bg-gray-50 p-4 rounded-xl border border-gray-100"
+    <div className="glass-card rounded-2xl p-6">
+      <h4 className="text-sm font-bold uppercase tracking-widest text-white/40 mb-2">
+        Comparação com o Mercado
+      </h4>
+      <p className="text-white/30 text-xs mb-5">
+        Seu valor/hora ({fmt(valorHora)}) comparado às principais plataformas freelancer.
+      </p>
+
+      <div className="space-y-3">
+        {comparacoes.map(c => {
+          const status = getStatus(c.valorMedio);
+          const cfg = statusConfig[status];
+          const StatusIcon = cfg.icon;
+          const pct = Math.round(((valorHora - c.valorMedio) / c.valorMedio) * 100);
+
+          return (
+            <div
+              key={c.plataforma}
+              className="flex items-center gap-4 rounded-xl px-4 py-3"
+              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}
             >
-              <h6 className="font-medium mb-2">{comp.plataforma}</h6>
-              <div className="space-y-1 text-sm">
-                <div className="flex justify-between">
-                  <span>Mínimo:</span>
-                  <span className="font-medium">{formatarMoeda(comp.valorMinimo)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Médio:</span>
-                  <span className="font-medium">{formatarMoeda(comp.valorMedio)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Máximo:</span>
-                  <span className="font-medium">{formatarMoeda(comp.valorMaximo)}</span>
-                </div>
-                <div className="flex justify-between mt-2 pt-2 border-t border-gray-200">
-                  <span>Sua taxa:</span>
-                  <span className={`font-bold ${
-                    valorHora < comp.valorMedio ? 'text-green-600' : 
-                    valorHora > comp.valorMaximo ? 'text-red-600' : 'text-yellow-600'
-                  }`}>
-                    {formatarMoeda(valorHora)}
-                  </span>
-                </div>
-                <div className="mt-2">
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    valorHora < comp.valorMedio ? 'bg-green-100 text-green-800' : 
-                    valorHora > comp.valorMaximo ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {valorHora < comp.valorMedio 
-                      ? 'Competitivo' 
-                      : valorHora > comp.valorMaximo 
-                        ? 'Acima do mercado' 
-                        : 'Na média do mercado'}
-                  </span>
+              {/* Platform */}
+              <div className="w-28 flex-shrink-0">
+                <div className="text-white/70 text-sm font-medium">{c.plataforma}</div>
+                <div className="text-white/25 text-xs">
+                  {fmt(c.valorMinimo)} – {fmt(c.valorMaximo)}
                 </div>
               </div>
+
+              {/* Range bar */}
+              <div className="flex-1 relative h-5 flex items-center">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        background: 'linear-gradient(90deg, rgba(120,100,255,0.3), rgba(100,180,255,0.3))',
+                        width: '100%',
+                      }}
+                    />
+                  </div>
+                </div>
+                {/* Marker for valor médio */}
+                <div
+                  className="absolute w-2 h-4 rounded-sm bg-violet-400 opacity-60"
+                  style={{ left: '50%', transform: 'translateX(-50%)' }}
+                  title={`Médio: ${fmt(c.valorMedio)}`}
+                />
+              </div>
+
+              {/* Status badge */}
+              <div className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border flex-shrink-0 ${cfg.bg} ${cfg.color}`}>
+                <StatusIcon className="w-3 h-3" />
+                {pct > 0 ? `+${pct}%` : `${pct}%`}
+              </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );
