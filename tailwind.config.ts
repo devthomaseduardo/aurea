@@ -62,12 +62,46 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))'
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))'
+				},
+				info: {
+					DEFAULT: 'hsl(var(--info))',
+					foreground: 'hsl(var(--info-foreground))'
+				},
+				brand: {
+					violet: 'hsl(var(--brand-violet))',
+					blue: 'hsl(var(--brand-blue))',
+					glow: 'hsl(var(--brand-glow))'
 				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				sm: 'var(--elevation-sm)',
+				md: 'var(--elevation-md)',
+				lg: 'var(--elevation-lg)',
+				xl: 'var(--elevation-xl)',
+				glow: 'var(--elevation-glow)',
+				glass: 'var(--elevation-glass)'
+			},
+			zIndex: {
+				dropdown: '50',
+				sticky: '100',
+				overlay: '200',
+				modal: '300',
+				popover: '400',
+				toast: '500',
+				tooltip: '600'
 			},
 			keyframes: {
 				'accordion-down': {
