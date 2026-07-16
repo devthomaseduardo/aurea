@@ -32,6 +32,7 @@ export const ENV = {
     storageBucket: read('VITE_FIREBASE_STORAGE_BUCKET'),
     messagingSenderId: read('VITE_FIREBASE_MESSAGING_SENDER_ID'),
     appId: read('VITE_FIREBASE_APP_ID'),
+    measurementId: read('VITE_FIREBASE_MEASUREMENT_ID'),
   },
   /** Client-side Stripe publishable key for Checkout / Connect return */
   stripePublishableKey: read('VITE_STRIPE_PUBLISHABLE_KEY'),

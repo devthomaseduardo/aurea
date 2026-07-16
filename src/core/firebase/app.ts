@@ -13,12 +13,13 @@ export function getFirebaseApp(): FirebaseApp | null {
     app =
       getApps()[0] ??
       initializeApp({
-        apiKey: ENV.firebase.apiKey,
-        authDomain: ENV.firebase.authDomain,
-        projectId: ENV.firebase.projectId,
+        apiKey: ENV.firebase.apiKey!,
+        authDomain: ENV.firebase.authDomain!,
+        projectId: ENV.firebase.projectId!,
         storageBucket: ENV.firebase.storageBucket,
         messagingSenderId: ENV.firebase.messagingSenderId,
-        appId: ENV.firebase.appId,
+        appId: ENV.firebase.appId!,
+        measurementId: ENV.firebase.measurementId,
       });
   }
   return app;
