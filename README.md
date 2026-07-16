@@ -1,4 +1,3 @@
-
 <p align="center">
   <img width="1920" height="1440" alt="alanista" src="https://github.com/user-attachments/assets/bc4fbb09-d4b5-4cbf-b62f-7ebe0fb60005" />
 
@@ -25,6 +24,7 @@
   <img src="https://img.shields.io/badge/TypeScript-5.0.0-blue?logo=typescript" alt="TypeScript"/>
   <img src="https://img.shields.io/badge/Tailwind-3.0.0-blue?logo=tailwindcss" alt="Tailwind CSS"/>
   <img src="https://img.shields.io/badge/Version-1.0.0-success" alt="Version"/>
+  <img src="https://komarev.com/ghpvc/?username=devthomaseduardo&repo=fulstack-analisador-freelancer&color=orange" alt="Repository Views" />
 </p>
 
 <br/>
@@ -106,3 +106,10 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICE
   Desenvolvido com ❤️ por Thomas Eduardo 
 </p>
 
+---
+
+> **📊 Visualizações deste repositório**  
+> O badge acima mostra o número de visualizações únicas deste README (atualizado automaticamente via [komarev.com](https://komarev.com/ghpvc)).  
+> Obrigado pela visita! Se o projeto te inspirou, considere deixar uma estrela ⭐️.
+
+**Padrão aplicado em todos os repositórios de Thomas Eduardo.**
