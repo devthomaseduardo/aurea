@@ -1,314 +1,248 @@
-<p align="center">
-  <img width="1920" height="1440" alt="CalculaFreela" src="https://github.com/user-attachments/assets/bc4fbb09-d4b5-4cbf-b62f-7ebe0fb60005" />
-</p>
+# Aurea
 
-<h1 align="center">CalculaFreela</h1>
+**Plataforma comercial empresarial** para freelancers, consultores e times independentes.
 
-<p align="center">
-  <strong>Plataforma SaaS enterprise para freelancers calcularem orçamentos, gerarem propostas e gerenciarem o pipeline comercial.</strong>
-</p>
+Precifique projetos, gere propostas profissionais, gerencie clientes e contratos, e conecte ferramentas do dia a dia — com login real e dados isolados por usuário.
 
-<p align="center">
-  <a href="#arquitetura">Arquitetura</a> ·
-  <a href="#design-system">Design System</a> ·
-  <a href="#módulos">Módulos</a> ·
-  <a href="#tecnologias">Tecnologias</a> ·
-  <a href="#instalação">Instalação</a> ·
-  <a href="#docker">Docker</a> ·
-  <a href="#deploy--cicd">Deploy</a> ·
-  <a href="#roadmap">Roadmap</a>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white" alt="React"/>
-  <img src="https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript&logoColor=white" alt="TypeScript"/>
-  <img src="https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white" alt="Vite"/>
-  <img src="https://img.shields.io/badge/Tailwind-3.4-38B2AC?logo=tailwindcss&logoColor=white" alt="Tailwind"/>
-  <img src="https://img.shields.io/badge/Version-2.0.0-success" alt="Version"/>
-</p>
+| | |
+|---|---|
+| **Produto** | Aurea Enterprise |
+| **Versão** | 4.1 |
+| **Stack** | React · Vite · TypeScript · Firebase · Tailwind |
+| **Repositório** | [github.com/devthomaseduardo/aurea](https://github.com/devthomaseduardo/aurea) |
 
 ---
 
-## Visão do produto
+## O que é a Aurea
 
-O **CalculaFreela** deixou de ser apenas uma calculadora de landing page e passou a ser um **software B2B** real para freelancers:
+Aurea unifica o fluxo comercial de quem vende serviço:
 
-| Módulo | Capacidade |
+1. **Calcular** o valor de um projeto (escopo, horas, tecnologias, margem)
+2. **Propor** com carta de proposta e PDF
+3. **Gerir** clientes, pipeline e contratos
+4. **Conectar** Google, GitHub, Stripe, Slack e outros
+
+Não é só uma calculadora: é um **SaaS multi-usuário** com autenticação Firebase e banco Firestore.
+
+---
+
+## Funcionalidades
+
+### Comercial
+- Calculadora de orçamento em wizard (informações → escopo → tecnologias → resumo)
+- Propostas com status (rascunho, enviada, aceita, etc.)
+- Contratos gerados a partir de propostas
+- CRM leve de clientes (lead / ativo / inativo)
+- Dashboard e analytics
+
+### Conta e multi-usuário
+- Login com **e-mail/senha**, **Google** e **GitHub**
+- Dados por usuário em Firestore: `users/{uid}/…`
+- Perfil, preferências e isolamento de workspace
+
+### Integrações (plugins)
+| Conector | Como funciona |
+|----------|----------------|
+| Google Workspace | OAuth (Gmail send + Calendar events) na tela Integrações |
+| GitHub | OAuth / token para repositórios |
+| Stripe | Payment Links com chave `sk_…` |
+| Slack | Incoming Webhook |
+| Notion | Integration token |
+| WhatsApp Business | Webhook / Cloud API |
+
+Login social pede só identidade (e-mail/perfil). Scopes sensíveis (Gmail, Calendar, repo) só ao **Conectar** o plugin.
+
+### UI
+- Design system light enterprise (tokens, layouts, patterns)
+- Tema claro/escuro
+- Landing page + app autenticado
+
+---
+
+## Stack técnica
+
+| Camada | Tecnologia |
 |--------|------------|
-| **Dashboard** | Receita, clientes, projetos, horas, lucro, gráficos, atividades |
-| **Clientes** | CRUD, busca, filtros, ordenação, paginação |
-| **Calculadora** | Wizard 6 etapas com validação Zod por step |
-| **Propostas** | Persistência, status, PDF/export, duplicar, editar, excluir |
-| **Contratos** | Pipeline de status e vínculo com propostas |
-| **Analytics** | Séries de receita e breakdown de status |
-| **Configurações / Perfil** | Preferências, tema, dados comerciais padrão |
-| **Design System** | Storybook interno em `/design-system` |
+| Frontend | React 18, Vite 5, TypeScript |
+| Estilo | Tailwind CSS, Radix UI, shadcn-style components |
+| Estado | Zustand, TanStack Query |
+| Auth | **Firebase Authentication** |
+| Database | **Cloud Firestore** (por `uid`) |
+| Hosting sugerido | Vercel (SPA) ou Firebase Hosting |
+| Testes | Vitest + Testing Library |
 
-Identidade visual **Deep Space** preservada: paleta escura, violet-blue, glass cards, gradients e tipografia Inter.
-
----
-
-## Arquitetura
-
-```
-src/
-├── app/                    # Bootstrap da aplicação
-│   ├── App.tsx
-│   ├── providers/          # QueryClient, Tooltip, ErrorBoundary, Toasters
-│   ├── routes/             # Rotas com lazy loading
-│   └── styles/             # Tokens CSS + utilitários de marca
-├── core/                   # Infra transversal
-│   ├── config/             # APP_CONFIG, ROUTES
-│   ├── storage/            # localStorage tipado
-│   └── hooks/
-├── design-system/          # Design System próprio
-│   ├── tokens/             # Colors, spacing, radius, elevation…
-│   ├── patterns/           # PageHeader, MetricCard, EmptyState…
-│   └── layouts/            # Dashboard / Landing / Auth
-├── modules/                # Feature modules (Clean Architecture light)
-│   ├── landing/
-│   ├── dashboard/
-│   ├── clients/
-│   ├── calculator/         # domain + schemas + wizard steps
-│   ├── proposals/
-│   ├── contracts/
-│   ├── analytics/
-│   ├── settings/
-│   ├── profile/
-│   └── design-system/
-├── services/               # Regras de persistência / API-ready
-├── hooks/                  # React Query hooks reutilizáveis
-├── stores/                 # Zustand (UI + Calculator)
-├── shared/                 # UI shadcn + utilitários
-├── types/                  # Domain types
-└── assets/
-```
-
-### Princípios
-
-- **SOLID / Clean Architecture (front)**: domain isolado (`calculator/domain`), services sem JSX, pages finas, hooks como casos de uso.
-- **Component Driven Development**: primitivos (shadcn) → patterns → páginas de módulo.
-- **Separação de responsabilidades**: UI ≠ estado ≠ regras de orçamento ≠ persistência.
-- **Modularidade**: cada módulo pode crescer com `components/pages/services/hooks/types/schemas/utils/routes`.
-
-### Dados
-
-Persistência **local-first** via `localStorage` (`cf_v2:*`), com seeds realistas. Services são o único ponto de I/O — prontos para trocar por API REST/GraphQL sem reescrever UI.
+> **Sem Supabase.** Produção = Firebase Auth + Firestore.
 
 ---
 
-## Design System
+## Início rápido
 
-Acesse em desenvolvimento: **`/design-system`**
+### Pré-requisitos
+- Node.js 20+
+- Conta [Firebase](https://console.firebase.google.com) (projeto ex.: `aurea-daa33`)
 
-### Tokens
-
-- Colors (semantic + brand)
-- Typography (Inter scale)
-- Spacing, Radius, Border
-- Elevation / Shadows
-- Animations & Transitions
-- Breakpoints, Grid, Container
-- Icon sizes, Z-index
-- **Dark theme** (default) + **Light theme** preparado (`.light`)
-
-### Patterns de alto nível
-
-`PageHeader` · `PageContainer` · `FormSection` · `FormGroup` · `FormActions` · `SearchBar` · `FilterPanel` · `MetricGrid` · `MetricCard` · `StatCard` · `EmptyState` · `LoadingState` · `StatusBadge` · `DashboardLayout` · `LandingLayout` · `AuthLayout`
-
-### Primitivos
-
-Base shadcn/ui + Radix, estendidos com variantes e classes de marca (`btn-primary`, `glass-card`, `gradient-text`, `badge-pill`).
-
----
-
-## Módulos
-
-### Calculadora (Wizard)
-
-1. **Informações** — nome, descrição, valor/hora, moeda, regime, buffer  
-2. **Escopo** — requisitos com complexidade e estimativas  
-3. **Tecnologias** — stack + serviços adicionais  
-4. **Custos** — modelo básico/padrão/premium + partes do contrato  
-5. **Cronograma** — entregas e parcelas automáticas  
-6. **Resumo** — breakdown, mercado, PDF, salvar proposta/contrato  
-
-Validação por etapa com **Zod** + **React Hook Form**.
-
-### Propostas
-
-Geradas a partir da calculadora, com status (`draft` → `sent` → `accepted`…), tecnologias, horas, valor, exportação de carta/contrato e ações de duplicar/excluir.
-
----
-
-## Tecnologias
-
-| Camada | Stack |
-|--------|--------|
-| UI | React 18, TypeScript, Tailwind CSS, shadcn/ui, Radix |
-| Estado | Zustand, React Query |
-| Forms | React Hook Form + Zod |
-| Charts | Recharts |
-| Routing | React Router v6 (lazy + code splitting) |
-| PDF | html2pdf.js |
-| Build | Vite 5 + SWC |
-| Deploy | Vercel / Docker + Nginx |
-
----
-
-## Instalação
+### Instalação
 
 ```bash
-# Clonar
-git clone https://github.com/devthomaseduardo/fulstack-analisador-freelancer.git
-cd fulstack-analisador-freelancer
-
-# Instalar
+git clone https://github.com/devthomaseduardo/aurea.git
+cd aurea
 npm install
-
-# Desenvolvimento (http://localhost:8080)
-npm run dev
-
-# Build de produção
-npm run build
-npm run preview
-
-# Lint
-npm run lint
+cp .env.example .env.local
 ```
+
+Preencha o `.env.local` com a config do app Web no Firebase:
+
+```env
+VITE_APP_URL=http://localhost:8080
+
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=seu-projeto.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+# opcional
+VITE_FIREBASE_MEASUREMENT_ID=
+```
+
+### Desenvolvimento
+
+```bash
+npm run dev
+# → http://localhost:8080
+```
+
+Sem `VITE_FIREBASE_*`, o app roda em **modo local** (localStorage) para demos e testes.  
+Com Firebase configurado, login e dados vão para a nuvem.
 
 ### Scripts
 
-| Script | Descrição |
-|--------|-----------|
+| Comando | Descrição |
+|---------|-----------|
 | `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Bundle de produção |
+| `npm run build` | Build de produção (`dist/`) |
 | `npm run preview` | Preview do build |
+| `npm test` | Suite Vitest |
+| `npm run test:watch` | Testes em watch |
 | `npm run lint` | ESLint |
-| `npm run test` | Testes unitários/integração (Vitest) |
-| `npm run test:watch` | Testes em modo watch |
-| `npm run test:coverage` | Testes com relatório de cobertura |
 
 ---
 
-## Docker
+## Produção (go-live)
+
+Guia completo: **[DEPLOY.md](./DEPLOY.md)**
+
+Checklist resumido:
+
+1. Firebase → **Authentication** → Começar → Email + Google (+ GitHub)
+2. Firestore → criar DB + publicar [`firestore.rules`](./firestore.rules)
+3. OAuth consent (Google Cloud) → **Testing** + **usuários de teste**
+4. Domínios autorizados: `localhost` + domínio de produção
+5. Variáveis `VITE_FIREBASE_*` na Vercel
+6. Deploy (`vercel` ou pipeline)
 
 ```bash
-# Build + run
-docker compose up --build
-
-# Ou manualmente
-docker build -t calculafreela .
-docker run -p 8080:80 calculafreela
+npm run build
+# output: dist/
 ```
 
-A imagem usa **multi-stage build** (Node 20 → Nginx Alpine) com SPA fallback e gzip.
+`vercel.json` já configura rewrite SPA.
 
 ---
 
-## Deploy & CI/CD
+## Arquitetura (visão)
 
-### Vercel (recomendado)
+```
+src/
+  app/                 # App shell, rotas, providers
+  core/
+    auth/              # Auth service (Firebase + fallback local)
+    firebase/          # App, Auth, Firestore
+    db/                # useCloudData() — local vs cloud
+    config/            # ENV, APP_CONFIG, rotas
+  modules/             # Domínios de produto
+    auth/ calculator/ clients/ proposals/
+    contracts/ dashboard/ integrations/ landing/ …
+  services/            # Clientes, propostas, plugins, etc.
+  design-system/       # Layouts, patterns, tokens
+  stores/              # Zustand
+```
 
-1. Importe o repositório no Vercel  
-2. Framework preset: **Vite**  
-3. Build command: `npm run build`  
-4. Output: `dist`  
+**Modelo Firestore**
 
-### CI
-
-Workflow GitHub Actions em `.github/workflows/ci.yml`:
-
-- `npm ci`
-- `npm run lint`
-- `npm run build`
-
-Roda em push/PR para `main`.
-
----
-
-## Screenshots / rotas principais
-
-| Rota | Descrição |
-|------|-----------|
-| `/` | Landing premium |
-| `/app/dashboard` | Dashboard operacional |
-| `/app/clients` | CRUD de clientes |
-| `/app/calculator` | Wizard de orçamento |
-| `/app/proposals` | Pipeline de propostas |
-| `/app/contracts` | Contratos |
-| `/app/analytics` | Analytics |
-| `/app/settings` | Configurações |
-| `/app/profile` | Perfil comercial |
-| `/design-system` | Documentação visual dos componentes |
+```
+users/{uid}                    # profile
+  clients/{id}
+  proposals/{id}
+  contracts/{id}
+  plugins/{pluginId}           # tokens de conectores
+  activities/{id}
+```
 
 ---
 
-## Roadmap
+## Firebase (projeto de referência)
 
-### v2.1
-- [ ] Autenticação (Clerk / Auth0)
-- [ ] Backend API + Postgres
-- [ ] Exportação PDF branded com template visual
-- [ ] Compartilhamento de proposta via link público
+| Campo | Exemplo |
+|-------|---------|
+| Nome | aurea |
+| Project ID | `aurea-daa33` |
+| Auth domain | `aurea-daa33.firebaseapp.com` |
+| GitHub OAuth callback | `https://aurea-daa33.firebaseapp.com/__/auth/handler` |
 
-### v2.2
-- [ ] Integração Stripe / Asaas para cobrança
-- [ ] Templates de proposta customizáveis
-- [ ] Multi-workspace / time
-
-### v3.0
-- [ ] App mobile (PWA)
-- [ ] IA para estimativa de escopo
-- [ ] Marketplace de templates
+Detalhes de OAuth Google “app não verificado”, scopes e conectores: ver [DEPLOY.md](./DEPLOY.md).
 
 ---
 
-## Testes (foco frontend)
+## Estrutura de marca
 
-Stack: **Vitest** + **Testing Library** + **user-event** + **jsdom** + **coverage-v8**.
+```
+public/brand/
+  logo.png
+  logo-mark.jpg
+  hero.jpg
+  product.jpg
+  pattern.jpg
+```
+
+Nome legal / produto: **Aurea Technologies** · **Aurea Enterprise**  
+Config central: `src/core/config/app.config.ts`
+
+---
+
+## Testes
 
 ```bash
-npm run test            # suite completa (~100 testes)
-npm run test:watch      # desenvolvimento
-npm run test:coverage   # cobertura (text/html/lcov)
+npm test
 ```
 
-### O que a suíte cobre no frontend
+Cobertura inclui domínio da calculadora, serviços, auth local, componentes de UI e rotas.
 
-| Camada UI | Exemplos |
-|-----------|----------|
-| **Rotas** | Landing, Dashboard shell, Calculadora, 404 |
-| **Layouts** | `DashboardLayout` (sidebar + outlet) |
-| **Patterns** | `PageHeader`, `SearchBar`, `MetricCard`, `EmptyState`, `FormSection`… |
-| **Landing** | `Hero`, `NavBar`, CTAs e links |
-| **Wizard** | `StepInfo` / `StepEscopo` (validação + interação), `CalculatorPage` + demo |
-| **CRUD UI** | `ClientsPage` (lista seed + busca) |
-| **Domain/Services** | Orçamento, Zod, persistência local (suporte à UI) |
+---
 
-Helpers em `src/test/test-utils.tsx` (`renderWithProviders` com Router + React Query + Tooltip).
+## Contribuindo
 
-Os testes rodam no CI (GitHub Actions) antes do build.
-
-## Qualidade
-
-- Lazy loading + code splitting por rota e vendor chunks  
-- Error Boundary global  
-- Loading / Skeleton / Empty states  
-- React Query para cache e mutações  
-- Zustand para UI e wizard  
-- Componentes preferencialmente < 200 linhas  
-- Domain de cálculo isolado e testável  
-- Suite automatizada com 70+ testes
+1. Fork / branch a partir de `main`
+2. `npm install && npm test`
+3. PR com descrição clara do que mudou e por quê
 
 ---
 
 ## Licença
 
-MIT © Thomas Eduardo
+Projeto privado / uso conforme o repositório GitHub. Ajuste a licença se for publicar open source.
+
+---
+
+## Links
+
+- [Deploy e produção](./DEPLOY.md)
+- [Firestore rules](./firestore.rules)
+- [Firebase Console](https://console.firebase.google.com/project/aurea-daa33)
+- [Repositório](https://github.com/devthomaseduardo/aurea)
 
 ---
 
 <p align="center">
-  Desenvolvido com precisão por <strong>Thomas Eduardo</strong>
+  <strong>Aurea</strong> — operação comercial com padrão enterprise.
 </p>
