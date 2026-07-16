@@ -14,19 +14,28 @@ Stack de produção (**sem Supabase**):
 
 ## 1. Firebase (obrigatório para login real multi-usuário)
 
-1. [Firebase Console](https://console.firebase.google.com) → **Add project**
-2. **Authentication → Sign-in method**
-   - Email/Password → Enable
-   - Google → Enable
-   - GitHub → Enable (Client ID/Secret do [GitHub OAuth Apps](https://github.com/settings/developers))
-3. **Firestore Database → Create database**
+1. [Firebase Console](https://console.firebase.google.com) → projeto **aurea** (`aurea-daa33`)
+2. **Authentication** (menu esquerdo)
+   - Se aparecer **Começar / Get started**, clique — isso **ativa** o Auth no projeto  
+   - Sem este passo o app retorna `auth/configuration-not-found`
+3. **Authentication → Sign-in method**
+   - **Email/Password** → Enable → Save  
+   - **Google** → Enable → escolha e-mail de suporte → Save  
+   - **GitHub** → Enable (Client ID/Secret do [GitHub OAuth Apps](https://github.com/settings/developers))
+4. **Firestore Database → Create database**
    - Production mode
    - Publique as rules de `firestore.rules` deste repositório
-4. **Project settings → Your apps → Web**
+5. **Project settings → Your apps → Web**
    - Copie `apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`
-5. **Authentication → Settings → Authorized domains**
+6. **Authentication → Settings → Authorized domains**
    - `localhost`
    - domínio Vercel (`seu-app.vercel.app`) e domínio custom se houver
+
+### Erro `auth/configuration-not-found`
+
+Causa: Authentication ainda não foi inicializado no projeto (só criar o app Web não basta).
+
+Solução: Console → **Authentication** → **Começar** → ative **Email/senha** (e Google se for usar social) → tente login de novo.
 
 ### GitHub OAuth App
 

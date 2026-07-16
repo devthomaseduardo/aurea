@@ -229,77 +229,130 @@ async function localSocial(input: SocialLoginInput): Promise<AuthUser> {
 
 /* ─── Firebase (production) ─── */
 
+/** Map Firebase Auth errors to actionable PT-BR messages */
+function mapFirebaseAuthError(err: unknown): Error {
+  const code =
+    err && typeof err === 'object' && 'code' in err
+      ? String((err as { code: string }).code)
+      : '';
+  const raw = err instanceof Error ? err.message : String(err);
+
+  const table: Record<string, string> = {
+    'auth/configuration-not-found':
+      'Firebase Authentication ainda não foi ativado. No console: Authentication → Começar → ative Email/senha e Google.',
+    'auth/operation-not-allowed':
+      'Este método de login está desativado. Em Authentication → Sign-in method, ative Email/senha, Google ou GitHub.',
+    'auth/invalid-api-key':
+      'API key Firebase inválida. Confira VITE_FIREBASE_API_KEY no .env.local.',
+    'auth/unauthorized-domain':
+      'Este domínio não está autorizado. Em Authentication → Settings → Authorized domains, adicione localhost e seu domínio.',
+    'auth/popup-blocked':
+      'O popup de login foi bloqueado pelo navegador. Permita popups para este site.',
+    'auth/popup-closed-by-user':
+      'Login cancelado: a janela de autorização foi fechada.',
+    'auth/email-already-in-use':
+      'Já existe uma conta com este e-mail. Faça login ou use outro e-mail.',
+    'auth/invalid-email': 'E-mail inválido.',
+    'auth/user-not-found': 'E-mail ou senha inválidos.',
+    'auth/wrong-password': 'E-mail ou senha inválidos.',
+    'auth/invalid-credential': 'E-mail ou senha inválidos.',
+    'auth/weak-password': 'Senha fraca. Use no mínimo 6 caracteres.',
+    'auth/too-many-requests':
+      'Muitas tentativas. Aguarde alguns minutos e tente de novo.',
+    'auth/network-request-failed':
+      'Falha de rede ao falar com o Firebase. Verifique sua conexão.',
+    'auth/account-exists-with-different-credential':
+      'Este e-mail já está cadastrado com outro provedor (ex.: Google vs e-mail).',
+  };
+
+  if (code && table[code]) return new Error(table[code]);
+  if (raw.includes('configuration-not-found')) return new Error(table['auth/configuration-not-found']);
+  return err instanceof Error ? err : new Error(raw || 'Falha na autenticação Firebase');
+}
+
 async function cloudRegister(input: RegisterInput): Promise<AuthUser> {
-  const auth = requireAuth();
-  const cred = await createUserWithEmailAndPassword(
-    auth,
-    input.email.trim().toLowerCase(),
-    input.password
-  );
-  await updateProfile(cred.user, { displayName: input.name.trim() });
-  const user = firebaseToAuthUser(cred.user);
-  user.name = input.name.trim();
-  user.companyName = input.companyName?.trim();
-  await bootstrapWorkspace(user);
-  return user;
+  try {
+    const auth = requireAuth();
+    const cred = await createUserWithEmailAndPassword(
+      auth,
+      input.email.trim().toLowerCase(),
+      input.password
+    );
+    await updateProfile(cred.user, { displayName: input.name.trim() });
+    const user = firebaseToAuthUser(cred.user);
+    user.name = input.name.trim();
+    user.companyName = input.companyName?.trim();
+    await bootstrapWorkspace(user);
+    return user;
+  } catch (e) {
+    throw mapFirebaseAuthError(e);
+  }
 }
 
 async function cloudLogin(input: LoginInput): Promise<AuthUser> {
-  const auth = requireAuth();
-  const cred = await signInWithEmailAndPassword(
-    auth,
-    input.email.trim().toLowerCase(),
-    input.password
-  );
-  const user = firebaseToAuthUser(cred.user);
-  await bootstrapWorkspace(user);
-  return user;
+  try {
+    const auth = requireAuth();
+    const cred = await signInWithEmailAndPassword(
+      auth,
+      input.email.trim().toLowerCase(),
+      input.password
+    );
+    const user = firebaseToAuthUser(cred.user);
+    await bootstrapWorkspace(user);
+    return user;
+  } catch (e) {
+    throw mapFirebaseAuthError(e);
+  }
 }
 
 async function cloudProvider(provider: 'google' | 'github'): Promise<AuthUser> {
-  const auth = requireAuth();
-  let authProvider: FirebaseAuthProvider;
-  if (provider === 'google') {
-    const g = new GoogleAuthProvider();
-    g.addScope('email');
-    g.addScope('profile');
-    // Scopes for working connectors after login
-    g.addScope('https://www.googleapis.com/auth/gmail.send');
-    g.addScope('https://www.googleapis.com/auth/calendar.events');
-    g.setCustomParameters({ prompt: 'select_account' });
-    authProvider = g;
-  } else {
-    const gh = new GithubAuthProvider();
-    gh.addScope('read:user');
-    gh.addScope('user:email');
-    gh.addScope('repo');
-    authProvider = gh;
+  try {
+    const auth = requireAuth();
+    let authProvider: FirebaseAuthProvider;
+    if (provider === 'google') {
+      const g = new GoogleAuthProvider();
+      g.addScope('email');
+      g.addScope('profile');
+      // Scopes for working connectors after login
+      g.addScope('https://www.googleapis.com/auth/gmail.send');
+      g.addScope('https://www.googleapis.com/auth/calendar.events');
+      g.setCustomParameters({ prompt: 'select_account' });
+      authProvider = g;
+    } else {
+      const gh = new GithubAuthProvider();
+      gh.addScope('read:user');
+      gh.addScope('user:email');
+      gh.addScope('repo');
+      authProvider = gh;
+    }
+
+    const result = await signInWithPopup(auth, authProvider);
+    const user = firebaseToAuthUser(result.user);
+
+    // Persist OAuth access token for connectors
+    const credential =
+      provider === 'google'
+        ? GoogleAuthProvider.credentialFromResult(result)
+        : GithubAuthProvider.credentialFromResult(result);
+
+    const accessToken = credential?.accessToken;
+    if (accessToken) {
+      const { pluginsService } = await import('@/services/plugins.service');
+      await pluginsService.connectWithToken(
+        provider === 'google' ? 'google-workspace' : 'github',
+        {
+          accessToken,
+          accountLabel: user.email,
+          provider,
+        }
+      );
+    }
+
+    await bootstrapWorkspace(user);
+    return user;
+  } catch (e) {
+    throw mapFirebaseAuthError(e);
   }
-
-  const result = await signInWithPopup(auth, authProvider);
-  const user = firebaseToAuthUser(result.user);
-
-  // Persist OAuth access token for connectors
-  const credential =
-    provider === 'google'
-      ? GoogleAuthProvider.credentialFromResult(result)
-      : GithubAuthProvider.credentialFromResult(result);
-
-  const accessToken = credential?.accessToken;
-  if (accessToken) {
-    const { pluginsService } = await import('@/services/plugins.service');
-    await pluginsService.connectWithToken(
-      provider === 'google' ? 'google-workspace' : 'github',
-      {
-        accessToken,
-        accountLabel: user.email,
-        provider,
-      }
-    );
-  }
-
-  await bootstrapWorkspace(user);
-  return user;
 }
 
 export const authService = {
