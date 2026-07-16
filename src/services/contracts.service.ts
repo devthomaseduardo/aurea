@@ -1,6 +1,13 @@
 import { localStore } from '@/core/storage/local-storage';
 import { generateId } from '@/shared/utils/utils';
 import type { Contract, ContractStatus } from '@/types/domain';
+import { useCloudData } from '@/core/db/mode';
+import {
+  listCollection,
+  getDocument,
+  setDocument,
+  removeDocument,
+} from '@/core/firebase/user-repo';
 
 const KEY = 'contracts';
 
@@ -37,50 +44,98 @@ const seed: Contract[] = [
 function ensureSeed(): Contract[] {
   const existing = localStore.get<Contract[] | null>(KEY, null);
   if (existing && existing.length > 0) return existing;
-  localStore.set(KEY, seed);
-  return seed;
+  if (!useCloudData()) {
+    localStore.set(KEY, seed);
+    return seed;
+  }
+  return [];
 }
 
-export const contractsService = {
-  list(filters: {
+function paginate(
+  items: Contract[],
+  filters: {
     search?: string;
     status?: ContractStatus | 'all';
     page?: number;
     pageSize?: number;
-  } = {}) {
-    let items = [...ensureSeed()];
-    const { search = '', status = 'all', page = 1, pageSize = 10 } = filters;
+  }
+) {
+  let list = [...items];
+  const { search = '', status = 'all', page = 1, pageSize = 10 } = filters;
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      items = items.filter(
-        (c) =>
-          c.title.toLowerCase().includes(q) || c.clientName.toLowerCase().includes(q)
-      );
-    }
-    if (status !== 'all') items = items.filter((c) => c.status === status);
+  if (search.trim()) {
+    const q = search.toLowerCase();
+    list = list.filter(
+      (c) =>
+        c.title.toLowerCase().includes(q) || c.clientName.toLowerCase().includes(q)
+    );
+  }
+  if (status !== 'all') list = list.filter((c) => c.status === status);
 
-    items.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  list.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 
-    const total = items.length;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const start = (page - 1) * pageSize;
+  const total = list.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const start = (page - 1) * pageSize;
 
-    return {
-      data: items.slice(start, start + pageSize),
-      total,
-      page,
-      pageSize,
-      totalPages,
-    };
+  return {
+    data: list.slice(start, start + pageSize),
+    total,
+    page,
+    pageSize,
+    totalPages,
+  };
+}
+
+async function loadAll(): Promise<Contract[]> {
+  if (useCloudData()) {
+    const items = await listCollection<Contract>('contracts');
+    localStore.set(KEY, items);
+    return items;
+  }
+  return ensureSeed();
+}
+
+export const contractsService = {
+  list(
+    filters: {
+      search?: string;
+      status?: ContractStatus | 'all';
+      page?: number;
+      pageSize?: number;
+    } = {}
+  ) {
+    return paginate(ensureSeed(), filters);
+  },
+
+  async listAsync(
+    filters: {
+      search?: string;
+      status?: ContractStatus | 'all';
+      page?: number;
+      pageSize?: number;
+    } = {}
+  ) {
+    return paginate(await loadAll(), filters);
   },
 
   getAll(): Contract[] {
     return ensureSeed();
   },
 
+  async getAllAsync(): Promise<Contract[]> {
+    return loadAll();
+  },
+
   getById(id: string): Contract | undefined {
     return ensureSeed().find((c) => c.id === id);
+  },
+
+  async getByIdAsync(id: string): Promise<Contract | undefined> {
+    if (useCloudData()) {
+      return getDocument<Contract>('contracts', id);
+    }
+    return this.getById(id);
   },
 
   create(input: Omit<Contract, 'id' | 'createdAt' | 'updatedAt'>): Contract {
@@ -95,6 +150,16 @@ export const contractsService = {
     return contract;
   },
 
+  async createAsync(
+    input: Omit<Contract, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<Contract> {
+    const contract = this.create(input);
+    if (useCloudData()) {
+      await setDocument('contracts', contract.id, contract);
+    }
+    return contract;
+  },
+
   update(id: string, patch: Partial<Contract>): Contract | undefined {
     const all = ensureSeed();
     const idx = all.findIndex((c) => c.id === id);
@@ -104,11 +169,27 @@ export const contractsService = {
     return all[idx];
   },
 
+  async updateAsync(id: string, patch: Partial<Contract>): Promise<Contract | undefined> {
+    const updated = this.update(id, patch);
+    if (updated && useCloudData()) {
+      await setDocument('contracts', id, updated);
+    }
+    return updated;
+  },
+
   remove(id: string): boolean {
     const all = ensureSeed();
     const next = all.filter((c) => c.id !== id);
     if (next.length === all.length) return false;
     localStore.set(KEY, next);
     return true;
+  },
+
+  async removeAsync(id: string): Promise<boolean> {
+    const ok = this.remove(id);
+    if (ok && useCloudData()) {
+      await removeDocument('contracts', id);
+    }
+    return ok;
   },
 };

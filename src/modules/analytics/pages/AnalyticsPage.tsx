@@ -31,8 +31,8 @@ export default function AnalyticsPage() {
   const series = useRevenueSeries();
   const status = useQuery({
     queryKey: ['analytics', 'proposal-status'],
-    queryFn: () => {
-      const all = proposalsService.getAll();
+    queryFn: async () => {
+      const all = await proposalsService.getAllAsync();
       const map = new Map<string, number>();
       all.forEach((p) => map.set(p.status, (map.get(p.status) ?? 0) + 1));
       return Array.from(map.entries()).map(([name, value]) => ({ name, value }));

@@ -1,22 +1,8 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { ENV } from '@/core/config/env';
-
-let client: SupabaseClient | null = null;
-
-export function getSupabase(): SupabaseClient | null {
-  if (!ENV.isSocialOAuthEnabled) return null;
-  if (!client) {
-    client = createClient(ENV.supabaseUrl!, ENV.supabaseAnonKey!, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-      },
-    });
-  }
-  return client;
+/** @deprecated Supabase removido — use Firebase (`@/core/firebase/app`). */
+export function getSupabase() {
+  return null;
 }
 
 export function isSupabaseConfigured() {
-  return ENV.isSocialOAuthEnabled;
+  return false;
 }

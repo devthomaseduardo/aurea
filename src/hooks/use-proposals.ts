@@ -16,14 +16,14 @@ export const proposalKeys = {
 export function useProposals(filters: ProposalFilters = {}) {
   return useQuery({
     queryKey: proposalKeys.list(filters),
-    queryFn: () => proposalsService.list(filters),
+    queryFn: () => proposalsService.listAsync(filters),
   });
 }
 
 export function useProposal(id: string) {
   return useQuery({
     queryKey: proposalKeys.detail(id),
-    queryFn: () => proposalsService.getById(id),
+    queryFn: () => proposalsService.getByIdAsync(id),
     enabled: Boolean(id),
   });
 }
@@ -39,9 +39,9 @@ export function useCreateProposalFromCalculation() {
       projeto: DadosProjeto;
       resultado: ResultadoOrcamento;
       extras?: Partial<Pick<Proposal, 'clientId' | 'status' | 'notes'>>;
-    }) => proposalsService.createFromCalculation(projeto, resultado, extras),
-    onSuccess: (proposal) => {
-      activitiesService.add({
+    }) => proposalsService.createFromCalculationAsync(projeto, resultado, extras),
+    onSuccess: async (proposal) => {
+      await activitiesService.addAsync({
         type: 'proposal',
         title: 'Proposta criada',
         description: `${proposal.title} — ${proposal.clientName}`,
@@ -56,7 +56,7 @@ export function useUpdateProposal() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, patch }: { id: string; patch: Partial<Proposal> }) =>
-      proposalsService.update(id, patch),
+      proposalsService.updateAsync(id, patch),
     onSuccess: () => qc.invalidateQueries({ queryKey: proposalKeys.all }),
   });
 }
@@ -64,10 +64,10 @@ export function useUpdateProposal() {
 export function useDuplicateProposal() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => proposalsService.duplicate(id),
-    onSuccess: (proposal) => {
+    mutationFn: (id: string) => proposalsService.duplicateAsync(id),
+    onSuccess: async (proposal) => {
       if (proposal) {
-        activitiesService.add({
+        await activitiesService.addAsync({
           type: 'proposal',
           title: 'Proposta duplicada',
           description: proposal.title,
@@ -82,7 +82,7 @@ export function useDuplicateProposal() {
 export function useDeleteProposal() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => proposalsService.remove(id),
+    mutationFn: (id: string) => proposalsService.removeAsync(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: proposalKeys.all }),
   });
 }

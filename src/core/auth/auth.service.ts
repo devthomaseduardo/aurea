@@ -1,13 +1,25 @@
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updateProfile,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  onAuthStateChanged,
+  type User as FirebaseUser,
+  type AuthProvider as FirebaseAuthProvider,
+} from 'firebase/auth';
+import { getFirebaseAuth, requireAuth } from '@/core/firebase/app';
+import { isFirebaseConfigured } from '@/core/config/env';
 import { localStore, setStorageUserId } from '@/core/storage/local-storage';
 import { generateId } from '@/shared/utils/utils';
 import { hashPassword, verifyPassword } from './crypto';
-import { getSupabase, isSupabaseConfigured } from './supabase';
-import { ENV } from '@/core/config/env';
 import type {
-  AuthProvider,
   AuthRecord,
   AuthSession,
   AuthUser,
+  AuthProvider,
   LoginInput,
   RegisterInput,
   SocialLoginInput,
@@ -18,6 +30,34 @@ import { activitiesService } from '@/services/activities.service';
 const USERS_KEY = 'auth_users';
 const SESSION_KEY = 'auth_session';
 const SESSION_DAYS = 14;
+
+/** Prefer cloud (Firebase) when env is set */
+export function isCloudAuth(): boolean {
+  return isFirebaseConfigured();
+}
+
+function mapProvider(p?: string | null): AuthProvider {
+  if (p === 'github.com' || p === 'github') return 'github';
+  if (p === 'google.com' || p === 'google') return 'google';
+  return 'email';
+}
+
+function firebaseToAuthUser(user: FirebaseUser): AuthUser {
+  const providerId = user.providerData[0]?.providerId;
+  return {
+    id: user.uid,
+    email: user.email || `${user.uid}@users.aurea.app`,
+    name: user.displayName || user.email?.split('@')[0] || 'Usuário Aurea',
+    avatarUrl: user.photoURL || undefined,
+    provider: mapProvider(providerId),
+    createdAt: user.metadata.creationTime
+      ? new Date(user.metadata.creationTime).toISOString()
+      : new Date().toISOString(),
+    lastLoginAt: user.metadata.lastSignInTime
+      ? new Date(user.metadata.lastSignInTime).toISOString()
+      : new Date().toISOString(),
+  };
+}
 
 function toPublicUser(record: AuthRecord): AuthUser {
   return {
@@ -40,7 +80,7 @@ function saveUsers(users: AuthRecord[]) {
   localStore.setGlobal(USERS_KEY, users);
 }
 
-function createSession(user: AuthUser): AuthSession {
+function createLocalSession(user: AuthUser): AuthSession {
   const now = Date.now();
   return {
     userId: user.id,
@@ -58,58 +98,275 @@ function isSessionValid(session: AuthSession | null): session is AuthSession {
   return new Date(session.expiresAt).getTime() > Date.now();
 }
 
-function bootstrapUserWorkspace(user: AuthUser) {
+async function bootstrapWorkspace(user: AuthUser) {
   setStorageUserId(user.id);
-  const existing = localStore.get('profile', null as null | object);
-  if (!existing) {
-    profileService.update({
-      name: user.name,
-      email: user.email,
-      companyName: user.companyName ?? '',
-      hourlyRate: 120,
-      currency: 'BRL',
-      taxRegime: 'mei',
-      bio: `Conta Aurea via ${user.provider}`,
-      avatarUrl: user.avatarUrl,
-    });
-    activitiesService.add({
-      type: 'system',
-      title: 'Workspace criado',
-      description: `Bem-vindo(a), ${user.name}. Login via ${user.provider}.`,
-    });
-  } else if (user.avatarUrl) {
-    profileService.update({ avatarUrl: user.avatarUrl, name: user.name });
+  try {
+    const existing = await profileService.getAsync();
+    if (!existing?.name || existing.email === 'developer.thomas@outlook.com.br') {
+      await profileService.updateAsync({
+        name: user.name,
+        email: user.email,
+        companyName: user.companyName ?? '',
+        hourlyRate: existing?.hourlyRate ?? 120,
+        currency: existing?.currency ?? 'BRL',
+        taxRegime: existing?.taxRegime ?? 'mei',
+        bio: existing?.bio || `Conta Aurea · ${user.provider}`,
+        avatarUrl: user.avatarUrl,
+      });
+      await activitiesService.addAsync({
+        type: 'system',
+        title: 'Workspace pronto',
+        description: `Login via ${user.provider}. Dados vinculados a ${user.email}.`,
+      });
+    } else if (user.avatarUrl) {
+      await profileService.updateAsync({
+        avatarUrl: user.avatarUrl,
+        name: user.name || existing.name,
+      });
+    }
+  } catch {
+    // local bootstrap fallback
+    const existing = localStore.get('profile', null as null | object);
+    if (!existing) {
+      profileService.update({
+        name: user.name,
+        email: user.email,
+        companyName: user.companyName ?? '',
+        hourlyRate: 120,
+        currency: 'BRL',
+        taxRegime: 'mei',
+        bio: `Conta Aurea · ${user.provider}`,
+        avatarUrl: user.avatarUrl,
+      });
+    }
   }
 }
 
-function persistLogin(record: AuthRecord): AuthUser {
-  record.lastLoginAt = new Date().toISOString();
+/* ─── Local (dev without Firebase) ─── */
+
+async function localRegister(input: RegisterInput): Promise<AuthUser> {
+  const email = input.email.trim().toLowerCase();
+  const name = input.name.trim();
+  if (!email || !name || input.password.length < 6) {
+    throw new Error('Preencha nome, e-mail e senha (mín. 6 caracteres).');
+  }
   const users = getUsers();
-  const next = users.some((u) => u.id === record.id)
-    ? users.map((u) => (u.id === record.id ? record : u))
-    : [...users, record];
-  saveUsers(next);
+  if (users.some((u) => u.email === email)) {
+    throw new Error('Já existe uma conta com este e-mail.');
+  }
+  const { hash, salt } = await hashPassword(input.password);
+  const now = new Date().toISOString();
+  const record: AuthRecord = {
+    id: generateId('usr'),
+    email,
+    name,
+    companyName: input.companyName?.trim() || undefined,
+    passwordHash: hash,
+    passwordSalt: salt,
+    provider: 'email',
+    createdAt: now,
+    lastLoginAt: now,
+  };
+  saveUsers([...users, record]);
+  const user = toPublicUser(record);
+  localStore.setGlobal(SESSION_KEY, createLocalSession(user));
+  await bootstrapWorkspace(user);
+  return user;
+}
 
-  const publicUser = toPublicUser(record);
-  const session = createSession(publicUser);
-  localStore.setGlobal(SESSION_KEY, session);
-  bootstrapUserWorkspace(publicUser);
+async function localLogin(input: LoginInput): Promise<AuthUser> {
+  const email = input.email.trim().toLowerCase();
+  const record = getUsers().find((u) => u.email === email);
+  if (!record?.passwordHash || !record.passwordSalt) {
+    throw new Error('E-mail ou senha inválidos.');
+  }
+  const ok = await verifyPassword(input.password, record.passwordSalt, record.passwordHash);
+  if (!ok) throw new Error('E-mail ou senha inválidos.');
+  record.lastLoginAt = new Date().toISOString();
+  saveUsers(getUsers().map((u) => (u.id === record.id ? record : u)));
+  const user = toPublicUser(record);
+  localStore.setGlobal(SESSION_KEY, createLocalSession(user));
+  await bootstrapWorkspace(user);
+  return user;
+}
 
-  activitiesService.add({
-    type: 'system',
-    title: 'Login realizado',
-    description: `${record.provider.toUpperCase()} · ${new Date().toLocaleString('pt-BR')}`,
-  });
+async function localSocial(input: SocialLoginInput): Promise<AuthUser> {
+  const email = input.email.trim().toLowerCase();
+  let record =
+    getUsers().find(
+      (u) => u.providerUserId === input.providerUserId && u.provider === input.provider
+    ) || getUsers().find((u) => u.email === email);
 
-  return publicUser;
+  const now = new Date().toISOString();
+  if (!record) {
+    record = {
+      id: generateId('usr'),
+      email,
+      name: input.name,
+      provider: input.provider,
+      providerUserId: input.providerUserId,
+      avatarUrl: input.avatarUrl,
+      createdAt: now,
+      lastLoginAt: now,
+    };
+    saveUsers([...getUsers(), record]);
+  } else {
+    record = {
+      ...record,
+      name: input.name || record.name,
+      provider: input.provider,
+      providerUserId: input.providerUserId,
+      avatarUrl: input.avatarUrl || record.avatarUrl,
+      lastLoginAt: now,
+    };
+    saveUsers(getUsers().map((u) => (u.id === record!.id ? record! : u)));
+  }
+  const user = toPublicUser(record);
+  localStore.setGlobal(SESSION_KEY, createLocalSession(user));
+  await bootstrapWorkspace(user);
+  return user;
+}
+
+/* ─── Firebase (production) ─── */
+
+async function cloudRegister(input: RegisterInput): Promise<AuthUser> {
+  const auth = requireAuth();
+  const cred = await createUserWithEmailAndPassword(
+    auth,
+    input.email.trim().toLowerCase(),
+    input.password
+  );
+  await updateProfile(cred.user, { displayName: input.name.trim() });
+  const user = firebaseToAuthUser(cred.user);
+  user.name = input.name.trim();
+  user.companyName = input.companyName?.trim();
+  await bootstrapWorkspace(user);
+  return user;
+}
+
+async function cloudLogin(input: LoginInput): Promise<AuthUser> {
+  const auth = requireAuth();
+  const cred = await signInWithEmailAndPassword(
+    auth,
+    input.email.trim().toLowerCase(),
+    input.password
+  );
+  const user = firebaseToAuthUser(cred.user);
+  await bootstrapWorkspace(user);
+  return user;
+}
+
+async function cloudProvider(provider: 'google' | 'github'): Promise<AuthUser> {
+  const auth = requireAuth();
+  let authProvider: FirebaseAuthProvider;
+  if (provider === 'google') {
+    const g = new GoogleAuthProvider();
+    g.addScope('email');
+    g.addScope('profile');
+    // Scopes for working connectors after login
+    g.addScope('https://www.googleapis.com/auth/gmail.send');
+    g.addScope('https://www.googleapis.com/auth/calendar.events');
+    g.setCustomParameters({ prompt: 'select_account' });
+    authProvider = g;
+  } else {
+    const gh = new GithubAuthProvider();
+    gh.addScope('read:user');
+    gh.addScope('user:email');
+    gh.addScope('repo');
+    authProvider = gh;
+  }
+
+  const result = await signInWithPopup(auth, authProvider);
+  const user = firebaseToAuthUser(result.user);
+
+  // Persist OAuth access token for connectors
+  const credential =
+    provider === 'google'
+      ? GoogleAuthProvider.credentialFromResult(result)
+      : GithubAuthProvider.credentialFromResult(result);
+
+  const accessToken = credential?.accessToken;
+  if (accessToken) {
+    const { pluginsService } = await import('@/services/plugins.service');
+    await pluginsService.connectWithToken(
+      provider === 'google' ? 'google-workspace' : 'github',
+      {
+        accessToken,
+        accountLabel: user.email,
+        provider,
+      }
+    );
+  }
+
+  await bootstrapWorkspace(user);
+  return user;
 }
 
 export const authService = {
-  isSocialOAuthLive() {
-    return isSupabaseConfigured();
+  isCloudAuth,
+  isSocialOAuthLive: isCloudAuth,
+
+  /** Resolve current user (Firebase or local session) */
+  async getCurrentUserAsync(): Promise<AuthUser | null> {
+    if (isCloudAuth()) {
+      const auth = getFirebaseAuth();
+      if (!auth) return null;
+      const fbUser = auth.currentUser;
+      if (fbUser) {
+        const user = firebaseToAuthUser(fbUser);
+        setStorageUserId(user.id);
+        return user;
+      }
+      return new Promise((resolve) => {
+        const unsub = onAuthStateChanged(auth, async (u) => {
+          unsub();
+          if (!u) {
+            setStorageUserId(null);
+            resolve(null);
+            return;
+          }
+          const user = firebaseToAuthUser(u);
+          setStorageUserId(user.id);
+          resolve(user);
+        });
+      });
+    }
+
+    const session = localStore.getGlobal<AuthSession | null>(SESSION_KEY, null);
+    if (!isSessionValid(session)) {
+      if (session) localStore.removeGlobal(SESSION_KEY);
+      setStorageUserId(null);
+      return null;
+    }
+    setStorageUserId(session.userId);
+    const record = getUsers().find((u) => u.id === session.userId);
+    return record ? toPublicUser(record) : null;
+  },
+
+  getCurrentUser(): AuthUser | null {
+    if (isCloudAuth()) {
+      const u = getFirebaseAuth()?.currentUser;
+      if (!u) return null;
+      const user = firebaseToAuthUser(u);
+      setStorageUserId(user.id);
+      return user;
+    }
+    const session = localStore.getGlobal<AuthSession | null>(SESSION_KEY, null);
+    if (!isSessionValid(session)) {
+      setStorageUserId(null);
+      return null;
+    }
+    setStorageUserId(session.userId);
+    const record = getUsers().find((u) => u.id === session.userId);
+    return record ? toPublicUser(record) : null;
   },
 
   getSession(): AuthSession | null {
+    if (isCloudAuth()) {
+      const u = this.getCurrentUser();
+      if (!u) return null;
+      return createLocalSession(u);
+    }
     const session = localStore.getGlobal<AuthSession | null>(SESSION_KEY, null);
     if (!isSessionValid(session)) {
       if (session) localStore.removeGlobal(SESSION_KEY);
@@ -120,162 +377,43 @@ export const authService = {
     return session;
   },
 
-  getCurrentUser(): AuthUser | null {
-    const session = this.getSession();
-    if (!session) return null;
-    const user = getUsers().find((u) => u.id === session.userId);
-    return user ? toPublicUser(user) : null;
-  },
-
   async register(input: RegisterInput): Promise<AuthUser> {
-    const email = input.email.trim().toLowerCase();
-    const name = input.name.trim();
-    if (!email || !name || input.password.length < 6) {
-      throw new Error('Preencha nome, e-mail e senha (mín. 6 caracteres).');
-    }
-
-    const users = getUsers();
-    if (users.some((u) => u.email === email)) {
-      throw new Error('Já existe uma conta com este e-mail.');
-    }
-
-    const { hash, salt } = await hashPassword(input.password);
-    const now = new Date().toISOString();
-    const record: AuthRecord = {
-      id: generateId('usr'),
-      email,
-      name,
-      companyName: input.companyName?.trim() || undefined,
-      passwordHash: hash,
-      passwordSalt: salt,
-      provider: 'email',
-      createdAt: now,
-      lastLoginAt: now,
-    };
-
-    saveUsers([...users, record]);
-    return persistLogin(record);
+    if (isCloudAuth()) return cloudRegister(input);
+    return localRegister(input);
   },
 
   async login(input: LoginInput): Promise<AuthUser> {
-    const email = input.email.trim().toLowerCase();
-    const users = getUsers();
-    const record = users.find((u) => u.email === email);
-    if (!record || !record.passwordHash || !record.passwordSalt) {
-      throw new Error('E-mail ou senha inválidos.');
-    }
-
-    const ok = await verifyPassword(
-      input.password,
-      record.passwordSalt,
-      record.passwordHash
-    );
-    if (!ok) {
-      throw new Error('E-mail ou senha inválidos.');
-    }
-
-    return persistLogin(record);
+    if (isCloudAuth()) return cloudLogin(input);
+    return localLogin(input);
   },
 
-  /**
-   * Social login:
-   * - With Supabase env → real OAuth redirect (Google/GitHub)
-   * - Without → local provider account (dev/demo), still isolated by user
-   */
   async loginWithProvider(provider: 'google' | 'github'): Promise<'redirect' | AuthUser> {
-    const supabase = getSupabase();
-    if (supabase) {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${ENV.appUrl}/auth/callback`,
-          queryParams:
-            provider === 'google'
-              ? { access_type: 'offline', prompt: 'consent' }
-              : undefined,
-        },
-      });
-      if (error) throw new Error(error.message);
-      return 'redirect';
+    if (isCloudAuth()) {
+      const user = await cloudProvider(provider);
+      return user;
     }
-
-    // Local social simulation for environments without OAuth keys
-    return this.loginWithSocialProfile({
+    // Dev fallback without Firebase — still works for demos
+    return localSocial({
       provider,
       email: `${provider}.user@aurea.app`,
       name: provider === 'google' ? 'Usuário Google' : 'Usuário GitHub',
       providerUserId: `${provider}_local_demo`,
-      avatarUrl: undefined,
     });
   },
 
   async loginWithSocialProfile(input: SocialLoginInput): Promise<AuthUser> {
-    const email = input.email.trim().toLowerCase();
-    const users = getUsers();
-    let record =
-      users.find(
-        (u) =>
-          u.providerUserId === input.providerUserId && u.provider === input.provider
-      ) || users.find((u) => u.email === email);
-
-    if (!record) {
-      const now = new Date().toISOString();
-      record = {
-        id: generateId('usr'),
-        email,
-        name: input.name,
-        provider: input.provider,
-        providerUserId: input.providerUserId,
-        avatarUrl: input.avatarUrl,
-        createdAt: now,
-        lastLoginAt: now,
-      };
-    } else {
-      record = {
-        ...record,
-        name: input.name || record.name,
-        provider: input.provider,
-        providerUserId: input.providerUserId,
-        avatarUrl: input.avatarUrl || record.avatarUrl,
-      };
-    }
-
-    return persistLogin(record);
+    return localSocial(input);
   },
 
-  /** Complete Supabase OAuth redirect */
   async completeOAuthCallback(): Promise<AuthUser | null> {
-    const supabase = getSupabase();
-    if (!supabase) return null;
-
-    const { data, error } = await supabase.auth.getSession();
-    if (error) throw new Error(error.message);
-    const session = data.session;
-    if (!session?.user) return null;
-
-    const meta = session.user.user_metadata || {};
-    const provider = (session.user.app_metadata?.provider || 'google') as
-      | 'google'
-      | 'github';
-
-    return this.loginWithSocialProfile({
-      provider: provider === 'github' ? 'github' : 'google',
-      email: session.user.email || `${session.user.id}@oauth.aurea.app`,
-      name:
-        meta.full_name ||
-        meta.name ||
-        meta.user_name ||
-        session.user.email?.split('@')[0] ||
-        'Usuário Aurea',
-      providerUserId: session.user.id,
-      avatarUrl: meta.avatar_url || meta.picture,
-    });
+    // Firebase popup flow does not need callback page, but keep for deep links
+    return this.getCurrentUserAsync();
   },
 
   async logout(): Promise<void> {
-    const supabase = getSupabase();
-    if (supabase) {
-      await supabase.auth.signOut().catch(() => undefined);
+    if (isCloudAuth()) {
+      const auth = getFirebaseAuth();
+      if (auth) await signOut(auth);
     }
     localStore.removeGlobal(SESSION_KEY);
     setStorageUserId(null);
@@ -283,7 +421,26 @@ export const authService = {
 
   async ensureDemoAccount(): Promise<{ email: string; password: string }> {
     const email = 'demo@aurea.app';
-    const password = 'demo123';
+    const password = 'demo1234';
+    if (isCloudAuth()) {
+      try {
+        await this.login({ email, password });
+        await this.logout();
+      } catch {
+        try {
+          await this.register({
+            name: 'Usuário Demo',
+            email,
+            password,
+            companyName: 'Aurea Demo',
+          });
+          await this.logout();
+        } catch {
+          // may already exist with different password
+        }
+      }
+      return { email, password };
+    }
     const users = getUsers();
     if (!users.some((u) => u.email === email)) {
       await this.register({
@@ -295,5 +452,28 @@ export const authService = {
       await this.logout();
     }
     return { email, password };
+  },
+
+  /** Subscribe to Firebase auth state */
+  onAuthChanged(cb: (user: AuthUser | null) => void): () => void {
+    if (!isCloudAuth()) {
+      cb(this.getCurrentUser());
+      return () => undefined;
+    }
+    const auth = getFirebaseAuth();
+    if (!auth) {
+      cb(null);
+      return () => undefined;
+    }
+    return onAuthStateChanged(auth, (u) => {
+      if (!u) {
+        setStorageUserId(null);
+        cb(null);
+        return;
+      }
+      const user = firebaseToAuthUser(u);
+      setStorageUserId(user.id);
+      cb(user);
+    });
   },
 };

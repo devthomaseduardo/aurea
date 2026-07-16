@@ -8,13 +8,13 @@ describe('clientsService', () => {
 
   it('seed inicial cria clientes de demonstração', () => {
     const all = clientsService.getAll();
-    expect(all.length).toBeGreaterThanOrEqual(4);
+    expect(all.length).toBeGreaterThanOrEqual(2);
   });
 
   it('lista com paginação', () => {
-    const page1 = clientsService.list({ page: 1, pageSize: 2 });
-    expect(page1.data).toHaveLength(2);
-    expect(page1.total).toBeGreaterThanOrEqual(4);
+    const page1 = clientsService.list({ page: 1, pageSize: 1 });
+    expect(page1.data).toHaveLength(1);
+    expect(page1.total).toBeGreaterThanOrEqual(2);
     expect(page1.totalPages).toBeGreaterThanOrEqual(2);
   });
 

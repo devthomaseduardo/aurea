@@ -40,7 +40,7 @@ export function StepResumo({ onBack }: Props) {
     });
 
     if (andContract) {
-      contractsService.create({
+      await contractsService.createAsync({
         proposalId: proposal.id,
         title: projeto.nome,
         clientName: projeto.contratante.nome,
@@ -50,7 +50,7 @@ export function StepResumo({ onBack }: Props) {
           resultado.valoresPropostas[projeto.modeloProposta] ?? resultado.custoTotal,
         content: gerarContrato(projeto, resultado),
       });
-      activitiesService.add({
+      await activitiesService.addAsync({
         type: 'contract',
         title: 'Contrato gerado',
         description: projeto.nome,

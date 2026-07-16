@@ -26,21 +26,24 @@ export const useAuthStore = create<AuthState>((set) => ({
   error: null,
 
   hydrate: async () => {
-    // Prefer existing local session; also try OAuth session if present
-    let user = authService.getCurrentUser();
-    if (!user) {
-      try {
-        user = await authService.completeOAuthCallback();
-      } catch {
-        user = null;
-      }
+    try {
+      const user = await authService.getCurrentUserAsync();
+      if (user) setStorageUserId(user.id);
+      set({
+        user,
+        isAuthenticated: Boolean(user),
+        isHydrated: true,
+      });
+
+      // Keep session in sync with Firebase
+      authService.onAuthChanged((u) => {
+        if (u) setStorageUserId(u.id);
+        else setStorageUserId(null);
+        set({ user: u, isAuthenticated: Boolean(u) });
+      });
+    } catch {
+      set({ user: null, isAuthenticated: false, isHydrated: true });
     }
-    if (user) setStorageUserId(user.id);
-    set({
-      user,
-      isAuthenticated: Boolean(user),
-      isHydrated: true,
-    });
   },
 
   login: async (input) => {
@@ -82,10 +85,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user: result, isAuthenticated: true, isLoading: false });
       return result;
     } catch (e) {
-      set({
-        isLoading: false,
-        error: e instanceof Error ? e.message : 'Falha no login social',
-      });
+      const message =
+        e instanceof Error
+          ? e.message
+          : 'Falha no login social. Verifique Firebase Auth (Google/GitHub).';
+      set({ isLoading: false, error: message });
       throw e;
     }
   },
@@ -94,11 +98,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const user = await authService.completeOAuthCallback();
-      if (user) {
-        set({ user, isAuthenticated: true, isLoading: false });
-      } else {
-        set({ isLoading: false });
-      }
+      if (user) set({ user, isAuthenticated: true, isLoading: false });
+      else set({ isLoading: false });
       return user;
     } catch (e) {
       set({

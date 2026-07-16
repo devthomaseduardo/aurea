@@ -12,14 +12,14 @@ export const clientKeys = {
 export function useClients(filters: ClientFilters = {}) {
   return useQuery({
     queryKey: clientKeys.list(filters),
-    queryFn: () => clientsService.list(filters),
+    queryFn: () => clientsService.listAsync(filters),
   });
 }
 
 export function useClient(id: string) {
   return useQuery({
     queryKey: clientKeys.detail(id),
-    queryFn: () => clientsService.getById(id),
+    queryFn: () => clientsService.getByIdAsync(id),
     enabled: Boolean(id),
   });
 }
@@ -28,9 +28,9 @@ export function useCreateClient() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (input: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>) =>
-      clientsService.create(input),
-    onSuccess: (client) => {
-      activitiesService.add({
+      clientsService.createAsync(input),
+    onSuccess: async (client) => {
+      await activitiesService.addAsync({
         type: 'client',
         title: 'Cliente criado',
         description: client.name,
@@ -45,7 +45,7 @@ export function useUpdateClient() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, patch }: { id: string; patch: Partial<Client> }) =>
-      clientsService.update(id, patch),
+      clientsService.updateAsync(id, patch),
     onSuccess: () => qc.invalidateQueries({ queryKey: clientKeys.all }),
   });
 }
@@ -53,7 +53,7 @@ export function useUpdateClient() {
 export function useDeleteClient() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => clientsService.remove(id),
+    mutationFn: (id: string) => clientsService.removeAsync(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: clientKeys.all }),
   });
 }

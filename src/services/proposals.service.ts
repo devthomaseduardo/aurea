@@ -2,6 +2,13 @@ import { localStore } from '@/core/storage/local-storage';
 import { generateId } from '@/shared/utils/utils';
 import type { Proposal, ProposalStatus } from '@/types/domain';
 import type { DadosProjeto, ResultadoOrcamento } from '@/modules/calculator/domain/calculadora';
+import { useCloudData } from '@/core/db/mode';
+import {
+  listCollection,
+  getDocument,
+  setDocument,
+  removeDocument,
+} from '@/core/firebase/user-repo';
 
 const KEY = 'proposals';
 
@@ -64,8 +71,58 @@ const seed: Proposal[] = [
 function ensureSeed(): Proposal[] {
   const existing = localStore.get<Proposal[] | null>(KEY, null);
   if (existing && existing.length > 0) return existing;
-  localStore.set(KEY, seed);
-  return seed;
+  // Cloud starts empty; local demo seeds sample proposals
+  if (!useCloudData()) {
+    localStore.set(KEY, seed);
+    return seed;
+  }
+  return [];
+}
+
+function paginate(items: Proposal[], filters: ProposalFilters) {
+  let list = [...items];
+  const {
+    search = '',
+    status = 'all',
+    sortBy = 'updatedAt',
+    sortDir = 'desc',
+    page = 1,
+    pageSize = 10,
+  } = filters;
+
+  if (search.trim()) {
+    const q = search.toLowerCase();
+    list = list.filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.clientName.toLowerCase().includes(q) ||
+        p.technologies.some((t) => t.toLowerCase().includes(q))
+    );
+  }
+
+  if (status !== 'all') list = list.filter((p) => p.status === status);
+
+  list.sort((a, b) => {
+    const av = a[sortBy] ?? '';
+    const bv = b[sortBy] ?? '';
+    const cmp =
+      typeof av === 'number' && typeof bv === 'number'
+        ? av - bv
+        : String(av).localeCompare(String(bv), 'pt-BR');
+    return sortDir === 'asc' ? cmp : -cmp;
+  });
+
+  const total = list.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const start = (page - 1) * pageSize;
+
+  return {
+    data: list.slice(start, start + pageSize),
+    total,
+    page,
+    pageSize,
+    totalPages,
+  };
 }
 
 export interface ProposalFilters {
@@ -77,59 +134,41 @@ export interface ProposalFilters {
   pageSize?: number;
 }
 
+async function loadAll(): Promise<Proposal[]> {
+  if (useCloudData()) {
+    const items = await listCollection<Proposal>('proposals');
+    localStore.set(KEY, items);
+    return items;
+  }
+  return ensureSeed();
+}
+
 export const proposalsService = {
   list(filters: ProposalFilters = {}) {
-    let items = [...ensureSeed()];
-    const {
-      search = '',
-      status = 'all',
-      sortBy = 'updatedAt',
-      sortDir = 'desc',
-      page = 1,
-      pageSize = 10,
-    } = filters;
+    return paginate(ensureSeed(), filters);
+  },
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      items = items.filter(
-        (p) =>
-          p.title.toLowerCase().includes(q) ||
-          p.clientName.toLowerCase().includes(q) ||
-          p.technologies.some((t) => t.toLowerCase().includes(q))
-      );
-    }
-
-    if (status !== 'all') items = items.filter((p) => p.status === status);
-
-    items.sort((a, b) => {
-      const av = a[sortBy] ?? '';
-      const bv = b[sortBy] ?? '';
-      const cmp =
-        typeof av === 'number' && typeof bv === 'number'
-          ? av - bv
-          : String(av).localeCompare(String(bv), 'pt-BR');
-      return sortDir === 'asc' ? cmp : -cmp;
-    });
-
-    const total = items.length;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const start = (page - 1) * pageSize;
-
-    return {
-      data: items.slice(start, start + pageSize),
-      total,
-      page,
-      pageSize,
-      totalPages,
-    };
+  async listAsync(filters: ProposalFilters = {}) {
+    return paginate(await loadAll(), filters);
   },
 
   getAll(): Proposal[] {
     return ensureSeed();
   },
 
+  async getAllAsync(): Promise<Proposal[]> {
+    return loadAll();
+  },
+
   getById(id: string): Proposal | undefined {
     return ensureSeed().find((p) => p.id === id);
+  },
+
+  async getByIdAsync(id: string): Promise<Proposal | undefined> {
+    if (useCloudData()) {
+      return getDocument<Proposal>('proposals', id);
+    }
+    return this.getById(id);
   },
 
   createFromCalculation(
@@ -165,6 +204,18 @@ export const proposalsService = {
     return proposal;
   },
 
+  async createFromCalculationAsync(
+    projeto: DadosProjeto,
+    resultado: ResultadoOrcamento,
+    extras?: Partial<Pick<Proposal, 'clientId' | 'status' | 'notes'>>
+  ): Promise<Proposal> {
+    const proposal = this.createFromCalculation(projeto, resultado, extras);
+    if (useCloudData()) {
+      await setDocument('proposals', proposal.id, proposal);
+    }
+    return proposal;
+  },
+
   update(id: string, patch: Partial<Proposal>): Proposal | undefined {
     const all = ensureSeed();
     const idx = all.findIndex((p) => p.id === id);
@@ -177,6 +228,14 @@ export const proposalsService = {
     };
     all[idx] = updated;
     localStore.set(KEY, all);
+    return updated;
+  },
+
+  async updateAsync(id: string, patch: Partial<Proposal>): Promise<Proposal | undefined> {
+    const updated = this.update(id, patch);
+    if (updated && useCloudData()) {
+      await setDocument('proposals', id, updated);
+    }
     return updated;
   },
 
@@ -198,11 +257,41 @@ export const proposalsService = {
     return copy;
   },
 
+  async duplicateAsync(id: string): Promise<Proposal | undefined> {
+    if (useCloudData()) {
+      const original = await this.getByIdAsync(id);
+      if (!original) return undefined;
+      const now = new Date().toISOString();
+      const copy: Proposal = {
+        ...original,
+        id: generateId('prop'),
+        title: `${original.title} (cópia)`,
+        status: 'draft',
+        createdAt: now,
+        updatedAt: now,
+        sentAt: undefined,
+      };
+      await setDocument('proposals', copy.id, copy);
+      const all = await loadAll();
+      localStore.set(KEY, [copy, ...all.filter((p) => p.id !== copy.id)]);
+      return copy;
+    }
+    return this.duplicate(id);
+  },
+
   remove(id: string): boolean {
     const all = ensureSeed();
     const next = all.filter((p) => p.id !== id);
     if (next.length === all.length) return false;
     localStore.set(KEY, next);
     return true;
+  },
+
+  async removeAsync(id: string): Promise<boolean> {
+    const ok = this.remove(id);
+    if (ok && useCloudData()) {
+      await removeDocument('proposals', id);
+    }
+    return ok;
   },
 };

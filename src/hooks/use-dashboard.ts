@@ -7,7 +7,7 @@ import { contractsService } from '@/services/contracts.service';
 export function useDashboardMetrics() {
   return useQuery({
     queryKey: ['dashboard', 'metrics'],
-    queryFn: () => dashboardService.getMetrics(),
+    queryFn: () => dashboardService.getMetricsAsync(),
   });
 }
 
@@ -21,25 +21,30 @@ export function useRevenueSeries() {
 export function useRecentActivities(limit = 8) {
   return useQuery({
     queryKey: ['activities', limit],
-    queryFn: () => activitiesService.list(limit),
+    queryFn: () => activitiesService.listAsync(limit),
   });
 }
 
 export function useRecentProposals(limit = 5) {
   return useQuery({
     queryKey: ['proposals', 'recent', limit],
-    queryFn: () =>
-      proposalsService
-        .list({ page: 1, pageSize: limit, sortBy: 'updatedAt', sortDir: 'desc' })
-        .data,
+    queryFn: async () => {
+      const page = await proposalsService.listAsync({
+        page: 1,
+        pageSize: limit,
+        sortBy: 'updatedAt',
+        sortDir: 'desc',
+      });
+      return page.data;
+    },
   });
 }
 
 export function useContractStatuses() {
   return useQuery({
     queryKey: ['contracts', 'status-summary'],
-    queryFn: () => {
-      const all = contractsService.getAll();
+    queryFn: async () => {
+      const all = await contractsService.getAllAsync();
       const groups = ['draft', 'pending_signature', 'active', 'completed', 'cancelled'] as const;
       return groups.map((status) => ({
         status,

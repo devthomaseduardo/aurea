@@ -41,7 +41,7 @@ export default function ContractsPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['contracts', filters],
-    queryFn: () => contractsService.list(filters),
+    queryFn: () => contractsService.listAsync(filters),
   });
 
   return (

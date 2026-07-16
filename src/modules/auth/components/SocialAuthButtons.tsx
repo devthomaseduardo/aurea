@@ -63,8 +63,8 @@ export function SocialAuthButtons({ redirectTo = ROUTES.app.dashboard }: SocialA
       toast({
         title: 'Login social realizado',
         description: live
-          ? 'Sessão autenticada com sucesso.'
-          : 'Modo local (sem Supabase). Configure OAuth para produção.',
+          ? 'Sessão autenticada com Firebase. Conectores Google/GitHub disponíveis.'
+          : 'Modo local (dev). Configure VITE_FIREBASE_* para produção.',
       });
       navigate(redirectTo, { replace: true });
     } catch (e) {
@@ -114,8 +114,8 @@ export function SocialAuthButtons({ redirectTo = ROUTES.app.dashboard }: SocialA
 
       <p className="text-[11px] text-center text-muted-foreground leading-relaxed">
         {live
-          ? 'OAuth real via Supabase (Google e GitHub).'
-          : 'Sem chaves Supabase: login social local para desenvolvimento. Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY para OAuth real.'}
+          ? 'OAuth real via Firebase Auth (Google e GitHub). Em produção use domínio autorizado no console Firebase.'
+          : 'Modo local (dev): social sem Firebase. Para produção configure VITE_FIREBASE_* e habilite Google/GitHub no Firebase Auth.'}
       </p>
     </div>
   );

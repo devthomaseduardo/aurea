@@ -66,7 +66,7 @@ export default function IntegrationsPage() {
 
   const { data: plugins = [] } = useQuery({
     queryKey: ['plugins'],
-    queryFn: () => pluginsService.listRuntime(),
+    queryFn: () => pluginsService.listRuntimeAsync(),
   });
 
   const filtered = useMemo(() => {
@@ -84,12 +84,10 @@ export default function IntegrationsPage() {
 
   const refresh = () => qc.invalidateQueries({ queryKey: ['plugins'] });
 
-  const handleConnect = (plugin: PluginRuntime) => {
+  const handleConnect = async (plugin: PluginRuntime) => {
     try {
-      pluginsService.connect(plugin.id, {
-        accountLabel: `${plugin.name} · ${plugin.id}@aurea.app`,
-      });
-      activitiesService.add({
+      await pluginsService.connectLive(plugin.id);
+      await activitiesService.addAsync({
         type: 'system',
         title: 'Plugin conectado',
         description: plugin.name,
@@ -97,7 +95,7 @@ export default function IntegrationsPage() {
       });
       toast({
         title: `${plugin.name} conectado`,
-        description: 'Integração ativa nesta conta. OAuth real pode ser ligado depois.',
+        description: 'OAuth autorizado. Tokens salvos na sua conta.',
       });
       refresh();
     } catch (e) {
@@ -121,14 +119,14 @@ export default function IntegrationsPage() {
     refresh();
   };
 
-  const handleSync = (plugin: PluginRuntime) => {
+  const handleSync = async (plugin: PluginRuntime) => {
     try {
-      pluginsService.sync(plugin.id);
-      toast({ title: 'Sincronização concluída', description: plugin.name });
+      const detail = await pluginsService.testConnection(plugin.id);
+      toast({ title: 'Conector OK', description: `${plugin.name}: ${detail}` });
       refresh();
     } catch (e) {
       toast({
-        title: 'Falha na sync',
+        title: 'Falha no conector',
         description: e instanceof Error ? e.message : 'Erro',
         variant: 'destructive',
       });
@@ -261,7 +259,7 @@ export default function IntegrationsPage() {
                         onClick={() => handleSync(plugin)}
                       >
                         <RefreshCw className="w-3.5 h-3.5" />
-                        Sync
+                        Testar
                       </Button>
                       <Button
                         size="sm"
@@ -294,12 +292,12 @@ export default function IntegrationsPage() {
         </div>
       )}
 
-      <div className="mt-10 app-panel p-5 text-sm text-muted-foreground">
-        <p className="font-medium text-foreground mb-1">Arquitetura de plugins</p>
+      <div className="mt-10 app-panel p-5 text-sm text-muted-foreground space-y-2">
+        <p className="font-medium text-foreground">Conectores em produção</p>
         <p>
-          As conexões ficam salvas por usuário (storage isolado). O fluxo de “Conectar”
-          simula OAuth e está pronto para trocar por provedores reais (Google, Stripe,
-          Slack) via backend ou Supabase Edge Functions.
+          Com Firebase configurado, Google Workspace e GitHub usam OAuth real (popup +
+          scopes). Tokens ficam em Firestore sob a sua conta. Stripe gera Payment Links
+          com a chave conectada. Veja <code className="text-xs">DEPLOY.md</code>.
         </p>
       </div>
     </PageContainer>

@@ -1,6 +1,13 @@
 import { localStore } from '@/core/storage/local-storage';
 import { generateId } from '@/shared/utils/utils';
 import type { Client, ClientStatus } from '@/types/domain';
+import { useCloudData } from '@/core/db/mode';
+import {
+  listCollection,
+  getDocument,
+  setDocument,
+  removeDocument,
+} from '@/core/firebase/user-repo';
 
 const KEY = 'clients';
 
@@ -13,7 +20,7 @@ const seedClients: Client[] = [
     company: 'TechCorp Brasil',
     document: '12.345.678/0001-99',
     address: 'Av. Paulista, 1000 — São Paulo, SP',
-    notes: 'Cliente recorrente. Prefere propostas detalhadas.',
+    notes: 'Cliente recorrente.',
     status: 'active',
     createdAt: new Date(Date.now() - 86400000 * 45).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 5).toISOString(),
@@ -24,37 +31,67 @@ const seedClients: Client[] = [
     email: 'bruno@startup.io',
     phone: '+55 21 97777-2002',
     company: 'Startup.io',
-    document: '98.765.432/0001-10',
     status: 'lead',
     notes: 'Lead quente via indicação.',
     createdAt: new Date(Date.now() - 86400000 * 12).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-  },
-  {
-    id: 'cli_seed_3',
-    name: 'Carla Mendes',
-    email: 'carla@agencia.digital',
-    company: 'Agência Digital',
-    status: 'active',
-    createdAt: new Date(Date.now() - 86400000 * 90).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000 * 20).toISOString(),
-  },
-  {
-    id: 'cli_seed_4',
-    name: 'Diego Rocha',
-    email: 'diego@ecommerce.br',
-    company: 'E-Commerce BR',
-    status: 'inactive',
-    createdAt: new Date(Date.now() - 86400000 * 120).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000 * 60).toISOString(),
   },
 ];
 
 function ensureSeed(): Client[] {
   const existing = localStore.get<Client[] | null>(KEY, null);
   if (existing && existing.length > 0) return existing;
-  localStore.set(KEY, seedClients);
-  return seedClients;
+  // Only seed local demo mode — cloud starts empty (real data)
+  if (!useCloudData()) {
+    localStore.set(KEY, seedClients);
+    return seedClients;
+  }
+  return [];
+}
+
+function paginate(
+  items: Client[],
+  filters: ClientFilters
+): PaginatedResult<Client> {
+  let list = [...items];
+  const {
+    search = '',
+    status = 'all',
+    sortBy = 'updatedAt',
+    sortDir = 'desc',
+    page = 1,
+    pageSize = 10,
+  } = filters;
+
+  if (search.trim()) {
+    const q = search.toLowerCase();
+    list = list.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.email.toLowerCase().includes(q) ||
+        c.company?.toLowerCase().includes(q) ||
+        c.document?.includes(q)
+    );
+  }
+  if (status !== 'all') list = list.filter((c) => c.status === status);
+
+  list.sort((a, b) => {
+    const av = a[sortBy] ?? '';
+    const bv = b[sortBy] ?? '';
+    const cmp = String(av).localeCompare(String(bv), 'pt-BR', { sensitivity: 'base' });
+    return sortDir === 'asc' ? cmp : -cmp;
+  });
+
+  const total = list.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const start = (page - 1) * pageSize;
+  return {
+    data: list.slice(start, start + pageSize),
+    total,
+    page,
+    pageSize,
+    totalPages,
+  };
 }
 
 export interface ClientFilters {
@@ -74,54 +111,42 @@ export interface PaginatedResult<T> {
   totalPages: number;
 }
 
+async function loadAll(): Promise<Client[]> {
+  if (useCloudData()) {
+    const items = await listCollection<Client>('clients');
+    localStore.set(KEY, items);
+    return items;
+  }
+  return ensureSeed();
+}
+
 export const clientsService = {
   list(filters: ClientFilters = {}): PaginatedResult<Client> {
-    let items = [...ensureSeed()];
-    const {
-      search = '',
-      status = 'all',
-      sortBy = 'updatedAt',
-      sortDir = 'desc',
-      page = 1,
-      pageSize = 10,
-    } = filters;
+    return paginate(ensureSeed(), filters);
+  },
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      items = items.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.email.toLowerCase().includes(q) ||
-          c.company?.toLowerCase().includes(q) ||
-          c.document?.includes(q)
-      );
-    }
-
-    if (status !== 'all') {
-      items = items.filter((c) => c.status === status);
-    }
-
-    items.sort((a, b) => {
-      const av = a[sortBy] ?? '';
-      const bv = b[sortBy] ?? '';
-      const cmp = String(av).localeCompare(String(bv), 'pt-BR', { sensitivity: 'base' });
-      return sortDir === 'asc' ? cmp : -cmp;
-    });
-
-    const total = items.length;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const start = (page - 1) * pageSize;
-    const data = items.slice(start, start + pageSize);
-
-    return { data, total, page, pageSize, totalPages };
+  async listAsync(filters: ClientFilters = {}): Promise<PaginatedResult<Client>> {
+    const items = await loadAll();
+    return paginate(items, filters);
   },
 
   getAll(): Client[] {
     return ensureSeed();
   },
 
+  async getAllAsync(): Promise<Client[]> {
+    return loadAll();
+  },
+
   getById(id: string): Client | undefined {
     return ensureSeed().find((c) => c.id === id);
+  },
+
+  async getByIdAsync(id: string): Promise<Client | undefined> {
+    if (useCloudData()) {
+      return getDocument<Client>('clients', id);
+    }
+    return this.getById(id);
   },
 
   create(input: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>): Client {
@@ -132,8 +157,17 @@ export const clientsService = {
       createdAt: now,
       updatedAt: now,
     };
-    const all = ensureSeed();
-    localStore.set(KEY, [client, ...all]);
+    localStore.set(KEY, [client, ...ensureSeed()]);
+    return client;
+  },
+
+  async createAsync(
+    input: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<Client> {
+    const client = this.create(input);
+    if (useCloudData()) {
+      await setDocument('clients', client.id, client);
+    }
     return client;
   },
 
@@ -152,11 +186,27 @@ export const clientsService = {
     return updated;
   },
 
+  async updateAsync(id: string, patch: Partial<Client>): Promise<Client | undefined> {
+    const updated = this.update(id, patch);
+    if (updated && useCloudData()) {
+      await setDocument('clients', id, updated);
+    }
+    return updated;
+  },
+
   remove(id: string): boolean {
     const all = ensureSeed();
     const next = all.filter((c) => c.id !== id);
     if (next.length === all.length) return false;
     localStore.set(KEY, next);
     return true;
+  },
+
+  async removeAsync(id: string): Promise<boolean> {
+    const ok = this.remove(id);
+    if (ok && useCloudData()) {
+      await removeDocument('clients', id);
+    }
+    return ok;
   },
 };
