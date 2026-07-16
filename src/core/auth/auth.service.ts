@@ -310,42 +310,35 @@ async function cloudProvider(provider: 'google' | 'github'): Promise<AuthUser> {
     const auth = requireAuth();
     let authProvider: FirebaseAuthProvider;
     if (provider === 'google') {
+      // Login only: basic profile scopes (no Gmail/Calendar — those need OAuth verification)
       const g = new GoogleAuthProvider();
       g.addScope('email');
       g.addScope('profile');
-      // Scopes for working connectors after login
-      g.addScope('https://www.googleapis.com/auth/gmail.send');
-      g.addScope('https://www.googleapis.com/auth/calendar.events');
       g.setCustomParameters({ prompt: 'select_account' });
       authProvider = g;
     } else {
+      // Login only: identity scopes. repo scope is requested in Integrações → GitHub
       const gh = new GithubAuthProvider();
       gh.addScope('read:user');
       gh.addScope('user:email');
-      gh.addScope('repo');
       authProvider = gh;
     }
 
     const result = await signInWithPopup(auth, authProvider);
     const user = firebaseToAuthUser(result.user);
 
-    // Persist OAuth access token for connectors
-    const credential =
-      provider === 'google'
-        ? GoogleAuthProvider.credentialFromResult(result)
-        : GithubAuthProvider.credentialFromResult(result);
-
-    const accessToken = credential?.accessToken;
-    if (accessToken) {
-      const { pluginsService } = await import('@/services/plugins.service');
-      await pluginsService.connectWithToken(
-        provider === 'google' ? 'google-workspace' : 'github',
-        {
+    // GitHub login token can list public profile; full repo access is via connectLive
+    if (provider === 'github') {
+      const credential = GithubAuthProvider.credentialFromResult(result);
+      const accessToken = credential?.accessToken;
+      if (accessToken) {
+        const { pluginsService } = await import('@/services/plugins.service');
+        await pluginsService.connectWithToken('github', {
           accessToken,
           accountLabel: user.email,
-          provider,
-        }
-      );
+          provider: 'github',
+        });
+      }
     }
 
     await bootstrapWorkspace(user);

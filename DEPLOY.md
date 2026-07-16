@@ -43,15 +43,33 @@ Solução: Console → **Authentication** → **Começar** → ative **Email/sen
 - Authorization callback URL:  
   `https://YOUR_PROJECT.firebaseapp.com/__/auth/handler`
 
-### Google Cloud (Gmail + Calendar funcionando)
+### Google Cloud (OAuth + Gmail/Calendar)
 
-No mesmo projeto Google Cloud:
+No [Google Cloud Console](https://console.cloud.google.com) do projeto ligado ao Firebase:
 
-1. APIs & Services → Enable **Gmail API** e **Google Calendar API**
-2. OAuth consent screen → External → scopes:
-   - `https://www.googleapis.com/auth/gmail.send`
-   - `https://www.googleapis.com/auth/calendar.events`
-3. Enquanto em *Testing*, adicione test users
+1. **APIs & Services → Enabled APIs** → ative **Gmail API** e **Google Calendar API** (só se for usar conectores)
+2. **APIs & Services → OAuth consent screen**
+   - User type: **External**
+   - App name: `Aurea`, e-mail de suporte
+   - Publishing status: **Testing** (ok em desenvolvimento)
+3. **Test users** (obrigatório em Testing): adicione o Gmail de cada pessoa que vai logar  
+   - Sem isso o Google mostra “app não verificado” e pode bloquear
+4. **Scopes no login** do Aurea: só `email` + `profile` (não pede Gmail no login)
+5. **Scopes dos conectores** (Integrações → Google Workspace):
+   - `gmail.send`
+   - `calendar.events`  
+   → em Testing só **test users** conseguem autorizar; para o público, precisa **Verification** da Google (demorado)
+
+#### “Google não verificou este app”
+
+Normal em apps novos. Durante desenvolvimento:
+
+1. OAuth consent → **Testing**
+2. Adicione seu e-mail em **Test users**
+3. Na tela de aviso: **Avançado** → **Ir para Aurea (não seguro)**  
+   (só aparece se você for test user)
+
+Não use scopes de Gmail/Calendar no login — o Aurea pede isso só ao **Conectar** o plugin.
 
 ---
 
