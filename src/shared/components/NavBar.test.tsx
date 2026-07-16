@@ -13,7 +13,7 @@ describe('NavBar (frontend)', () => {
     expect(screen.getByAltText(/Aurea logo/i)).toBeInTheDocument();
 
     const enter = screen.getAllByRole('link', { name: /Acessar conta/i })[0];
-    expect(enter).toHaveAttribute('href', ROUTES.app.dashboard);
+    expect(enter).toHaveAttribute('href', ROUTES.auth.login);
   });
 
   it('abre menu mobile e lista links enterprise', async () => {

@@ -29,7 +29,7 @@ const Hero = () => {
             </p>
 
             <div className="animate-fade-up delay-300 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-10">
-              <Link to={ROUTES.app.dashboard} className="btn-primary text-sm h-11 px-6">
+              <Link to={ROUTES.auth.login} className="btn-primary text-sm h-11 px-6">
                 Acessar a plataforma
                 <ArrowRight className="w-4 h-4" />
               </Link>

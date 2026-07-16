@@ -17,7 +17,7 @@ describe('Hero (frontend)', () => {
     ).toBeInTheDocument();
 
     const appCta = screen.getByRole('link', { name: /Acessar a plataforma/i });
-    expect(appCta).toHaveAttribute('href', ROUTES.app.dashboard);
+    expect(appCta).toHaveAttribute('href', ROUTES.auth.login);
     expect(screen.getByRole('link', { name: /Conhecer a plataforma/i })).toHaveAttribute(
       'href',
       '#plataforma'

@@ -40,14 +40,15 @@ export default function SettingsPage() {
                 <Label>Tema</Label>
                 <Select
                   value={theme}
-                  onValueChange={(v) => setTheme(v as 'dark' | 'light')}
+                  onValueChange={(v) => setTheme(v as 'light' | 'dark' | 'system')}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Claro (padrão)</SelectItem>
+                    <SelectItem value="light">Claro</SelectItem>
                     <SelectItem value="dark">Escuro</SelectItem>
+                    <SelectItem value="system">Sistema</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

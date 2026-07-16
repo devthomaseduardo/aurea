@@ -56,7 +56,7 @@ const NavBar = () => {
               <a
                 key={link.href}
                 href={link.href}
-                className="px-3.5 py-2 text-[13px] font-medium text-slate-600 hover:text-slate-900 rounded-md hover:bg-slate-50 transition-colors"
+                className="nav-link px-3.5 py-2 text-[13px] font-medium rounded-md"
               >
                 {link.label}
               </a>
@@ -65,16 +65,16 @@ const NavBar = () => {
 
           <div className="flex items-center gap-2">
             <Link
-              to={ROUTES.app.dashboard}
-              className="hidden sm:inline-flex h-9 items-center px-3.5 text-[13px] font-medium text-slate-700 hover:text-slate-900 rounded-md hover:bg-slate-50"
+              to={ROUTES.auth.login}
+              className="hidden sm:inline-flex h-9 items-center px-3.5 text-[13px] font-medium text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors"
             >
               Acessar conta
             </Link>
             <Link
-              to={ROUTES.app.calculator}
+              to={ROUTES.auth.register}
               className="hidden sm:inline-flex btn-primary h-9 text-[13px] px-4"
             >
-              Solicitar demonstração
+              Criar workspace
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
             <button

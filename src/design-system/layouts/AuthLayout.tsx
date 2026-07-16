@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { Zap } from 'lucide-react';
-import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
+import { BrandLogo } from '@/design-system/components/BrandLogo';
+import { APP_CONFIG, ROUTES } from '@/core/config/app.config';
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -11,39 +10,42 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
-      <div
-        className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full opacity-30 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(100,80,255,0.25) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-        }}
-      />
-      <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <Link to={ROUTES.home} className="inline-flex items-center gap-2 mb-6">
-            <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(135deg, hsl(243,75%,66%), hsl(213,90%,60%))',
-              }}
-            >
-              <Zap className="w-4 h-4 text-white" fill="white" />
-            </div>
-            <span className="text-xl font-bold">
-              <span className="gradient-text-subtle">Calcula</span>
-              <span className="gradient-text">Freela</span>
-            </span>
-          </Link>
-          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-          {subtitle && (
-            <p className="text-sm text-muted-foreground mt-2">{subtitle}</p>
-          )}
+    <div className="min-h-svh flex bg-slate-50">
+      <div className="hidden lg:flex lg:w-[44%] relative overflow-hidden bg-slate-900 text-white p-10 flex-col justify-between">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsla(239,84%,57%,0.35),transparent_55%)]" />
+        <div className="relative z-10">
+          <BrandLogo to={ROUTES.home} className="[&_span]:text-white" />
         </div>
-        <div className="glass-card rounded-2xl p-6 md:p-8">{children}</div>
-        <p className="text-center text-xs text-muted-foreground mt-6">
-          {APP_CONFIG.name} v{APP_CONFIG.version}
+        <div className="relative z-10 max-w-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-300 mb-3">
+            Aurea Enterprise
+          </p>
+          <h2 className="text-3xl font-semibold tracking-tight leading-tight mb-3">
+            Seu workspace comercial, com dados reais por conta
+          </h2>
+          <p className="text-sm text-slate-300 leading-relaxed">
+            Clientes, propostas, contratos e plugins ficam isolados por usuário.
+            Pronto para evoluir para SSO e OAuth reais.
+          </p>
+        </div>
+        <p className="relative z-10 text-xs text-slate-500">
+          {APP_CONFIG.legalName} · v{APP_CONFIG.version}
         </p>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md">
+          <div className="lg:hidden mb-8 flex justify-center">
+            <BrandLogo to={ROUTES.home} />
+          </div>
+          <div className="mb-6">
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h1>
+            {subtitle && (
+              <p className="text-sm text-muted-foreground mt-1.5">{subtitle}</p>
+            )}
+          </div>
+          <div className="app-panel p-6 md:p-8">{children}</div>
+        </div>
       </div>
     </div>
   );

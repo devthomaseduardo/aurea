@@ -15,9 +15,11 @@ import {
   LogOut,
   Palette,
   ChevronRight,
+  Plug,
 } from 'lucide-react';
 import { cn } from '@/shared/utils/utils';
 import { useUiStore } from '@/stores/ui.store';
+import { useAuthStore } from '@/stores/auth.store';
 import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
 import { profileService } from '@/services/profile.service';
 import { Button } from '@/shared/components/ui/button';
@@ -48,12 +50,14 @@ const navGroups = [
   {
     label: 'Administração',
     items: [
+      { to: ROUTES.app.integrations, label: 'Integrações', icon: Plug },
       { to: ROUTES.app.profile, label: 'Organização', icon: User },
       { to: ROUTES.app.settings, label: 'Configurações', icon: Settings },
       { to: ROUTES.designSystem, label: 'Design System', icon: Palette },
     ],
   },
 ];
+
 
 function NavItem({
   to,
@@ -119,6 +123,7 @@ function pageTitle(pathname: string) {
     [ROUTES.app.proposals]: 'Propostas',
     [ROUTES.app.contracts]: 'Contratos',
     [ROUTES.app.analytics]: 'Analytics',
+    [ROUTES.app.integrations]: 'Integrações',
     [ROUTES.app.settings]: 'Configurações',
     [ROUTES.app.profile]: 'Organização',
   };
@@ -133,7 +138,16 @@ export function DashboardLayout() {
   const location = useLocation();
   const { sidebarCollapsed, sidebarMobileOpen, toggleSidebar, setSidebarMobileOpen } =
     useUiStore();
+  const { user, logout } = useAuthStore();
   const profile = profileService.get();
+  const displayName = user?.name || profile.name;
+  const displayEmail = user?.email || profile.email;
+
+  const handleLogout = async () => {
+    await logout();
+    navigate(ROUTES.auth.login);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground flex">
       {sidebarMobileOpen && (
@@ -202,10 +216,10 @@ export function DashboardLayout() {
           {!sidebarCollapsed && (
             <div className="px-2.5 py-2 rounded-lg bg-slate-50 border border-border">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                Conta
+                Conta autenticada
               </p>
-              <p className="text-xs font-medium truncate">{profile.name}</p>
-              <p className="text-[11px] text-muted-foreground truncate">{profile.email}</p>
+              <p className="text-xs font-medium truncate">{displayName}</p>
+              <p className="text-[11px] text-muted-foreground truncate">{displayEmail}</p>
             </div>
           )}
           <div className={cn('flex gap-1', sidebarCollapsed && 'flex-col items-center')}>
@@ -229,7 +243,7 @@ export function DashboardLayout() {
                 'text-muted-foreground h-8',
                 !sidebarCollapsed && 'flex-1 justify-start px-2.5'
               )}
-              onClick={() => navigate(ROUTES.home)}
+              onClick={handleLogout}
             >
               <LogOut className="w-4 h-4" />
               {!sidebarCollapsed && <span className="ml-2 text-xs">Sair</span>}

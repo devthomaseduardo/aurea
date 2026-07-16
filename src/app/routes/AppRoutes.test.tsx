@@ -23,28 +23,26 @@ describe('AppRoutes (frontend)', () => {
     }, waitPage);
   });
 
-  it('renderiza shell do app e dashboard em /app/dashboard', async () => {
+  it('protege /app e redireciona para login quando não autenticado', async () => {
     renderWithProviders(<AppRoutes />, {
       routerProps: { initialEntries: [ROUTES.app.dashboard] },
     });
 
     await waitFor(() => {
-      expect(screen.getByRole('link', { name: 'Visão geral' })).toBeInTheDocument();
-      expect(
-        screen.getByRole('heading', { name: /Visão geral executiva/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Acessar conta/i })).toBeInTheDocument();
     }, waitPage);
   });
 
-  it('renderiza precificação em /app/calculator', async () => {
+  it('renderiza tela de login em /login', async () => {
     renderWithProviders(<AppRoutes />, {
-      routerProps: { initialEntries: [ROUTES.app.calculator] },
+      routerProps: { initialEntries: [ROUTES.auth.login] },
     });
 
     await waitFor(() => {
-      expect(
-        screen.getByRole('heading', { name: /Precificação de projetos/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Acessar conta/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Continuar com Google/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Continuar com GitHub/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Entrar com conta demo/i })).toBeInTheDocument();
     }, waitPage);
   });
 

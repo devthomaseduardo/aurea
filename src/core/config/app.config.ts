@@ -28,6 +28,11 @@ export const APP_CONFIG = {
 
 export const ROUTES = {
   home: '/',
+  auth: {
+    login: '/login',
+    register: '/register',
+    callback: '/auth/callback',
+  },
   app: {
     root: '/app',
     dashboard: '/app/dashboard',
@@ -40,6 +45,7 @@ export const ROUTES = {
     contracts: '/app/contracts',
     contractDetail: (id: string) => `/app/contracts/${id}`,
     analytics: '/app/analytics',
+    integrations: '/app/integrations',
     settings: '/app/settings',
     profile: '/app/profile',
   },

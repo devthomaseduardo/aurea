@@ -4,6 +4,7 @@ import { Toaster } from '@/shared/components/ui/toaster';
 import { Toaster as Sonner } from '@/shared/components/ui/sonner';
 import type { ReactNode } from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
+import { ThemeBootstrap } from './ThemeBootstrap';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,13 +23,15 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider delayDuration={200}>
-          {children}
-          <Toaster />
-          <Sonner />
-        </TooltipProvider>
-      </QueryClientProvider>
+      <ThemeBootstrap>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider delayDuration={200}>
+            {children}
+            <Toaster />
+            <Sonner />
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ThemeBootstrap>
     </ErrorBoundary>
   );
 }

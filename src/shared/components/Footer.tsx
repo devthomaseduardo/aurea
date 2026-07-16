@@ -31,22 +31,22 @@ const Footer = () => {
             </p>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to={ROUTES.app.dashboard} className="text-slate-600 hover:text-slate-900">
+                <Link to={ROUTES.app.dashboard} className="text-hover">
                   Console
                 </Link>
               </li>
               <li>
-                <Link to={ROUTES.app.calculator} className="text-slate-600 hover:text-slate-900">
+                <Link to={ROUTES.app.calculator} className="text-hover">
                   Precificação
                 </Link>
               </li>
               <li>
-                <Link to={ROUTES.app.proposals} className="text-slate-600 hover:text-slate-900">
+                <Link to={ROUTES.app.proposals} className="text-hover">
                   Propostas
                 </Link>
               </li>
               <li>
-                <Link to={ROUTES.app.clients} className="text-slate-600 hover:text-slate-900">
+                <Link to={ROUTES.app.clients} className="text-hover">
                   Clientes
                 </Link>
               </li>
@@ -59,17 +59,17 @@ const Footer = () => {
             </p>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#plataforma" className="text-slate-600 hover:text-slate-900">
+                <a href="#plataforma" className="text-hover">
                   Sobre o produto
                 </a>
               </li>
               <li>
-                <a href="#seguranca" className="text-slate-600 hover:text-slate-900">
+                <a href="#seguranca" className="text-hover">
                   Governança
                 </a>
               </li>
               <li>
-                <Link to={ROUTES.designSystem} className="text-slate-600 hover:text-slate-900">
+                <Link to={ROUTES.designSystem} className="text-hover">
                   Design System
                 </Link>
               </li>

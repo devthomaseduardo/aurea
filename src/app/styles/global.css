@@ -138,30 +138,56 @@
   html {
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
+    font-optical-sizing: auto;
     letter-spacing: -0.011em;
+    line-height: 1.5;
     background-color: hsl(var(--background));
     background-image:
       radial-gradient(ellipse 90% 60% at 50% -20%, hsla(239, 84%, 57%, 0.08), transparent 55%),
       radial-gradient(ellipse 40% 30% at 100% 0%, hsla(42, 55%, 52%, 0.06), transparent 50%);
     background-attachment: fixed;
     min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .dark body,
+  html.dark body {
+    background-image:
+      radial-gradient(ellipse 90% 60% at 50% -20%, hsla(239, 84%, 60%, 0.12), transparent 55%),
+      radial-gradient(ellipse 40% 30% at 100% 0%, hsla(221, 83%, 50%, 0.08), transparent 50%);
   }
 
   ::selection {
-    background: hsla(239, 84%, 57%, 0.18);
-    color: hsl(222, 47%, 11%);
+    background: hsla(239, 84%, 57%, 0.22);
+    color: hsl(var(--foreground));
   }
 
-  h1, h2, h3, h4 {
+  h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.03em;
     font-weight: 600;
     color: hsl(var(--foreground));
+    line-height: 1.2;
+  }
+
+  p {
+    line-height: 1.6;
+  }
+
+  a {
+    color: inherit;
+    text-underline-offset: 3px;
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  button, [role="button"] {
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
   }
 
   :focus-visible {
@@ -184,11 +210,38 @@
   }
 
   .glass-card {
-    background: hsla(0, 0%, 100%, 0.85);
+    background: hsl(var(--card) / 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid hsl(var(--border));
     box-shadow: var(--elevation-md);
+  }
+
+  /* Accessible text/link hover — works light + dark */
+  .link-hover {
+    @apply text-primary transition-colors duration-150;
+  }
+  .link-hover:hover {
+    color: hsl(var(--primary) / 0.85);
+    text-decoration: underline;
+  }
+
+  .nav-link {
+    @apply text-muted-foreground transition-colors duration-150;
+  }
+  .nav-link:hover {
+    @apply text-foreground bg-accent;
+  }
+
+  .text-hover {
+    @apply text-muted-foreground transition-colors duration-150;
+  }
+  .text-hover:hover {
+    @apply text-foreground;
+  }
+
+  .muted-hover:hover {
+    color: hsl(var(--foreground));
   }
 
   .glass-card-hover {
@@ -233,7 +286,13 @@
 
   .btn-ghost:hover {
     background: hsl(var(--muted));
-    border-color: hsl(214 28% 80%);
+    border-color: hsl(var(--border));
+    color: hsl(var(--foreground));
+  }
+
+  .dark .btn-ghost:hover {
+    background: hsl(var(--accent));
+    border-color: hsl(var(--border));
   }
 
   .gradient-text {
@@ -244,7 +303,7 @@
   }
 
   .gradient-text-subtle {
-    background: linear-gradient(180deg, hsl(222, 47%, 11%) 30%, hsl(215, 16%, 35%) 100%);
+    background: linear-gradient(180deg, hsl(var(--foreground)) 30%, hsl(var(--muted-foreground)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
