@@ -23,7 +23,6 @@ const icons = {
 
 export function StepCustos({ onNext, onBack }: Props) {
   const { projeto, updateProjeto } = useCalculatorStore();
-
   const form = useForm<PartesFormValues>({
     resolver: zodResolver(partesSchema),
     defaultValues: {
@@ -88,7 +87,7 @@ export function StepCustos({ onNext, onBack }: Props) {
           <div className="space-y-2">
             <Label>Nome</Label>
             <Input
-              className="bg-black/20 border-white/10"
+
               {...form.register('contratante.nome')}
             />
             {form.formState.errors.contratante?.nome && (
@@ -100,7 +99,7 @@ export function StepCustos({ onNext, onBack }: Props) {
           <div className="space-y-2">
             <Label>Documento</Label>
             <Input
-              className="bg-black/20 border-white/10"
+
               {...form.register('contratante.documento')}
             />
           </div>
@@ -108,7 +107,7 @@ export function StepCustos({ onNext, onBack }: Props) {
         <div className="space-y-2">
           <Label>Endereço</Label>
           <Input
-            className="bg-black/20 border-white/10"
+
             {...form.register('contratante.endereco')}
           />
         </div>
@@ -120,7 +119,7 @@ export function StepCustos({ onNext, onBack }: Props) {
           <div className="space-y-2">
             <Label>Nome</Label>
             <Input
-              className="bg-black/20 border-white/10"
+
               {...form.register('contratado.nome')}
             />
             {form.formState.errors.contratado?.nome && (
@@ -132,7 +131,7 @@ export function StepCustos({ onNext, onBack }: Props) {
           <div className="space-y-2">
             <Label>Documento</Label>
             <Input
-              className="bg-black/20 border-white/10"
+
               {...form.register('contratado.documento')}
             />
           </div>
@@ -140,7 +139,7 @@ export function StepCustos({ onNext, onBack }: Props) {
         <div className="space-y-2">
           <Label>Endereço</Label>
           <Input
-            className="bg-black/20 border-white/10"
+
             {...form.register('contratado.endereco')}
           />
         </div>
@@ -150,7 +149,7 @@ export function StepCustos({ onNext, onBack }: Props) {
         <Button type="button" variant="outline" onClick={onBack}>
           Voltar
         </Button>
-        <Button type="submit" className="btn-primary text-white">
+        <Button type="submit" className="btn-primary">
           Continuar
         </Button>
       </FormActions>

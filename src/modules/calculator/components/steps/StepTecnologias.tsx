@@ -18,7 +18,6 @@ export function StepTecnologias({ onNext, onBack }: Props) {
   const { projeto, updateProjeto } = useCalculatorStore();
   const [error, setError] = useState<string | null>(null);
   const [outro, setOutro] = useState('');
-
   const toggleTech = (id: string) => {
     updateProjeto({
       tecnologias: projeto.tecnologias.map((t) =>
@@ -119,7 +118,7 @@ export function StepTecnologias({ onNext, onBack }: Props) {
           <Label>Outros serviços</Label>
           <div className="flex gap-2">
             <Input
-              className="bg-black/20 border-white/10"
+
               value={outro}
               onChange={(e) => setOutro(e.target.value)}
               placeholder="Ex: SEO técnico"
@@ -162,7 +161,7 @@ export function StepTecnologias({ onNext, onBack }: Props) {
         <Button type="button" variant="outline" onClick={onBack}>
           Voltar
         </Button>
-        <Button type="button" className="btn-primary text-white" onClick={submit}>
+        <Button type="button" className="btn-primary" onClick={submit}>
           Continuar
         </Button>
       </FormActions>

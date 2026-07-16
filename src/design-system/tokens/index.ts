@@ -1,5 +1,5 @@
 /**
- * CalculaFreela Design Tokens
+ * Aurea Design Tokens
  * Single source of truth for visual language.
  * CSS variables are defined in global.css — these mirror them for JS usage.
  */

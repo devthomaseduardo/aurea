@@ -46,7 +46,6 @@ export default function ProposalDetailPage() {
   const remove = useDeleteProposal();
   const duplicate = useDuplicateProposal();
   const update = useUpdateProposal();
-
   if (isLoading) {
     return (
       <PageContainer>
@@ -68,7 +67,6 @@ export default function ProposalDetailPage() {
 
   const hasSnapshot =
     proposal.projectSnapshot && proposal.resultSnapshot;
-
   return (
     <PageContainer>
       <PageHeader
@@ -107,7 +105,7 @@ export default function ProposalDetailPage() {
                 toast({ title: 'Status atualizado' });
               }}
             >
-              <SelectTrigger className="w-40 bg-black/20 border-white/10">
+              <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

@@ -22,7 +22,6 @@ interface Props {
 
 export function StepInfo({ onNext }: Props) {
   const { projeto, updateProjeto } = useCalculatorStore();
-
   const form = useForm<InfoFormValues>({
     resolver: zodResolver(infoSchema),
     defaultValues: {
@@ -60,7 +59,6 @@ export function StepInfo({ onNext }: Props) {
           <Label htmlFor="nome">Nome do projeto</Label>
           <Input
             id="nome"
-            className="bg-black/20 border-white/10"
             placeholder="Ex: Site Institucional da Empresa X"
             {...form.register('nome')}
           />
@@ -73,7 +71,7 @@ export function StepInfo({ onNext }: Props) {
           <Label htmlFor="descricao">Descrição</Label>
           <Textarea
             id="descricao"
-            className="bg-black/20 border-white/10 min-h-[120px]"
+            className="min-h-[120px]"
             placeholder="Descreva objetivo e escopo do projeto…"
             {...form.register('descricao')}
           />
@@ -90,7 +88,7 @@ export function StepInfo({ onNext }: Props) {
               <Input
                 id="valorHora"
                 type="number"
-                className="pl-9 bg-black/20 border-white/10"
+                className="pl-9"
                 {...form.register('valorHora', { valueAsNumber: true })}
               />
             </div>
@@ -104,7 +102,7 @@ export function StepInfo({ onNext }: Props) {
               value={form.watch('moeda')}
               onValueChange={(v) => form.setValue('moeda', v as 'BRL' | 'USD')}
             >
-              <SelectTrigger className="bg-black/20 border-white/10">
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -127,7 +125,7 @@ export function StepInfo({ onNext }: Props) {
                 )
               }
             >
-              <SelectTrigger className="bg-black/20 border-white/10">
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -145,7 +143,6 @@ export function StepInfo({ onNext }: Props) {
               type="number"
               min={0}
               max={100}
-              className="bg-black/20 border-white/10"
               {...form.register('bufferSeguranca', { valueAsNumber: true })}
             />
           </div>
@@ -153,7 +150,7 @@ export function StepInfo({ onNext }: Props) {
       </FormSection>
 
       <FormActions>
-        <Button type="submit" className="btn-primary text-white">
+        <Button type="submit" className="btn-primary">
           Continuar
         </Button>
       </FormActions>

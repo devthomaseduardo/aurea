@@ -12,7 +12,6 @@ interface Props {
 
 export function StepCronograma({ onNext, onBack }: Props) {
   const { projeto, resultado, recalculate } = useCalculatorStore();
-
   useEffect(() => {
     recalculate();
   }, [recalculate]);
@@ -27,7 +26,6 @@ export function StepCronograma({ onNext, onBack }: Props) {
 
   const valor =
     resultado.valoresPropostas[projeto.modeloProposta] ?? resultado.custoTotal;
-
   return (
     <div className="space-y-6">
       <FormSection
@@ -89,7 +87,7 @@ export function StepCronograma({ onNext, onBack }: Props) {
         <Button type="button" variant="outline" onClick={onBack}>
           Voltar
         </Button>
-        <Button type="button" className="btn-primary text-white" onClick={onNext}>
+        <Button type="button" className="btn-primary" onClick={onNext}>
           Ver resumo
         </Button>
       </FormActions>

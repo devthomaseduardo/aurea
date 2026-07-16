@@ -65,7 +65,6 @@ function ColorSwatch({ name, cssVar }: { name: string; cssVar: string }) {
 
 export default function DesignSystemPage() {
   const [search, setSearch] = useState('');
-
   return (
     <div className="min-h-screen bg-background">
       <PageContainer size="xl">
@@ -80,7 +79,7 @@ export default function DesignSystemPage() {
 
         <PageHeader
           title="Design System"
-          description="Storybook simplificado do CalculaFreela — tokens, primitivos e patterns."
+          description="Storybook simplificado da Aurea — tokens, primitivos, marca e patterns."
         />
 
         <Tabs defaultValue="tokens" className="space-y-8">
@@ -196,7 +195,7 @@ export default function DesignSystemPage() {
               <Button variant="ghost">Ghost</Button>
               <Button variant="destructive">Destructive</Button>
               <Button variant="link">Link</Button>
-              <button className="btn-primary text-white px-4 py-2 text-sm">Brand Primary</button>
+              <button className="btn-primary px-4 py-2 text-sm">Brand Primary</button>
               <button className="btn-ghost px-4 py-2 text-sm">Brand Ghost</button>
               <Button size="sm">Small</Button>
               <Button size="lg">Large</Button>
@@ -208,8 +207,8 @@ export default function DesignSystemPage() {
 
           <TabsContent value="inputs" className="space-y-6">
             <div className="glass-card rounded-2xl p-6 space-y-4 max-w-xl">
-              <Input placeholder="Input padrão" className="bg-black/20 border-white/10" />
-              <Textarea placeholder="Textarea" className="bg-black/20 border-white/10" />
+              <Input placeholder="Input padrão" />
+              <Textarea placeholder="Textarea" />
               <SearchBar value={search} onChange={setSearch} />
               <div className="flex items-center gap-4">
                 <label className="flex items-center gap-2 text-sm">
@@ -307,12 +306,12 @@ export default function DesignSystemPage() {
             <div className="glass-card rounded-2xl p-6">
               <FormSection title="FormSection" description="Agrupa campos de formulário.">
                 <FormGroup columns={2}>
-                  <Input placeholder="Campo A" className="bg-black/20 border-white/10" />
-                  <Input placeholder="Campo B" className="bg-black/20 border-white/10" />
+                  <Input placeholder="Campo A" />
+                  <Input placeholder="Campo B" />
                 </FormGroup>
                 <FormActions>
                   <Button variant="outline">Cancelar</Button>
-                  <Button className="btn-primary text-white">Salvar</Button>
+                  <Button className="btn-primary">Salvar</Button>
                 </FormActions>
               </FormSection>
             </div>

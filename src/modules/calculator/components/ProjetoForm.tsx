@@ -62,10 +62,8 @@ const ProjetoForm = () => {
   const [resultado, setResultado] = useState<ResultadoOrcamento | null>(null);
   const [formStep, setFormStep] = useState(1);
   const [animateNext, setAnimateNext] = useState(false);
-
   const adicionarRequisito = () => {
     if (novoRequisito.descricao.trim() === '') return;
-    
     const requisito: Requisito = {
       ...novoRequisito,
       id: Date.now().toString(),
@@ -93,7 +91,6 @@ const ProjetoForm = () => {
 
   const adicionarOutroServico = () => {
     if (outroServico.trim() === '') return;
-    
     setProjeto(prev => ({
       ...prev,
       configuracao: {
@@ -154,7 +151,6 @@ const ProjetoForm = () => {
   const estimarTempoAutomatico = () => {
     let estimativaDias = 1;
     let estimativaHoras = 8;
-    
     switch (novoRequisito.complexidade) {
       case 'baixa':
         estimativaDias = 1;

@@ -20,24 +20,31 @@ export function MetricCard({
   className,
 }: MetricCardProps) {
   const positive = trend ? trend.value >= 0 : null;
-
   return (
-    <div className={cn('glass-card rounded-2xl p-5 relative overflow-hidden group', className)}>
+    <div
+      className={cn(
+        'app-panel p-5 relative overflow-hidden group transition-colors hover:border-primary/20',
+        className
+      )}
+    >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
+          <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground mb-2">
             {label}
           </p>
-          <p className="text-2xl md:text-3xl font-bold tracking-tight text-foreground truncate">
+          <p className="text-2xl md:text-[1.75rem] font-semibold tracking-tight text-foreground tabular-nums truncate">
             {value}
           </p>
           {(hint || trend) && (
-            <div className="flex items-center gap-2 mt-2 flex-wrap">
+            <div className="flex items-center gap-2 mt-2.5 flex-wrap">
               {trend && (
                 <span
                   className={cn(
-                    'inline-flex items-center gap-0.5 text-xs font-semibold',
-                    positive ? 'text-emerald-400' : 'text-rose-400'
+                    'inline-flex items-center gap-0.5 text-xs font-medium rounded-md px-1.5 py-0.5',
+                    positive
+                      ? 'text-emerald-700 bg-emerald-50'
+                      : 'text-rose-700 bg-rose-50'
                   )}
                 >
                   {positive ? (
@@ -57,8 +64,8 @@ export function MetricCard({
           )}
         </div>
         {Icon && (
-          <div className="feature-icon shrink-0 !w-10 !h-10">
-            <Icon className="w-4 h-4 text-violet-400" />
+          <div className="feature-icon shrink-0 !w-9 !h-9">
+            <Icon className="w-4 h-4 text-primary" />
           </div>
         )}
       </div>

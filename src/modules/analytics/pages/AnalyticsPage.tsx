@@ -48,7 +48,6 @@ export default function AnalyticsPage() {
   }
 
   const m = metrics.data!;
-
   return (
     <PageContainer>
       <PageHeader

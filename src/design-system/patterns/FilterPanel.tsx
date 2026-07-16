@@ -10,7 +10,7 @@ export function FilterPanel({ children, className }: FilterPanelProps) {
   return (
     <div
       className={cn(
-        'flex flex-col sm:flex-row sm:items-center gap-3 mb-6 p-3 rounded-xl border border-border bg-card/40',
+        'flex flex-col sm:flex-row sm:items-center gap-3 mb-5 p-3 rounded-xl border border-border bg-card',
         className
       )}
     >

@@ -9,55 +9,53 @@ interface WizardStepperProps {
 
 export function WizardStepper({ current, onStepClick }: WizardStepperProps) {
   return (
-    <div className="mb-10">
-      <div className="flex items-center justify-between relative">
-        <div
-          className="absolute top-5 left-0 right-0 h-px hidden sm:block"
-          style={{ background: 'rgba(255,255,255,0.05)' }}
-        />
+    <div className="mb-6">
+      <div className="flex items-center gap-1 overflow-x-auto pb-1 -mx-1 px-1">
         {WIZARD_STEPS.map((step, index) => {
           const active = index === current;
           const done = index < current;
           return (
-            <button
-              key={step.id}
-              type="button"
-              onClick={() => onStepClick?.(index)}
-              className="flex flex-col items-center relative z-10 flex-1 min-w-0 group"
-              disabled={index > current}
-            >
-              <div
+            <div key={step.id} className="flex items-center min-w-0 flex-1">
+              <button
+                type="button"
+                onClick={() => onStepClick?.(index)}
+                disabled={index > current}
                 className={cn(
-                  'w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all',
-                  active && 'text-white',
-                  done && 'text-violet-400',
-                  !active && !done && 'text-white/20'
-                )}
-                style={{
-                  background: active
-                    ? 'linear-gradient(135deg, hsl(243,75%,66%), hsl(213,90%,60%))'
-                    : done
-                      ? 'rgba(120,100,255,0.15)'
-                      : 'rgba(255,255,255,0.04)',
-                  border: active
-                    ? 'none'
-                    : done
-                      ? '1px solid rgba(120,100,255,0.3)'
-                      : '1px solid rgba(255,255,255,0.06)',
-                  boxShadow: active ? '0 0 20px rgba(120,100,255,0.4)' : 'none',
-                }}
-              >
-                {done ? <Check className="w-4 h-4" /> : index + 1}
-              </div>
-              <span
-                className={cn(
-                  'text-[10px] sm:text-xs mt-2 font-medium truncate max-w-full px-0.5',
-                  active ? 'text-white/70' : done ? 'text-violet-400/60' : 'text-white/15'
+                  'flex items-center gap-2 rounded-lg px-2 py-2 w-full min-w-0 transition-colors',
+                  active && 'bg-primary/10',
+                  !active && !done && 'opacity-50',
+                  index <= current && 'hover:bg-white/[0.03]'
                 )}
               >
-                {step.label}
-              </span>
-            </button>
+                <span
+                  className={cn(
+                    'w-7 h-7 rounded-md flex items-center justify-center text-[11px] font-semibold shrink-0 border',
+                    active &&
+                      'bg-primary text-primary-foreground border-primary shadow-[0_0_16px_hsla(250,85%,60%,0.35)]',
+                    done && 'bg-primary/15 text-primary border-primary/30',
+                    !active && !done && 'bg-muted text-muted-foreground border-border'
+                  )}
+                >
+                  {done ? <Check className="w-3.5 h-3.5" /> : index + 1}
+                </span>
+                <span
+                  className={cn(
+                    'text-[11px] sm:text-xs font-medium truncate hidden xs:inline sm:inline',
+                    active ? 'text-foreground' : 'text-muted-foreground'
+                  )}
+                >
+                  {step.label}
+                </span>
+              </button>
+              {index < WIZARD_STEPS.length - 1 && (
+                <div
+                  className={cn(
+                    'h-px w-2 sm:w-4 shrink-0 mx-0.5',
+                    done ? 'bg-primary/40' : 'bg-border'
+                  )}
+                />
+              )}
+            </div>
           );
         })}
       </div>

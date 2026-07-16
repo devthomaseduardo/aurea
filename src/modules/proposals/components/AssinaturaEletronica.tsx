@@ -11,17 +11,13 @@ const AssinaturaEletronica: React.FC<AssinaturaEletronicaProps> = ({ onChange, l
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [canvasEmpty, setCanvasEmpty] = useState(true);
-
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
     setIsDrawing(true);
     setCanvasEmpty(false);
-    
     ctx.beginPath();
     
     // Para mouse
@@ -41,10 +37,8 @@ const AssinaturaEletronica: React.FC<AssinaturaEletronicaProps> = ({ onChange, l
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return;
-    
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
@@ -67,13 +61,10 @@ const AssinaturaEletronica: React.FC<AssinaturaEletronicaProps> = ({ onChange, l
 
   const endDrawing = () => {
     if (!isDrawing) return;
-    
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
     ctx.closePath();
     setIsDrawing(false);
     
@@ -85,10 +76,8 @@ const AssinaturaEletronica: React.FC<AssinaturaEletronicaProps> = ({ onChange, l
   const limparAssinatura = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     setCanvasEmpty(true);
     onChange('');
@@ -97,7 +86,6 @@ const AssinaturaEletronica: React.FC<AssinaturaEletronicaProps> = ({ onChange, l
   const salvarAssinatura = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
     const assinaturaDataUrl = canvas.toDataURL('image/png');
     
     // Criar um link para download
@@ -113,7 +101,6 @@ const AssinaturaEletronica: React.FC<AssinaturaEletronicaProps> = ({ onChange, l
   React.useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
@@ -134,7 +121,6 @@ const AssinaturaEletronica: React.FC<AssinaturaEletronicaProps> = ({ onChange, l
     
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-    
     return () => {
       window.removeEventListener('resize', resizeCanvas);
     };

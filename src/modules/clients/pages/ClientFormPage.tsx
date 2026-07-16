@@ -41,7 +41,6 @@ export default function ClientFormPage() {
   const existing = useClient(isEdit ? id! : '');
   const create = useCreateClient();
   const update = useUpdateClient();
-
   const form = useForm<ClientFormValues>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
@@ -124,7 +123,7 @@ export default function ClientFormPage() {
           <FormGroup columns={2}>
             <div className="space-y-2">
               <Label htmlFor="name">Nome *</Label>
-              <Input id="name" className="bg-black/20 border-white/10" {...form.register('name')} />
+              <Input id="name" {...form.register('name')} />
               {form.formState.errors.name && (
                 <p className="text-xs text-rose-400">{form.formState.errors.name.message}</p>
               )}
@@ -134,7 +133,6 @@ export default function ClientFormPage() {
               <Input
                 id="email"
                 type="email"
-                className="bg-black/20 border-white/10"
                 {...form.register('email')}
               />
               {form.formState.errors.email && (
@@ -145,13 +143,12 @@ export default function ClientFormPage() {
           <FormGroup columns={2}>
             <div className="space-y-2">
               <Label htmlFor="phone">Telefone</Label>
-              <Input id="phone" className="bg-black/20 border-white/10" {...form.register('phone')} />
+              <Input id="phone" {...form.register('phone')} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="company">Empresa</Label>
               <Input
                 id="company"
-                className="bg-black/20 border-white/10"
                 {...form.register('company')}
               />
             </div>
@@ -161,7 +158,6 @@ export default function ClientFormPage() {
               <Label htmlFor="document">Documento</Label>
               <Input
                 id="document"
-                className="bg-black/20 border-white/10"
                 {...form.register('document')}
               />
             </div>
@@ -173,7 +169,7 @@ export default function ClientFormPage() {
                   form.setValue('status', v as ClientFormValues['status'])
                 }
               >
-                <SelectTrigger className="bg-black/20 border-white/10">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -188,7 +184,6 @@ export default function ClientFormPage() {
             <Label htmlFor="address">Endereço</Label>
             <Input
               id="address"
-              className="bg-black/20 border-white/10"
               {...form.register('address')}
             />
           </div>
@@ -196,7 +191,7 @@ export default function ClientFormPage() {
             <Label htmlFor="notes">Observações</Label>
             <Textarea
               id="notes"
-              className="bg-black/20 border-white/10 min-h-[100px]"
+              className="min-h-[100px]"
               {...form.register('notes')}
             />
           </div>
@@ -208,7 +203,7 @@ export default function ClientFormPage() {
           </Button>
           <Button
             type="submit"
-            className="btn-primary text-white"
+            className="btn-primary"
             disabled={create.isPending || update.isPending}
           >
             {isEdit ? 'Salvar alterações' : 'Criar cliente'}

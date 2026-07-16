@@ -20,7 +20,6 @@ export function StepResumo({ onBack }: Props) {
   const navigate = useNavigate();
   const { projeto, resultado, recalculate, reset } = useCalculatorStore();
   const createProposal = useCreateProposalFromCalculation();
-
   useEffect(() => {
     recalculate();
   }, [recalculate]);
@@ -94,7 +93,7 @@ export function StepResumo({ onBack }: Props) {
         </Button>
         <Button
           type="button"
-          className="btn-primary text-white"
+          className="btn-primary"
           onClick={() => saveProposal(false)}
           disabled={createProposal.isPending}
         >

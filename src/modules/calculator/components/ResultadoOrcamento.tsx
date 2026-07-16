@@ -24,14 +24,13 @@ const REGIME_LABELS: Record<string, string> = {
 
 const MODELO_BADGE: Record<string, { color: string; icon: React.ElementType; label: string }> = {
   basico:  { color: 'text-sky-400 border-sky-400/30 bg-sky-400/10',     icon: ShieldCheck, label: 'Básico'   },
-  padrao:  { color: 'text-emerald-400 border-emerald-400/30 bg-emerald-400/10', icon: Award,       label: 'Padrão'   },
+  padrao:  { color: 'text-emerald-700 border-emerald-200 bg-emerald-50', icon: Award,       label: 'Padrão'   },
   premium: { color: 'text-violet-400 border-violet-400/30 bg-violet-400/10',   icon: Star,        label: 'Premium'  },
 };
 
 const ResultadoOrcamentoComponent: React.FC<Props> = ({ resultado, projeto }) => {
   const resultadoRef = useRef<HTMLDivElement>(null);
   const [copiado, setCopiado] = React.useState(false);
-
   const fmt = (valor: number) =>
     resultado.moeda === 'BRL'
       ? valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -41,7 +40,6 @@ const ResultadoOrcamentoComponent: React.FC<Props> = ({ resultado, projeto }) =>
   const modeloSelecionado = modelosPropostas.find(m => m.modelo === projeto.modeloProposta) ?? modelosPropostas[1];
   const badge = MODELO_BADGE[projeto.modeloProposta] ?? MODELO_BADGE.padrao;
   const BadgeIcon = badge.icon;
-
   const gerarPDF = async () => {
     if (!resultadoRef.current) return;
     const opt = {
@@ -108,7 +106,6 @@ const ResultadoOrcamentoComponent: React.FC<Props> = ({ resultado, projeto }) =>
     { label: 'Impostos',        value: resultado.custoImpostos,       color: 'from-rose-500 to-pink-500'    },
   ];
   const totalBreakdown = breakdownItems.reduce((a, i) => a + i.value, 0);
-
   return (
     <div className="animate-fade-in space-y-6" ref={resultadoRef}>
 

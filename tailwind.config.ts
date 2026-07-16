@@ -78,6 +78,7 @@ export default {
 				brand: {
 					violet: 'hsl(var(--brand-violet))',
 					blue: 'hsl(var(--brand-blue))',
+					gold: 'hsl(var(--brand-gold))',
 					glow: 'hsl(var(--brand-glow))'
 				}
 			},

@@ -97,7 +97,7 @@ export function StepEscopo({ onNext, onBack }: Props) {
           <div className="space-y-2">
             <Label>Novo requisito</Label>
             <Input
-              className="bg-black/20 border-white/10"
+
               placeholder="Ex: Dashboard com gráficos em tempo real"
               value={novo.descricao}
               onChange={(e) => setNovo((p) => ({ ...p, descricao: e.target.value }))}
@@ -111,7 +111,7 @@ export function StepEscopo({ onNext, onBack }: Props) {
                 value={novo.complexidade}
                 onValueChange={(v) => onComplexidade(v as Requisito['complexidade'])}
               >
-                <SelectTrigger className="bg-black/20 border-white/10">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -125,7 +125,6 @@ export function StepEscopo({ onNext, onBack }: Props) {
               <Label>Dias</Label>
               <Input
                 type="number"
-                className="bg-black/20 border-white/10"
                 value={novo.estimativaDias}
                 onChange={(e) =>
                   setNovo((p) => ({ ...p, estimativaDias: Number(e.target.value) }))
@@ -136,7 +135,6 @@ export function StepEscopo({ onNext, onBack }: Props) {
               <Label>Horas</Label>
               <Input
                 type="number"
-                className="bg-black/20 border-white/10"
                 value={novo.estimativaHoras}
                 onChange={(e) =>
                   setNovo((p) => ({ ...p, estimativaHoras: Number(e.target.value) }))
@@ -157,7 +155,7 @@ export function StepEscopo({ onNext, onBack }: Props) {
         <Button type="button" variant="outline" onClick={onBack}>
           Voltar
         </Button>
-        <Button type="button" className="btn-primary text-white" onClick={submit}>
+        <Button type="button" className="btn-primary" onClick={submit}>
           Continuar
         </Button>
       </FormActions>

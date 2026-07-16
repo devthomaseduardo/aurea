@@ -30,7 +30,11 @@ export const localStore = {
   },
 
   clearAll(): void {
-    const keys = Object.keys(localStorage).filter((k) => k.startsWith(`${prefix}:`));
-    keys.forEach((k) => localStorage.removeItem(k));
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i += 1) {
+      const k = localStorage.key(i);
+      if (k?.startsWith(`${prefix}:`)) keysToRemove.push(k);
+    }
+    keysToRemove.forEach((k) => localStorage.removeItem(k));
   },
 };

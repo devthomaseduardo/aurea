@@ -49,7 +49,6 @@ export default function ClientsPage() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-
   const filters = useMemo(
     () => ({ search, status, sortBy, sortDir, page, pageSize: 10 }),
     [search, status, sortBy, sortDir, page]
@@ -57,7 +56,6 @@ export default function ClientsPage() {
 
   const { data, isLoading } = useClients(filters);
   const remove = useDeleteClient();
-
   const toggleSort = (field: typeof sortBy) => {
     if (sortBy === field) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
     else {
@@ -79,7 +77,7 @@ export default function ClientsPage() {
         title="Clientes"
         description="Gerencie sua base de clientes e leads."
         actions={
-          <Button asChild className="btn-primary text-white">
+          <Button asChild variant="brand">
             <Link to={ROUTES.app.clientsNew}>
               <Plus className="w-4 h-4" />
               Novo cliente
@@ -105,7 +103,7 @@ export default function ClientsPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-full sm:w-40 bg-black/20 border-white/10">
+          <SelectTrigger className="w-full sm:w-40">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -125,14 +123,14 @@ export default function ClientsPage() {
           title="Nenhum cliente encontrado"
           description="Ajuste os filtros ou cadastre seu primeiro cliente."
           action={
-            <Button asChild className="btn-primary text-white">
+            <Button asChild variant="brand">
               <Link to={ROUTES.app.clientsNew}>Cadastrar cliente</Link>
             </Button>
           }
         />
       ) : (
         <>
-          <div className="glass-card rounded-2xl overflow-hidden">
+          <div className="app-panel overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="border-white/[0.06] hover:bg-transparent">

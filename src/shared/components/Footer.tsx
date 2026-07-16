@@ -1,142 +1,100 @@
-
-import React from 'react';
-import { Zap, Github, Twitter, Linkedin, Mail, ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
+import { BrandLogo } from '@/design-system/components/BrandLogo';
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
-  const links = {
-    produto: [
-      { label: 'Como Funciona', href: '#como-funciona' },
-      { label: 'Dashboard', href: '/app/dashboard' },
-      { label: 'Calculadora', href: '/app/calculator' },
-      { label: 'Design System', href: '/design-system' },
-    ],
-    legal: [
-      { label: 'Termos de Uso', href: '#' },
-      { label: 'Privacidade', href: '#' },
-    ],
-  };
-
-  const socials = [
-    { label: 'GitHub', href: '#', icon: Github },
-    { label: 'Twitter', href: '#', icon: Twitter },
-    { label: 'LinkedIn', href: '#', icon: Linkedin },
-    { label: 'Email', href: 'mailto:contato@calculafreela.com.br', icon: Mail },
-  ];
+  const year = new Date().getFullYear();
 
   return (
-    <footer
-      id="contato"
-      className="relative pt-20 pb-10 px-6 md:px-12 overflow-hidden"
-    >
-      {/* Top divider with glow */}
-      <div className="absolute top-0 inset-x-0">
-        <div className="section-divider" />
-        <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[1px]"
-          style={{
-            background: 'linear-gradient(90deg, transparent, rgba(120,100,255,0.4) 50%, transparent)',
-          }}
-        />
-      </div>
-
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-12 mb-16">
-
-          {/* Brand */}
-          <div>
-            <a href="#inicio" className="flex items-center gap-2 mb-5 group w-fit">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, hsl(243,75%,66%), hsl(213,90%,60%))' }}
-              >
-                <Zap className="w-4 h-4 text-white" fill="white" />
-              </div>
-              <span className="text-xl font-bold tracking-tight">
-                <span className="gradient-text-subtle">Calcula</span>
-                <span className="gradient-text">Freela</span>
-              </span>
-            </a>
-            <p className="text-white/35 text-sm leading-relaxed max-w-xs mb-8">
-              Ferramenta premium para freelancers calcularem orçamentos com precisão, profissionalismo e velocidade.
+    <footer className="border-t border-border bg-white">
+      <div className="max-w-7xl mx-auto px-5 md:px-6 py-14 md:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-10 mb-12">
+          <div className="col-span-2 md:col-span-5">
+            <BrandLogo className="mb-4" />
+            <p className="text-sm text-slate-600 max-w-sm leading-relaxed mb-4">
+              {APP_CONFIG.description}
             </p>
-
-            {/* Socials */}
-            <div className="flex gap-2">
-              {socials.map(({ label, href, icon: Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white/30 hover:text-white transition-all duration-200"
-                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(120,100,255,0.15)';
-                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(120,100,255,0.3)';
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
-                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.06)';
-                  }}
-                >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
+            <p className="text-xs text-slate-500">
+              Contato empresarial:{' '}
+              <a
+                href={`mailto:${APP_CONFIG.supportEmail}`}
+                className="text-primary font-medium hover:underline"
+              >
+                {APP_CONFIG.supportEmail}
+              </a>
+            </p>
           </div>
 
-          {/* Produto */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-5">
-              Produto
-            </h4>
-            <ul className="space-y-3">
-              {links.produto.map(link => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-sm text-white/45 hover:text-white transition-colors flex items-center gap-1 group"
-                  >
-                    {link.label}
-                    <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-0.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
-                  </a>
-                </li>
-              ))}
+          <div className="md:col-span-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 mb-3">
+              Plataforma
+            </p>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to={ROUTES.app.dashboard} className="text-slate-600 hover:text-slate-900">
+                  Console
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.app.calculator} className="text-slate-600 hover:text-slate-900">
+                  Precificação
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.app.proposals} className="text-slate-600 hover:text-slate-900">
+                  Propostas
+                </Link>
+              </li>
+              <li>
+                <Link to={ROUTES.app.clients} className="text-slate-600 hover:text-slate-900">
+                  Clientes
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Legal */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-5">
+          <div className="md:col-span-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 mb-3">
+              Empresa
+            </p>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a href="#plataforma" className="text-slate-600 hover:text-slate-900">
+                  Sobre o produto
+                </a>
+              </li>
+              <li>
+                <a href="#seguranca" className="text-slate-600 hover:text-slate-900">
+                  Governança
+                </a>
+              </li>
+              <li>
+                <Link to={ROUTES.designSystem} className="text-slate-600 hover:text-slate-900">
+                  Design System
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="md:col-span-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 mb-3">
               Legal
-            </h4>
-            <ul className="space-y-3">
-              {links.legal.map(link => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-sm text-white/45 hover:text-white transition-colors flex items-center gap-1 group"
-                  >
-                    {link.label}
-                    <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all" />
-                  </a>
-                </li>
-              ))}
+            </p>
+            <ul className="space-y-2 text-sm text-slate-600">
+              <li>Termos de uso</li>
+              <li>Política de privacidade</li>
+              <li>Segurança da informação</li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="section-divider mb-8" />
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-white/25 text-xs">
-            &copy; {currentYear} CalculaFreela. Feito com dedicação para a comunidade freelancer.
+        <div className="pt-6 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-500">
+          <p>
+            © {year} {APP_CONFIG.legalName}. Todos os direitos reservados.
           </p>
-          <div className="flex items-center gap-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-white/25 text-xs">Sistema operacional</span>
-          </div>
+          <p>
+            v{APP_CONFIG.version} · {APP_CONFIG.tagline}
+          </p>
         </div>
       </div>
     </footer>

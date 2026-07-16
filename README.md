@@ -185,6 +185,9 @@ npm run lint
 | `npm run build` | Bundle de produção |
 | `npm run preview` | Preview do build |
 | `npm run lint` | ESLint |
+| `npm run test` | Testes unitários/integração (Vitest) |
+| `npm run test:watch` | Testes em modo watch |
+| `npm run test:coverage` | Testes com relatório de cobertura |
 
 ---
 
@@ -261,6 +264,32 @@ Roda em push/PR para `main`.
 
 ---
 
+## Testes (foco frontend)
+
+Stack: **Vitest** + **Testing Library** + **user-event** + **jsdom** + **coverage-v8**.
+
+```bash
+npm run test            # suite completa (~100 testes)
+npm run test:watch      # desenvolvimento
+npm run test:coverage   # cobertura (text/html/lcov)
+```
+
+### O que a suíte cobre no frontend
+
+| Camada UI | Exemplos |
+|-----------|----------|
+| **Rotas** | Landing, Dashboard shell, Calculadora, 404 |
+| **Layouts** | `DashboardLayout` (sidebar + outlet) |
+| **Patterns** | `PageHeader`, `SearchBar`, `MetricCard`, `EmptyState`, `FormSection`… |
+| **Landing** | `Hero`, `NavBar`, CTAs e links |
+| **Wizard** | `StepInfo` / `StepEscopo` (validação + interação), `CalculatorPage` + demo |
+| **CRUD UI** | `ClientsPage` (lista seed + busca) |
+| **Domain/Services** | Orçamento, Zod, persistência local (suporte à UI) |
+
+Helpers em `src/test/test-utils.tsx` (`renderWithProviders` com Router + React Query + Tooltip).
+
+Os testes rodam no CI (GitHub Actions) antes do build.
+
 ## Qualidade
 
 - Lazy loading + code splitting por rota e vendor chunks  
@@ -270,6 +299,7 @@ Roda em push/PR para `main`.
 - Zustand para UI e wizard  
 - Componentes preferencialmente < 200 linhas  
 - Domain de cálculo isolado e testável  
+- Suite automatizada com 70+ testes
 
 ---
 

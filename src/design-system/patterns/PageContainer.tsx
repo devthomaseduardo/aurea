@@ -17,7 +17,13 @@ const sizeClass = {
 
 export function PageContainer({ children, className, size = 'xl' }: PageContainerProps) {
   return (
-    <div className={cn('w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8', sizeClass[size], className)}>
+    <div
+      className={cn(
+        'w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 animate-fade-in',
+        sizeClass[size],
+        className
+      )}
+    >
       {children}
     </div>
   );

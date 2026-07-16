@@ -26,7 +26,6 @@ export const gerarCartaProposta = (dados: DadosProjeto, resultado: ResultadoOrca
   if (dados.configuracao.pagamentos) servicos.push('Gateway de Pagamento');
   if (dados.configuracao.apis) servicos.push('Integração com APIs');
   dados.configuracao.outrosServicos.forEach(servico => servicos.push(servico));
-  
   return `
 PROPOSTA DE DESENVOLVIMENTO
 ==========================

@@ -55,7 +55,6 @@ export default function ProposalsPage() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<ProposalStatus | 'all'>('all');
   const [page, setPage] = useState(1);
-
   const filters = useMemo(
     () => ({ search, status, page, pageSize: 10, sortBy: 'updatedAt' as const, sortDir: 'desc' as const }),
     [search, status, page]
@@ -65,14 +64,13 @@ export default function ProposalsPage() {
   const remove = useDeleteProposal();
   const duplicate = useDuplicateProposal();
   const update = useUpdateProposal();
-
   return (
     <PageContainer>
       <PageHeader
         title="Propostas"
         description="Propostas geradas pela calculadora e seu pipeline comercial."
         actions={
-          <Button asChild className="btn-primary text-white">
+          <Button asChild className="btn-primary">
             <Link to={ROUTES.app.calculator}>
               <Plus className="w-4 h-4" />
               Nova proposta
@@ -98,7 +96,7 @@ export default function ProposalsPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-full sm:w-44 bg-black/20 border-white/10">
+          <SelectTrigger className="w-full sm:w-44">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -121,14 +119,14 @@ export default function ProposalsPage() {
           title="Nenhuma proposta ainda"
           description="Use a calculadora para gerar sua primeira proposta profissional."
           action={
-            <Button asChild className="btn-primary text-white">
+            <Button asChild className="btn-primary">
               <Link to={ROUTES.app.calculator}>Abrir calculadora</Link>
             </Button>
           }
         />
       ) : (
         <>
-          <div className="glass-card rounded-2xl overflow-hidden">
+          <div className="app-panel overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="border-white/[0.06] hover:bg-transparent">

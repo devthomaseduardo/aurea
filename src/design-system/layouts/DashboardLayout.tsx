@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -10,31 +10,49 @@ import {
   User,
   Menu,
   X,
-  Zap,
-  ChevronLeft,
+  PanelLeftClose,
+  PanelLeft,
   LogOut,
   Palette,
+  ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/shared/utils/utils';
 import { useUiStore } from '@/stores/ui.store';
 import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
 import { profileService } from '@/services/profile.service';
 import { Button } from '@/shared/components/ui/button';
+import { BrandLogo } from '@/design-system/components/BrandLogo';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/shared/components/ui/tooltip';
 
-const navItems = [
-  { to: ROUTES.app.dashboard, label: 'Dashboard', icon: LayoutDashboard },
-  { to: ROUTES.app.clients, label: 'Clientes', icon: Users },
-  { to: ROUTES.app.calculator, label: 'Calculadora', icon: Calculator },
-  { to: ROUTES.app.proposals, label: 'Propostas', icon: FileText },
-  { to: ROUTES.app.contracts, label: 'Contratos', icon: FileSignature },
-  { to: ROUTES.app.analytics, label: 'Analytics', icon: BarChart3 },
-  { to: ROUTES.app.settings, label: 'Configurações', icon: Settings },
-  { to: ROUTES.app.profile, label: 'Perfil', icon: User },
+const navGroups = [
+  {
+    label: 'Operações',
+    items: [
+      { to: ROUTES.app.dashboard, label: 'Visão geral', icon: LayoutDashboard },
+      { to: ROUTES.app.calculator, label: 'Precificação', icon: Calculator },
+      { to: ROUTES.app.proposals, label: 'Propostas', icon: FileText },
+    ],
+  },
+  {
+    label: 'Comercial',
+    items: [
+      { to: ROUTES.app.clients, label: 'Clientes', icon: Users },
+      { to: ROUTES.app.contracts, label: 'Contratos', icon: FileSignature },
+      { to: ROUTES.app.analytics, label: 'Analytics', icon: BarChart3 },
+    ],
+  },
+  {
+    label: 'Administração',
+    items: [
+      { to: ROUTES.app.profile, label: 'Organização', icon: User },
+      { to: ROUTES.app.settings, label: 'Configurações', icon: Settings },
+      { to: ROUTES.designSystem, label: 'Design System', icon: Palette },
+    ],
+  },
 ];
 
 function NavItem({
@@ -51,18 +69,31 @@ function NavItem({
   const link = (
     <NavLink
       to={to}
+      end={to === ROUTES.app.dashboard}
       className={({ isActive }) =>
         cn(
-          'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
+          'group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
           isActive
-            ? 'bg-primary/15 text-foreground border border-primary/25 shadow-[0_0_20px_rgba(100,80,255,0.12)]'
-            : 'text-muted-foreground hover:text-foreground hover:bg-white/[0.04] border border-transparent'
+            ? 'bg-primary/10 text-foreground shadow-[inset_0_0_0_1px_hsla(239,84%,57%,0.2)]'
+            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
         )
       }
       onClick={() => useUiStore.getState().setSidebarMobileOpen(false)}
     >
-      <Icon className="w-4 h-4 shrink-0" />
-      {!collapsed && <span className="truncate">{label}</span>}
+      {({ isActive }) => (
+        <>
+          <Icon
+            className={cn(
+              'w-4 h-4 shrink-0 transition-colors',
+              isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+            )}
+          />
+          {!collapsed && <span className="truncate flex-1">{label}</span>}
+          {!collapsed && isActive && (
+            <ChevronRight className="w-3.5 h-3.5 text-primary/60" />
+          )}
+        </>
+      )}
     </NavLink>
   );
 
@@ -70,7 +101,9 @@ function NavItem({
     return (
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>{link}</TooltipTrigger>
-        <TooltipContent side="right">{label}</TooltipContent>
+        <TooltipContent side="right" className="text-xs">
+          {label}
+        </TooltipContent>
       </Tooltip>
     );
   }
@@ -78,50 +111,64 @@ function NavItem({
   return link;
 }
 
+function pageTitle(pathname: string) {
+  const map: Record<string, string> = {
+    [ROUTES.app.dashboard]: 'Visão geral',
+    [ROUTES.app.clients]: 'Clientes',
+    [ROUTES.app.calculator]: 'Precificação',
+    [ROUTES.app.proposals]: 'Propostas',
+    [ROUTES.app.contracts]: 'Contratos',
+    [ROUTES.app.analytics]: 'Analytics',
+    [ROUTES.app.settings]: 'Configurações',
+    [ROUTES.app.profile]: 'Organização',
+  };
+  if (map[pathname]) return map[pathname];
+  if (pathname.startsWith('/app/clients')) return 'Clientes';
+  if (pathname.startsWith('/app/proposals')) return 'Propostas';
+  return APP_CONFIG.name;
+}
+
 export function DashboardLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { sidebarCollapsed, sidebarMobileOpen, toggleSidebar, setSidebarMobileOpen } =
     useUiStore();
   const profile = profileService.get();
-
   return (
     <div className="min-h-screen bg-background text-foreground flex">
-      {/* Mobile overlay */}
       {sidebarMobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+        <button
+          type="button"
+          aria-label="Fechar menu"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setSidebarMobileOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={cn(
-          'fixed lg:sticky top-0 left-0 z-50 h-screen flex flex-col border-r border-border bg-[hsl(var(--sidebar-background))]/95 backdrop-blur-xl transition-all duration-300',
-          sidebarCollapsed ? 'w-[72px]' : 'w-64',
+          'fixed lg:sticky top-0 left-0 z-50 h-svh flex flex-col border-r border-sidebar-border bg-[hsl(var(--sidebar-background))] transition-[width,transform] duration-200 ease-out',
+          sidebarCollapsed ? 'w-[68px]' : 'w-[260px]',
           sidebarMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
         {/* Brand */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-border">
-          <Link to={ROUTES.app.dashboard} className="flex items-center gap-2 min-w-0">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-              style={{
-                background: 'linear-gradient(135deg, hsl(243,75%,66%), hsl(213,90%,60%))',
-              }}
-            >
-              <Zap className="w-4 h-4 text-white" fill="white" />
-            </div>
-            {!sidebarCollapsed && (
-              <span className="text-base font-bold tracking-tight truncate">
-                <span className="gradient-text-subtle">Calcula</span>
-                <span className="gradient-text">Freela</span>
-              </span>
-            )}
-          </Link>
+        <div
+          className={cn(
+            'flex items-center h-14 border-b border-sidebar-border shrink-0',
+            sidebarCollapsed ? 'justify-center px-2' : 'px-4 gap-2.5'
+          )}
+        >
+          <BrandLogo
+            to={ROUTES.app.dashboard}
+            showWordmark={!sidebarCollapsed}
+            size="md"
+            className="min-w-0"
+            onClick={() => setSidebarMobileOpen(false)}
+          />
           <button
-            className="lg:hidden p-1.5 rounded-lg hover:bg-white/5"
+            type="button"
+            className="lg:hidden ml-auto p-1.5 rounded-md hover:bg-muted"
             onClick={() => setSidebarMobileOpen(false)}
           >
             <X className="w-4 h-4" />
@@ -129,65 +176,93 @@ export function DashboardLayout() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-          {navItems.map((item) => (
-            <NavItem key={item.to} {...item} collapsed={sidebarCollapsed} />
+        <nav className="flex-1 overflow-y-auto px-2.5 py-3 space-y-5">
+          {navGroups.map((group) => (
+            <div key={group.label}>
+              {!sidebarCollapsed && (
+                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
+                  {group.label}
+                </p>
+              )}
+              <div className="space-y-0.5">
+                {group.items.map((item) => (
+                  <NavItem
+                    key={item.to}
+                    {...item}
+                    collapsed={sidebarCollapsed}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
-          <div className="pt-3 mt-3 border-t border-border">
-            <NavItem
-              to={ROUTES.designSystem}
-              label="Design System"
-              icon={Palette}
-              collapsed={sidebarCollapsed}
-            />
-          </div>
         </nav>
 
         {/* Footer */}
-        <div className="p-3 border-t border-border space-y-2">
+        <div className="p-2.5 border-t border-sidebar-border space-y-2 shrink-0">
           {!sidebarCollapsed && (
-            <div className="px-2 py-2 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-              <p className="text-xs font-medium text-foreground truncate">{profile.name}</p>
+            <div className="px-2.5 py-2 rounded-lg bg-slate-50 border border-border">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
+                Conta
+              </p>
+              <p className="text-xs font-medium truncate">{profile.name}</p>
               <p className="text-[11px] text-muted-foreground truncate">{profile.email}</p>
             </div>
           )}
-          <div className="flex items-center gap-1">
+          <div className={cn('flex gap-1', sidebarCollapsed && 'flex-col items-center')}>
             <Button
               variant="ghost"
               size="icon"
-              className="hidden lg:flex"
+              className="hidden lg:flex h-8 w-8 text-muted-foreground"
               onClick={toggleSidebar}
-              aria-label="Recolher menu"
+              aria-label={sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'}
             >
-              <ChevronLeft
-                className={cn('w-4 h-4 transition-transform', sidebarCollapsed && 'rotate-180')}
-              />
+              {sidebarCollapsed ? (
+                <PanelLeft className="w-4 h-4" />
+              ) : (
+                <PanelLeftClose className="w-4 h-4" />
+              )}
             </Button>
             <Button
               variant="ghost"
               size={sidebarCollapsed ? 'icon' : 'sm'}
-              className="flex-1 justify-start text-muted-foreground"
+              className={cn(
+                'text-muted-foreground h-8',
+                !sidebarCollapsed && 'flex-1 justify-start px-2.5'
+              )}
               onClick={() => navigate(ROUTES.home)}
             >
               <LogOut className="w-4 h-4" />
-              {!sidebarCollapsed && <span className="ml-2">Sair do app</span>}
+              {!sidebarCollapsed && <span className="ml-2 text-xs">Sair</span>}
             </Button>
           </div>
         </div>
       </aside>
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
-        {/* Top bar mobile */}
-        <header className="lg:hidden sticky top-0 z-30 h-14 flex items-center gap-3 px-4 border-b border-border bg-background/90 backdrop-blur-xl">
+      {/* Main column */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-svh">
+        <header className="sticky top-0 z-30 h-14 flex items-center gap-3 px-4 md:px-6 border-b border-border bg-white/95 backdrop-blur-xl">
           <button
+            type="button"
             onClick={() => setSidebarMobileOpen(true)}
-            className="p-2 rounded-lg border border-border hover:bg-white/5"
+            className="lg:hidden p-2 rounded-lg border border-border hover:bg-accent"
             aria-label="Abrir menu"
           >
             <Menu className="w-4 h-4" />
           </button>
-          <span className="font-semibold text-sm">{APP_CONFIG.name}</span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground hidden sm:block">
+              Console {APP_CONFIG.name}
+            </p>
+            <p className="text-sm font-semibold truncate text-slate-900">
+              {pageTitle(location.pathname)}
+            </p>
+          </div>
+          <Button asChild size="sm" variant="outline" className="hidden md:inline-flex">
+            <Link to={ROUTES.app.clients}>Clientes</Link>
+          </Button>
+          <Button asChild size="sm" variant="brand" className="hidden sm:inline-flex">
+            <Link to={ROUTES.app.calculator}>Nova proposta</Link>
+          </Button>
         </header>
 
         <main className="flex-1 overflow-x-hidden">

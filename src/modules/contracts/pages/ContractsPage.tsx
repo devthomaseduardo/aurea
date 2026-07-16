@@ -34,7 +34,6 @@ export default function ContractsPage() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<ContractStatus | 'all'>('all');
   const [page, setPage] = useState(1);
-
   const filters = useMemo(
     () => ({ search, status, page, pageSize: 10 }),
     [search, status, page]
@@ -69,7 +68,7 @@ export default function ContractsPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-full sm:w-52 bg-black/20 border-white/10">
+          <SelectTrigger className="w-full sm:w-52">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -93,7 +92,7 @@ export default function ContractsPage() {
         />
       ) : (
         <>
-          <div className="glass-card rounded-2xl overflow-hidden">
+          <div className="app-panel overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="border-white/[0.06] hover:bg-transparent">

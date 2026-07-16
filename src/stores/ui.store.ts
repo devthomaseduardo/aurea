@@ -13,13 +13,13 @@ interface UiState {
 export const useUiStore = create<UiState>((set) => ({
   sidebarCollapsed: false,
   sidebarMobileOpen: false,
-  theme: 'dark',
+  theme: 'light',
   toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
   setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
   setSidebarMobileOpen: (sidebarMobileOpen) => set({ sidebarMobileOpen }),
   setTheme: (theme) => {
-    document.documentElement.classList.toggle('light', theme === 'light');
     document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.documentElement.classList.remove('light');
     set({ theme });
   },
 }));

@@ -14,7 +14,6 @@ interface State {
 
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false };
-
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
@@ -26,7 +25,6 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
-
       return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-background">
           <div className="glass-card rounded-2xl p-8 max-w-md w-full text-center">
@@ -47,7 +45,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 this.setState({ hasError: false, error: undefined });
                 window.location.reload();
               }}
-              className="btn-primary text-white"
+              className="btn-primary"
             >
               <RefreshCw className="w-4 h-4" />
               Recarregar

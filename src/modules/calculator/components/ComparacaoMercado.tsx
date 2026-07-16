@@ -22,7 +22,7 @@ const ComparacaoMercado: React.FC<Props> = ({ comparacoes, valorHora, moeda }) =
   };
 
   const statusConfig = {
-    acima:       { icon: TrendingUp,   color: 'text-emerald-400', bg: 'bg-emerald-400/10 border-emerald-400/20', label: 'Acima da média'   },
+    acima:       { icon: TrendingUp,   color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', label: 'Acima da média'   },
     abaixo:      { icon: TrendingDown, color: 'text-rose-400',    bg: 'bg-rose-400/10 border-rose-400/20',       label: 'Abaixo da média'  },
     equivalente: { icon: Minus,        color: 'text-amber-400',   bg: 'bg-amber-400/10 border-amber-400/20',     label: 'Na média'         },
   };
@@ -42,7 +42,6 @@ const ComparacaoMercado: React.FC<Props> = ({ comparacoes, valorHora, moeda }) =
           const cfg = statusConfig[status];
           const StatusIcon = cfg.icon;
           const pct = Math.round(((valorHora - c.valorMedio) / c.valorMedio) * 100);
-
           return (
             <div
               key={c.plataforma}

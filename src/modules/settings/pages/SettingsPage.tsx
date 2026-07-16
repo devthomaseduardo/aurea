@@ -25,7 +25,6 @@ export default function SettingsPage() {
   const { theme, setTheme } = useUiStore();
   const [emailNotifs, setEmailNotifs] = useState(true);
   const [compactMode, setCompactMode] = useState(false);
-
   return (
     <PageContainer size="md">
       <PageHeader
@@ -43,12 +42,12 @@ export default function SettingsPage() {
                   value={theme}
                   onValueChange={(v) => setTheme(v as 'dark' | 'light')}
                 >
-                  <SelectTrigger className="bg-black/20 border-white/10">
+                  <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="dark">Escuro (recomendado)</SelectItem>
-                    <SelectItem value="light">Claro (experimental)</SelectItem>
+                    <SelectItem value="light">Claro (padrão)</SelectItem>
+                    <SelectItem value="dark">Escuro</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -100,7 +99,7 @@ export default function SettingsPage() {
                 Limpar todos os dados
               </Button>
               <Button
-                className="btn-primary text-white"
+                className="btn-primary"
                 onClick={() => toast({ title: 'Preferências salvas' })}
               >
                 Salvar preferências
