@@ -68,11 +68,6 @@ const Footer = () => {
                   Governança
                 </a>
               </li>
-              <li>
-                <Link to={ROUTES.designSystem} className="text-hover">
-                  Design System
-                </Link>
-              </li>
             </ul>
           </div>
 

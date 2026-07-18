@@ -170,7 +170,7 @@ async function localRegister(input: RegisterInput): Promise<AuthUser> {
   saveUsers([...users, record]);
   const user = toPublicUser(record);
   localStore.setGlobal(SESSION_KEY, createLocalSession(user));
-  await bootstrapWorkspace(user);
+  bootstrapWorkspace(user).catch(console.error);
   return user;
 }
 
@@ -186,7 +186,7 @@ async function localLogin(input: LoginInput): Promise<AuthUser> {
   saveUsers(getUsers().map((u) => (u.id === record.id ? record : u)));
   const user = toPublicUser(record);
   localStore.setGlobal(SESSION_KEY, createLocalSession(user));
-  await bootstrapWorkspace(user);
+  bootstrapWorkspace(user).catch(console.error);
   return user;
 }
 
@@ -223,7 +223,7 @@ async function localSocial(input: SocialLoginInput): Promise<AuthUser> {
   }
   const user = toPublicUser(record);
   localStore.setGlobal(SESSION_KEY, createLocalSession(user));
-  await bootstrapWorkspace(user);
+  bootstrapWorkspace(user).catch(console.error);
   return user;
 }
 
@@ -282,7 +282,7 @@ async function cloudRegister(input: RegisterInput): Promise<AuthUser> {
     const user = firebaseToAuthUser(cred.user);
     user.name = input.name.trim();
     user.companyName = input.companyName?.trim();
-    await bootstrapWorkspace(user);
+    bootstrapWorkspace(user).catch(console.error);
     return user;
   } catch (e) {
     throw mapFirebaseAuthError(e);
@@ -298,7 +298,7 @@ async function cloudLogin(input: LoginInput): Promise<AuthUser> {
       input.password
     );
     const user = firebaseToAuthUser(cred.user);
-    await bootstrapWorkspace(user);
+    bootstrapWorkspace(user).catch(console.error);
     return user;
   } catch (e) {
     throw mapFirebaseAuthError(e);
@@ -341,7 +341,7 @@ async function cloudProvider(provider: 'google' | 'github'): Promise<AuthUser> {
       }
     }
 
-    await bootstrapWorkspace(user);
+    bootstrapWorkspace(user).catch(console.error);
     return user;
   } catch (e) {
     throw mapFirebaseAuthError(e);

@@ -150,7 +150,7 @@ export default function ProposalsPage() {
                         {p.title}
                       </Link>
                       <div className="text-xs text-muted-foreground mt-0.5 truncate max-w-[200px]">
-                        {p.technologies.slice(0, 3).join(', ') || '—'}
+                        {p.technologies.slice(0, 3).join(', ') || '-'}
                       </div>
                     </TableCell>
                     <TableCell className="hidden md:table-cell text-muted-foreground">

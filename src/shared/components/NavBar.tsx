@@ -33,9 +33,6 @@ const NavBar = () => {
             <a href="mailto:enterprise@aurea.app" className="hover:text-foreground transition-colors">
               enterprise@aurea.app
             </a>
-            <Link to={ROUTES.designSystem} className="hover:text-foreground transition-colors">
-              Design System
-            </Link>
           </div>
         </div>
       </div>

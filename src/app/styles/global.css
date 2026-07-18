@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════
-   Aurea Design System v4 — Light Professional
+   Aurea Design System v4 Light Professional
    ═══════════════════════════════════════════════════════════ */
 
 @layer base {
@@ -172,7 +172,7 @@
   h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.03em;
     font-weight: 600;
-    color: hsl(var(--foreground));
+    color: inherit;
     line-height: 1.2;
   }
 

@@ -94,7 +94,7 @@ const governance = [
   {
     icon: Lock,
     title: 'Dados no edge',
-    text: 'Persistência local com prefixo versionado — pronta para evolução API/SSO.',
+    text: 'Persistência local com prefixo versionado, pronta para evolução API/SSO.',
   },
   {
     icon: Scale,
@@ -208,7 +208,7 @@ export default function Landing() {
               Capacidades da suíte comercial
             </h2>
             <p className="text-slate-600">
-              Módulos integrados para cobrir o ciclo completo — da estimativa à governança
+              Módulos integrados para cobrir o ciclo completo, da estimativa à governança
               do contrato.
             </p>
           </div>
@@ -278,7 +278,7 @@ export default function Landing() {
               </h2>
               <p className="text-slate-300 leading-relaxed mb-8 max-w-lg">
                 Propostas e contratos com trilha clara de status, breakdowns legíveis e
-                documentação exportável — o padrão que empresas esperam de um fornecedor
+                documentação exportável no padrão que empresas esperam de um fornecedor
                 profissional.
               </p>
               <div className="flex items-center gap-3 text-sm text-slate-300">
@@ -294,7 +294,7 @@ export default function Landing() {
                   className="rounded-xl border border-white/10 bg-white/5 p-5"
                 >
                   <item.icon className="w-5 h-5 text-indigo-300 mb-3" />
-                  <h3 className="text-sm font-semibold mb-1.5">{item.title}</h3>
+                  <h3 className="text-sm font-semibold text-white mb-1.5">{item.title}</h3>
                   <p className="text-sm text-slate-400 leading-relaxed">{item.text}</p>
                 </div>
               ))}
@@ -344,7 +344,7 @@ export default function Landing() {
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed mb-6">
                   Navegação por áreas de negócio, métricas executivas e atalhos para
-                  criação de propostas — experiência de software corporativo, sem
+                  criação de propostas com experiência de software corporativo, sem
                   complexidade desnecessária.
                 </p>
                 <Link to={ROUTES.app.dashboard} className="btn-primary self-start h-10 px-5 text-sm">
@@ -377,7 +377,7 @@ export default function Landing() {
             Eleve o padrão comercial do seu negócio
           </h2>
           <p className="text-slate-600 mb-8 max-w-xl mx-auto">
-            Adote um processo único de precificação e propostas — com a clareza que
+            Adote um processo único de precificação e propostas, com a clareza que
             clientes corporativos esperam.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">

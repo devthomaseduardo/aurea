@@ -53,7 +53,6 @@ const navGroups = [
       { to: ROUTES.app.integrations, label: 'Integrações', icon: Plug },
       { to: ROUTES.app.profile, label: 'Organização', icon: User },
       { to: ROUTES.app.settings, label: 'Configurações', icon: Settings },
-      { to: ROUTES.designSystem, label: 'Design System', icon: Palette },
     ],
   },
 ];

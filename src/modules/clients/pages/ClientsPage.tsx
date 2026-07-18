@@ -168,7 +168,7 @@ export default function ClientsPage() {
                       </Link>
                     </TableCell>
                     <TableCell className="hidden md:table-cell text-muted-foreground">
-                      {client.company || '—'}
+                      {client.company || '-'}
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-muted-foreground">
                       {client.email}
