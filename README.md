@@ -1,7 +1,3 @@
-<p align="center">
-  <img width="960" alt="Aurea" src="https://raw.githubusercontent.com/devthomaseduardo/aurea/main/public/brand/hero.jpg" />
-</p>
-
 <h1 align="center">Aurea</h1>
 
 <p align="center">
