@@ -1,10 +1,18 @@
-<h1 align="center">Aurea</h1>
+<h1 align="center">Áurea</h1>
 
 <p align="center">
-  <strong>Plataforma comercial empresarial para precificar projetos, gerar propostas e operar o pipeline de freelancers e consultores.</strong>
+  <strong>Plataforma comercial B2B</strong> para precificar projetos, gerar propostas e operar o pipeline de freelancers e consultores.
 </p>
 
 <p align="center">
+  Case de portfólio · Product Engineer · Full Stack<br/>
+  <a href="https://thomaseduardo.com.br/projetos/aurea">Ver no portfólio</a> ·
+  <a href="https://github.com/devthomaseduardo/aurea">GitHub</a> ·
+  Autor: <a href="https://thomaseduardo.com.br">Thomas Eduardo</a>
+</p>
+
+<p align="center">
+  <a href="#o-problema--a-solução">Case</a> ·
   <a href="#visão-do-produto">Visão</a> ·
   <a href="#arquitetura">Arquitetura</a> ·
   <a href="#design-system">Design System</a> ·
@@ -29,9 +37,19 @@
 
 ---
 
+## O problema → a solução
+
+| | |
+|--|--|
+| **Problema** | Operação comercial em planilhas: orçamentos inconsistentes, propostas sem padrão e zero visão do funil. |
+| **Solução** | SaaS único com calculadora multi-etapas, propostas/contratos, CRM de clientes, analytics e conectores (Google, GitHub, Stripe, Slack…). |
+| **Resultado** | Ciclo comercial mais rápido, propostas padronizadas e histórico por cliente — local (demo) ou Firestore (produção). |
+
+---
+
 ## Visão do produto
 
-A **Aurea** é o software B2B para a operação comercial de profissionais independentes:
+A **Áurea** é o software B2B para a operação comercial de profissionais independentes:
 
 | Módulo | Capacidade |
 |--------|------------|
@@ -237,7 +255,7 @@ npm install
 
 # Ambiente
 cp .env.example .env.local
-# Preencha VITE_FIREBASE_* (ver DEPLOY.md)
+# Preencha VITE_FIREBASE_* (ver DEPLOY.md) — opcional para demo local
 
 # Desenvolvimento (http://localhost:8080)
 npm run dev
@@ -263,6 +281,8 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=
 VITE_FIREBASE_APP_ID=
 VITE_FIREBASE_MEASUREMENT_ID=   # opcional
 ```
+
+Sem Firebase o app roda em **modo local** (localStorage) — ideal para demo e testes.
 
 ### Scripts
 
@@ -303,7 +323,7 @@ Imagem multi-stage (Node 20 → Nginx Alpine) com SPA fallback e gzip.
 4. Output: `dist`  
 5. Env: todas as `VITE_FIREBASE_*` + `VITE_APP_URL`  
 
-`vercel.json` já faz rewrite SPA.
+`vercel.json` já faz rewrite SPA + headers de segurança.
 
 ### Firebase (obrigatório para login real)
 
@@ -314,12 +334,6 @@ Rules: **[firestore.rules](./firestore.rules)**
 
 ```
 https://SEU_PROJECT_ID.firebaseapp.com/__/auth/handler
-```
-
-Exemplo (projeto `aurea-daa33`):
-
-```
-https://aurea-daa33.firebaseapp.com/__/auth/handler
 ```
 
 ---
@@ -351,6 +365,7 @@ https://aurea-daa33.firebaseapp.com/__/auth/handler
 - [x] Firestore multi-usuário
 - [x] Conectores OAuth / token com teste ao vivo
 - [x] Suite de testes + deploy Vercel/Docker
+- [x] SEO e README orientados a portfólio
 
 ### v4.2
 - [ ] Cloud Functions para secrets Stripe / refresh tokens
@@ -420,5 +435,6 @@ MIT © Thomas Eduardo
 ---
 
 <p align="center">
-  Desenvolvido com precisão por <strong>Thomas Eduardo</strong> · <strong>Aurea Technologies</strong>
+  Desenvolvido com precisão por <strong>Thomas Eduardo</strong> · <strong>Aurea Technologies</strong><br/>
+  <a href="https://thomaseduardo.com.br">thomaseduardo.com.br</a>
 </p>
