@@ -30,27 +30,27 @@ import { BrandLogo } from '@/design-system/components/BrandLogo';
 // 1. Catálogo de Aparelhos Atendidos com Imagens Reais
 const deviceCatalog = [
   // Apple
-  { brand: 'Apple', name: 'iPhone 11', img: 'https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=400&auto=format&fit=crop&q=80', services: 'Tela, Bateria, Conector', time: '30 a 45 min' },
-  { brand: 'Apple', name: 'iPhone 12', img: 'https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=400&auto=format&fit=crop&q=80', services: 'Tela OLED, Bateria, Vidro Traseiro', time: '40 min' },
-  { brand: 'Apple', name: 'iPhone 13', img: 'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?w=400&auto=format&fit=crop&q=80', services: 'Tela, Bateria, Placa, Câmera', time: '45 min' },
-  { brand: 'Apple', name: 'iPhone 14', img: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&auto=format&fit=crop&q=80', services: 'Tela, Vidro Traseiro a Laser', time: '50 min' },
-  { brand: 'Apple', name: 'iPhone 15', img: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&auto=format&fit=crop&q=80', services: 'Tela OLED, Conector USB-C', time: '45 min' },
+  { brand: 'Apple', name: 'iPhone 16 Pro Max', img: '/img/celulares/apple-iphone-16-preto.jpg', services: 'Tela OLED, Bateria, Vidro Traseiro', time: '40 a 50 min' },
+  { brand: 'Apple', name: 'iPhone 16', img: '/img/celulares/apple-iphone-16-rosa.jpg', services: 'Tela, Bateria, Conector USB-C', time: '35 a 45 min' },
+  { brand: 'Apple', name: 'iPhone 16e', img: '/img/celulares/apple-iphone-16e-branco.jpg', services: 'Tela, Câmera, Desoxidação', time: '40 min' },
+  { brand: 'Apple', name: 'iPhone 13', img: '/img/celulares/apple-iphone-13-preto.jpg', services: 'Tela, Bateria, Placa, Câmera', time: '45 min' },
+  { brand: 'Apple', name: 'iPhone SE 2ª Geração', img: '/img/celulares/apple-iphone-se.jpg', services: 'Tela LCD, Bateria, Botão Home', time: '30 min' },
   // Samsung
-  { brand: 'Samsung', name: 'Galaxy S21', img: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&auto=format&fit=crop&q=80', services: 'Tela Dynamic AMOLED, Bateria', time: '45 min' },
-  { brand: 'Samsung', name: 'Galaxy S22', img: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&auto=format&fit=crop&q=80', services: 'Tela, Conector USB-C, Câmera', time: '45 min' },
-  { brand: 'Samsung', name: 'Galaxy S23', img: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&auto=format&fit=crop&q=80', services: 'Tela AMOLED, Placa, Bateria', time: '50 min' },
-  { brand: 'Samsung', name: 'Galaxy A54', img: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&auto=format&fit=crop&q=80', services: 'Tela, Tampa Traseira, Carga', time: '40 min' },
-  { brand: 'Samsung', name: 'Galaxy A55', img: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&auto=format&fit=crop&q=80', services: 'Tela, Bateria, Conector', time: '40 min' },
+  { brand: 'Samsung', name: 'Galaxy S25 5G', img: '/img/celulares/samsung-galaxy-s25.jpg', services: 'Tela Dynamic AMOLED 2X, Bateria', time: '45 min' },
+  { brand: 'Samsung', name: 'Galaxy S25 FE 5G', img: '/img/celulares/samsung-galaxy-s25-fe.jpg', services: 'Tela, Conector USB-C, Câmera', time: '45 min' },
+  { brand: 'Samsung', name: 'Galaxy S24 Ultra 5G', img: '/img/celulares/samsung-galaxy-s24-ultra.jpg', services: 'Tela AMOLED, Placa, Vidro Traseiro', time: '50 min' },
+  { brand: 'Samsung', name: 'Galaxy A26 5G', img: '/img/celulares/samsung-galaxy-a26.jpg', services: 'Tela Super AMOLED, Carga, Bateria', time: '40 min' },
+  { brand: 'Samsung', name: 'Galaxy A16', img: '/img/celulares/samsung-galaxy-a16.jpg', services: 'Tela, Bateria, Conector', time: '40 min' },
   // Xiaomi
-  { brand: 'Xiaomi', name: 'Redmi Note 11', img: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&auto=format&fit=crop&q=80', services: 'Tela, Bateria 5000mAh, Carga', time: '40 min' },
-  { brand: 'Xiaomi', name: 'Redmi Note 12', img: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&auto=format&fit=crop&q=80', services: 'Tela AMOLED, Bateria, Desoxidação', time: '45 min' },
-  { brand: 'Xiaomi', name: 'Redmi Note 13', img: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&auto=format&fit=crop&q=80', services: 'Tela, Conector USB-C', time: '45 min' },
-  { brand: 'Xiaomi', name: 'Poco X5', img: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&auto=format&fit=crop&q=80', services: 'Tela 120Hz, Bateria, Placa', time: '50 min' },
+  { brand: 'Xiaomi', name: 'Xiaomi 17 Pro 5G', img: '/img/celulares/xiaomi-17-pro.jpg', services: 'Tela AMOLED 144Hz, Placa, Carga', time: '45 min' },
+  { brand: 'Xiaomi', name: 'Xiaomi 14', img: '/img/celulares/xiaomi-14.jpg', services: 'Tela, Bateria 5000mAh, Câmera Leica', time: '45 min' },
+  { brand: 'Xiaomi', name: 'Redmi Note 15 Pro', img: '/img/celulares/xiaomi-redmi-note-15-pro.jpg', services: 'Tela 120Hz, Conector USB-C, Carga', time: '40 min' },
+  { brand: 'Xiaomi', name: 'Redmi 12 4G', img: '/img/celulares/xiaomi-redmi-12.jpg', services: 'Tela FHD+, Bateria, Desoxidação', time: '40 min' },
   // Motorola
-  { brand: 'Motorola', name: 'Moto G54', img: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=400&auto=format&fit=crop&q=80', services: 'Tela, Bateria, Conector TurboPower', time: '40 min' },
-  { brand: 'Motorola', name: 'Moto G84', img: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=400&auto=format&fit=crop&q=80', services: 'Tela pOLED, Bateria, Câmera', time: '45 min' },
-  { brand: 'Motorola', name: 'Edge 30', img: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=400&auto=format&fit=crop&q=80', services: 'Tela OLED Curva, Conector', time: '50 min' },
-  { brand: 'Motorola', name: 'Edge 40', img: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=400&auto=format&fit=crop&q=80', services: 'Tela, Bateria, Tampa Traseira', time: '50 min' },
+  { brand: 'Motorola', name: 'Motorola Signature 5G', img: '/img/celulares/motorola-signature.jpg', services: 'Tela pOLED 165Hz, Bateria, Placa', time: '50 min' },
+  { brand: 'Motorola', name: 'Motorola Edge 70 5G', img: '/img/celulares/motorola-edge-70.png', services: 'Tela pOLED Curva, Bateria, Carga', time: '45 min' },
+  { brand: 'Motorola', name: 'Moto G86 5G', img: '/img/celulares/motorola-moto-g86.png', services: 'Tela, Bateria, Conector TurboPower', time: '40 min' },
+  { brand: 'Motorola', name: 'Moto G67 5G', img: '/img/celulares/motorola-moto-g67.png', services: 'Tela, Bateria, Tampa Traseira', time: '40 min' },
 ];
 
 // 2. Serviços mais procurados
