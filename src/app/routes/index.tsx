@@ -7,6 +7,9 @@ import { ProtectedRoute } from '@/modules/auth/components/ProtectedRoute';
 import { AuthBootstrap } from '@/modules/auth/components/AuthBootstrap';
 
 const LandingPage = lazy(() => import('@/modules/landing/pages/Landing'));
+const CatalogPage = lazy(() => import('@/modules/landing/pages/CatalogPage'));
+const ServicesPage = lazy(() => import('@/modules/landing/pages/ServicesPage'));
+const AboutPage = lazy(() => import('@/modules/landing/pages/AboutPage'));
 const StatusPortalPage = lazy(() => import('@/modules/status/pages/StatusPortalPage'));
 const NotFound = lazy(() => import('@/shared/components/NotFound'));
 const DesignSystemPage = lazy(() => import('@/modules/design-system/pages/DesignSystemPage'));
@@ -47,6 +50,30 @@ export function AppRoutes() {
           element={
             <Lazy>
               <LandingPage />
+            </Lazy>
+          }
+        />
+        <Route
+          path={ROUTES.aparelhos}
+          element={
+            <Lazy>
+              <CatalogPage />
+            </Lazy>
+          }
+        />
+        <Route
+          path={ROUTES.servicos}
+          element={
+            <Lazy>
+              <ServicesPage />
+            </Lazy>
+          }
+        />
+        <Route
+          path={ROUTES.sobre}
+          element={
+            <Lazy>
+              <AboutPage />
             </Lazy>
           }
         />

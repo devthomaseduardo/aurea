@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X, Search, PhoneCall, ArrowRight, Wrench } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Search, PhoneCall } from 'lucide-react';
 import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
 import { BrandLogo } from '@/design-system/components/BrandLogo';
 import { cn } from '@/shared/utils/utils';
@@ -8,6 +8,7 @@ import { cn } from '@/shared/utils/utils';
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 8);
@@ -16,12 +17,11 @@ const NavBar = () => {
   }, []);
 
   const navLinks = [
-    { href: '#inicio', label: 'Início' },
-    { href: '#servicos', label: 'Serviços' },
-    { href: '#aparelhos', label: 'Aparelhos' },
-    { href: '#status', label: 'Consultar OS' },
-    { href: '#garantia', label: 'Garantia' },
-    { href: '#loja', label: 'Nossa Loja' },
+    { to: ROUTES.home, label: 'Início' },
+    { to: ROUTES.servicos, label: 'Serviços' },
+    { to: ROUTES.aparelhos, label: 'Aparelhos' },
+    { to: ROUTES.sobre, label: 'Nossa Bancada' },
+    { to: ROUTES.statusPortal, label: 'Consultar OS' },
   ];
 
   return (
@@ -55,15 +55,23 @@ const NavBar = () => {
 
           {/* Links Centro */}
           <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="px-3.5 py-2 text-[13px] font-bold text-[#0B1633] hover:text-[#0055FF] hover:bg-slate-50 rounded-lg transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.to;
+              return (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={cn(
+                    'px-3.5 py-2 text-[13px] font-bold rounded-lg transition-colors',
+                    isActive
+                      ? 'text-[#0055FF] bg-blue-50'
+                      : 'text-[#0B1633] hover:text-[#0055FF] hover:bg-slate-50'
+                  )}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Botões Direita */}
@@ -78,13 +86,13 @@ const NavBar = () => {
               WhatsApp
             </a>
 
-            <a
-              href="#status"
+            <Link
+              to={ROUTES.statusPortal}
               className="hidden sm:inline-flex h-9 items-center px-3.5 text-xs font-bold text-white bg-[#0055FF] hover:bg-[#0044CC] rounded-xl shadow-sm transition-colors gap-1.5"
             >
               <Search className="w-3.5 h-3.5 text-[#FFD100]" />
               Consultar OS
-            </a>
+            </Link>
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -100,14 +108,14 @@ const NavBar = () => {
         {isMenuOpen && (
           <div className="lg:hidden border-t border-[#E5E7EB] bg-white px-5 py-4 space-y-2">
             {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
+              <Link
+                key={link.to}
+                to={link.to}
                 onClick={() => setIsMenuOpen(false)}
                 className="block py-2 text-sm font-bold text-[#0B1633] hover:text-[#0055FF]"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
             <div className="pt-3 border-t border-[#E5E7EB] flex flex-col gap-2">
               <a
@@ -118,13 +126,13 @@ const NavBar = () => {
               >
                 <PhoneCall className="w-4 h-4" /> WhatsApp: (11) 98765-4321
               </a>
-              <a
-                href="#status"
+              <Link
+                to={ROUTES.statusPortal}
                 onClick={() => setIsMenuOpen(false)}
                 className="btn-cambuci-primary justify-center text-xs"
               >
                 <Search className="w-4 h-4 text-[#FFD100]" /> Consultar Minha OS
-              </a>
+              </Link>
             </div>
           </div>
         )}

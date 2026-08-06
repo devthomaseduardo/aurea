@@ -15,7 +15,7 @@ describe('Hero (frontend)', () => {
       })
     ).toBeInTheDocument();
 
-    expect(screen.getByText(/Consultar minha OS/i)).toBeInTheDocument();
-    expect(screen.getByText(/Solicitar orçamento/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Consultar OS/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/WhatsApp Direct/i)).toBeInTheDocument();
   });
 });

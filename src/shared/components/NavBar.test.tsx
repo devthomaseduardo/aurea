@@ -19,6 +19,6 @@ describe('NavBar (frontend)', () => {
 
     await user.click(screen.getByLabelText('Toggle menu'));
     expect(screen.getAllByText('Consultar OS').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Garantia').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Nossa Bancada/i).length).toBeGreaterThan(0);
   });
 });

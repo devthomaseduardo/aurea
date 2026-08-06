@@ -28,6 +28,9 @@ export const APP_CONFIG = {
 
 export const ROUTES = {
   home: '/',
+  aparelhos: '/aparelhos',
+  servicos: '/servicos',
+  sobre: '/sobre',
   statusPortal: '/status',
   statusDetail: (id: string) => `/status/${id}`,
   auth: {

@@ -384,7 +384,7 @@ export default function Landing() {
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <div className="relative rounded-2xl overflow-hidden border border-[#E5E7EB] shadow-md h-80 bg-slate-200">
               <img
-                src="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800&auto=format&fit=crop&q=80"
+                src="/brand/product.jpg"
                 alt="Nossa Bancada Técnica"
                 className="w-full h-full object-cover"
               />

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { PhoneCall, Instagram, Mail, ShieldCheck, Lock } from 'lucide-react';
+import { PhoneCall, Instagram, Mail, Lock } from 'lucide-react';
 import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
 import { BrandLogo } from '@/design-system/components/BrandLogo';
 
@@ -28,12 +28,10 @@ const Footer = () => {
               Navegação
             </p>
             <ul className="space-y-2 text-xs font-semibold text-slate-600">
-              <li><a href="#servicos" className="hover:text-[#0055FF]">Serviços</a></li>
-              <li><a href="#status" className="hover:text-[#0055FF]">Consultar OS</a></li>
-              <li><a href="#garantia" className="hover:text-[#0055FF]">Garantia 90 Dias</a></li>
-              <li><a href="#loja" className="hover:text-[#0055FF]">Contato & Loja Física</a></li>
-              <li><a href="#garantia" className="hover:text-[#0055FF]">Política de Privacidade</a></li>
-              <li><a href="#garantia" className="hover:text-[#0055FF]">Termos de Serviço</a></li>
+              <li><Link to={ROUTES.servicos} className="hover:text-[#0055FF]">Serviços Prestados</Link></li>
+              <li><Link to={ROUTES.aparelhos} className="hover:text-[#0055FF]">Catálogo de Aparelhos</Link></li>
+              <li><Link to={ROUTES.sobre} className="hover:text-[#0055FF]">Nossa Loja & Bancada</Link></li>
+              <li><Link to={ROUTES.statusPortal} className="hover:text-[#0055FF]">Consultar Minha OS</Link></li>
             </ul>
           </div>
 
