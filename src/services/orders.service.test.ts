@@ -38,7 +38,7 @@ describe('OrdersService', () => {
       ],
     });
 
-    expect(newOrder.id).toContain('OS-');
+    expect(newOrder.id).toContain('CM-');
     expect(newOrder.totalValue).toBe(450);
 
     const fetched = ordersService.getById(newOrder.id);
@@ -55,8 +55,8 @@ describe('OrdersService', () => {
   });
 
   it('pesquisa ordem por código ou telefone', () => {
-    const results = ordersService.getByPhoneOrCode('OS-2026-001');
+    const results = ordersService.getByPhoneOrCode('CM-2026-00128');
     expect(results.length).toBeGreaterThan(0);
-    expect(results[0].id).toBe('OS-2026-001');
+    expect(results[0].id).toBe('CM-2026-00128');
   });
 });

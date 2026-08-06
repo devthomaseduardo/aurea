@@ -76,6 +76,7 @@ export const dashboardService = {
       'analyzing',
       'budget_pending',
       'repairing',
+      'testing',
       'ready',
       'delivered',
       'cancelled',

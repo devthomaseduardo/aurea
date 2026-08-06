@@ -1,30 +1,16 @@
 export type Currency = 'BRL' | 'USD';
 
-export type ProposalStatus =
-  | 'draft'
-  | 'sent'
-  | 'viewed'
-  | 'accepted'
-  | 'rejected'
-  | 'expired';
-
-export type ContractStatus =
-  | 'draft'
-  | 'pending_signature'
-  | 'active'
-  | 'completed'
-  | 'cancelled';
-
 export type ClientStatus = 'active' | 'inactive' | 'lead';
 
 export type OSStatus =
-  | 'received'         // Recebido
-  | 'analyzing'        // Em análise
+  | 'received'         // Recebido no balcão
+  | 'analyzing'        // Em diagnóstico
   | 'budget_pending'   // Aguardando aprovação de orçamento
   | 'repairing'        // Em reparo
+  | 'testing'          // Em testes de qualidade
   | 'ready'            // Pronto para retirada
-  | 'delivered'        // Entregue
-  | 'cancelled';       // Cancelado
+  | 'delivered'        // Entregue ao cliente
+  | 'cancelled';       // Recusado ou Cancelado
 
 export type OSPaymentStatus = 'pending' | 'paid' | 'refunded';
 export type DeviceType = 'phone' | 'tablet' | 'smartwatch' | 'computer' | 'other';
@@ -52,12 +38,14 @@ export interface OSPartItem {
 
 export interface ServiceOrder {
   id: string;
+  companyId?: string; // Multi-tenant company ID
   clientId: string;
   clientName: string;
   clientPhone?: string;
   deviceType: DeviceType;
   deviceBrand: string; // Ex: Apple, Samsung, Xiaomi, Motorola
   deviceModel: string; // Ex: iPhone 13 Pro, Galaxy S22
+  deviceImageUrl?: string; // Miniatura real do aparelho
   deviceColor?: string;
   serialNumber?: string; // IMEI ou Número de Série
   passcode?: string; // Senha de desbloqueio para testes
@@ -67,6 +55,8 @@ export interface ServiceOrder {
   checklist?: PhysicalChecklist;
   partsUsed?: OSPartItem[];
   status: OSStatus;
+  technicianId?: string;
+  technicianName?: string;
   laborPrice: number; // Mão de obra
   partsPrice: number; // Valor das peças
   totalValue: number;
@@ -82,6 +72,7 @@ export type ItemCategory = 'parts' | 'devices' | 'accessories' | 'services';
 
 export interface InventoryItem {
   id: string;
+  companyId?: string;
   name: string;
   category: ItemCategory;
   sku?: string;
@@ -108,6 +99,7 @@ export interface SaleItem {
 
 export interface Sale {
   id: string;
+  companyId?: string;
   clientId?: string;
   clientName?: string;
   items: SaleItem[];
@@ -119,44 +111,62 @@ export interface Sale {
   createdAt: string;
 }
 
-export interface Proposal {
+export interface DeviceModel {
   id: string;
-  title: string;
-  clientId?: string;
-  clientName: string;
-  status: ProposalStatus;
-  currency: Currency;
-  totalValue: number;
-  totalHours: number;
-  totalDays: number;
-  technologies: string[];
-  model: 'basico' | 'padrao' | 'premium';
-  projectSnapshot: unknown;
-  resultSnapshot: unknown;
-  notes?: string;
-  createdAt: string;
-  updatedAt: string;
-  sentAt?: string;
+  brand: 'Apple' | 'Samsung' | 'Xiaomi' | 'Motorola' | 'Outros';
+  model: string;
+  category: DeviceType;
+  imageUrl: string;
+  screenCostAvg: number;
+  batteryCostAvg: number;
+  releaseYear?: number;
 }
 
-export interface Contract {
+export interface Technician {
   id: string;
-  proposalId?: string;
-  title: string;
-  clientId?: string;
+  name: string;
+  role: 'Técnico Senior' | 'Técnico Pleno' | 'Atendente Balcão' | 'Gerente';
+  specialties: string[];
+  phone: string;
+  email: string;
+  avatarUrl?: string;
+  activeOSCount: number;
+  completedOSCount: number;
+  status: 'active' | 'inactive';
+}
+
+export interface WarrantyRecord {
+  id: string;
+  osId: string;
   clientName: string;
-  status: ContractStatus;
-  currency: Currency;
-  totalValue: number;
-  startDate?: string;
-  endDate?: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
+  clientPhone: string;
+  deviceModel: string;
+  partsReplaced: string[];
+  warrantyDays: number;
+  startDate: string;
+  endDate: string;
+  status: 'active' | 'expired' | 'claimed';
+}
+
+export interface TenantCompany {
+  id: string;
+  name: string;
+  legalName: string;
+  slug: string;
+  logoUrl: string;
+  primaryColor: string;
+  accentColor: string;
+  phone: string;
+  whatsapp: string;
+  address: string;
+  cnpj: string;
+  warrantyDays: number;
+  warrantyTerms: string;
 }
 
 export interface Client {
   id: string;
+  companyId?: string;
   name: string;
   email: string;
   phone?: string;
@@ -171,7 +181,7 @@ export interface Client {
 
 export interface Activity {
   id: string;
-  type: 'proposal' | 'client' | 'contract' | 'calculation' | 'system' | 'os' | 'inventory' | 'sale';
+  type: 'client' | 'system' | 'os' | 'inventory' | 'sale' | 'device' | 'team';
   title: string;
   description?: string;
   entityId?: string;
@@ -204,9 +214,4 @@ export interface DashboardMetrics {
   readyOS: number;
   lowStockItemsCount: number;
   averageTicket: number;
-  hours?: number;
-  projects?: number;
-  profit?: number;
-  acceptanceRate?: number;
 }
-

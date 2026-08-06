@@ -4,13 +4,13 @@ import {
   CheckCircle2,
   Clock,
   AlertTriangle,
-  TrendingUp,
   DollarSign,
   Plus,
-  ArrowUpRight,
   Smartphone,
   ChevronRight,
   Package,
+  UserCheck,
+  Eye,
 } from 'lucide-react';
 import {
   PageContainer,
@@ -18,14 +18,12 @@ import {
   MetricCard,
   MetricGrid,
   LoadingState,
-  StatusBadge,
 } from '@/design-system/patterns';
 import {
   useDashboardMetrics,
   useRevenueSeries,
-  useRecentActivities,
 } from '@/hooks/use-dashboard';
-import { formatCurrency, formatRelativeDate } from '@/shared/utils/utils';
+import { formatCurrency } from '@/shared/utils/utils';
 import {
   AreaChart,
   Area,
@@ -40,12 +38,12 @@ import { ROUTES } from '@/core/config/app.config';
 import { Button } from '@/shared/components/ui/button';
 import { ordersService, OS_STATUS_LABELS } from '@/services/orders.service';
 import { inventoryService } from '@/services/inventory.service';
-import type { OSStatus } from '@/types/domain';
+import { settingsService } from '@/services/settings.service';
 
 export default function DashboardPage() {
   const metrics = useDashboardMetrics();
   const series = useRevenueSeries();
-  const activities = useRecentActivities();
+  const activeTenant = settingsService.getActiveTenant();
 
   const recentOrders = ordersService.list().slice(0, 5);
   const lowStockItems = inventoryService.getLowStockItems();
@@ -63,20 +61,20 @@ export default function DashboardPage() {
   return (
     <PageContainer className="space-y-6">
       <PageHeader
-        title="Painel de Controle da Oficina"
-        description="Acompanhamento em tempo real de Ordens de Serviço, faturamento e peças em estoque."
+        title={`Painel Operacional — ${activeTenant.name}`}
+        description="Controle em tempo real de Ordens de Serviço, miniaturas de aparelhos, bancada técnica e faturamento."
         actions={
           <div className="flex items-center gap-2">
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline" size="sm" className="border-slate-300 font-bold text-xs">
               <Link to={ROUTES.app.pos}>
-                <ShoppingBag className="w-3.5 h-3.5 mr-1.5" />
+                <ShoppingBag className="w-3.5 h-3.5 mr-1.5 text-blue-600" />
                 Venda no Balcão (PDV)
               </Link>
             </Button>
 
-            <Button asChild variant="brand" size="sm">
+            <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm">
               <Link to={ROUTES.app.ordersNew}>
-                <Plus className="w-3.5 h-3.5 mr-1.5" />
+                <Plus className="w-3.5 h-3.5 mr-1.5 text-yellow-300" />
                 Nova OS
               </Link>
             </Button>
@@ -120,13 +118,13 @@ export default function DashboardPage() {
 
       {/* Gráfico de Evolução e Alerta de Estoque */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 bg-card border border-border rounded-xl p-5 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between border-b border-border pb-3">
+        <div className="xl:col-span-2 bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div>
-              <h3 className="font-bold text-base text-foreground">Faturamento de Reparos vs Vendas</h3>
-              <p className="text-xs text-muted-foreground">Evolução dos últimos 6 meses</p>
+              <h3 className="font-extrabold text-base text-slate-900">Faturamento de Reparos vs Vendas</h3>
+              <p className="text-xs text-slate-500">Evolução mensal da oficina ({activeTenant.name})</p>
             </div>
-            <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+            <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
               Ticket Médio: {formatCurrency(m.averageTicket)}
             </span>
           </div>
@@ -136,17 +134,17 @@ export default function DashboardPage() {
               <AreaChart data={series.data ?? []}>
                 <defs>
                   <linearGradient id="rep" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(239,84%,57%)" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="hsl(239,84%,57%)" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#1D4ED8" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#1D4ED8" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="sales" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(152,60%,36%)" stopOpacity={0.25} />
-                    <stop offset="100%" stopColor="hsl(152,60%,36%)" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#10B981" stopOpacity={0.25} />
+                    <stop offset="100%" stopColor="#10B981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsla(215,20%,50%,0.15)" vertical={false} />
-                <XAxis dataKey="month" stroke="hsla(215,16%,42%,0.75)" fontSize={11} tickLine={false} />
-                <YAxis stroke="hsla(215,16%,42%,0.75)" fontSize={11} tickLine={false} width={48} />
+                <XAxis dataKey="month" stroke="#64748B" fontSize={11} tickLine={false} />
+                <YAxis stroke="#64748B" fontSize={11} tickLine={false} width={48} />
                 <Tooltip
                   contentStyle={{
                     background: '#fff',
@@ -159,7 +157,7 @@ export default function DashboardPage() {
                   type="monotone"
                   dataKey="repair"
                   name="Reparos (OS)"
-                  stroke="hsl(239,84%,57%)"
+                  stroke="#1D4ED8"
                   fill="url(#rep)"
                   strokeWidth={2}
                 />
@@ -167,7 +165,7 @@ export default function DashboardPage() {
                   type="monotone"
                   dataKey="sales"
                   name="Vendas Balcão"
-                  stroke="hsl(152,60%,36%)"
+                  stroke="#10B981"
                   fill="url(#sales)"
                   strokeWidth={2}
                 />
@@ -177,34 +175,34 @@ export default function DashboardPage() {
         </div>
 
         {/* Alerta de Estoque Mínimo */}
-        <div className="bg-card border border-border rounded-xl p-5 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between border-b border-border pb-3">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div className="flex items-center gap-2">
               <Package className="w-5 h-5 text-amber-500" />
-              <h3 className="font-bold text-base text-foreground">Alertas de Reposição</h3>
+              <h3 className="font-extrabold text-base text-slate-900">Alertas de Reposição</h3>
             </div>
-            <Link to={ROUTES.app.inventory} className="text-xs font-semibold text-primary hover:underline">
-              Ver Tudo
+            <Link to={ROUTES.app.inventory} className="text-xs font-bold text-blue-700 hover:underline">
+              Ver Estoque
             </Link>
           </div>
 
           <div className="space-y-3">
             {lowStockItems.length === 0 ? (
-              <p className="text-xs text-muted-foreground text-center py-8">
+              <p className="text-xs text-slate-500 text-center py-8">
                 Estoque 100% abastecido. Nenhuma peça em nível crítico.
               </p>
             ) : (
               lowStockItems.slice(0, 4).map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between p-3 rounded-lg border border-amber-200/60 bg-amber-50/50 text-xs"
+                  className="flex items-center justify-between p-3 rounded-xl border border-amber-200 bg-amber-50/50 text-xs"
                 >
                   <div>
                     <p className="font-bold text-slate-900">{item.name}</p>
                     <p className="text-[11px] text-slate-500">Mínimo desejado: {item.minQuantity} un</p>
                   </div>
 
-                  <span className="font-extrabold text-red-600 bg-red-100 border border-red-200 px-2 py-1 rounded-md text-xs">
+                  <span className="font-extrabold text-red-700 bg-red-100 border border-red-200 px-2 py-1 rounded-md text-xs">
                     {item.quantity} restab.
                   </span>
                 </div>
@@ -214,14 +212,14 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Seção Inferior: Últimas Ordens de Serviço */}
-      <div className="bg-card border border-border rounded-xl p-5 space-y-4 shadow-sm">
-        <div className="flex items-center justify-between border-b border-border pb-3">
+      {/* Seção Inferior: Últimas Ordens de Serviço (Device-Centric Cards) */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div className="flex items-center gap-2">
-            <Wrench className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-base text-foreground">Últimas Ordens de Serviço</h3>
+            <Wrench className="w-5 h-5 text-blue-600" />
+            <h3 className="font-extrabold text-base text-slate-900">Aparelhos na Bancada (Ordens de Serviço)</h3>
           </div>
-          <Button asChild variant="ghost" size="sm" className="text-xs">
+          <Button asChild variant="ghost" size="sm" className="text-xs font-bold text-blue-700 hover:text-blue-800">
             <Link to={ROUTES.app.orders}>
               Ver todas as OS <ChevronRight className="w-3.5 h-3.5 ml-1" />
             </Link>
@@ -229,38 +227,73 @@ export default function DashboardPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-border">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50 text-[10px] uppercase font-extrabold text-slate-500 border-b border-slate-200">
               <tr>
-                <th className="p-3">Código</th>
+                <th className="p-3">Aparelho & OS</th>
                 <th className="p-3">Cliente</th>
-                <th className="p-3">Aparelho</th>
-                <th className="p-3">Defeito</th>
-                <th className="p-3">Status</th>
+                <th className="p-3">Técnico Resp.</th>
+                <th className="p-3">Defeito Relatado</th>
+                <th className="p-3">Status Pipeline</th>
                 <th className="p-3 text-right">Valor</th>
+                <th className="p-3 text-center">Ver</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-slate-100">
               {recentOrders.map((ord) => {
                 const statusInfo = OS_STATUS_LABELS[ord.status];
 
                 return (
-                  <tr key={ord.id} className="hover:bg-muted/40 transition-colors text-xs">
-                    <td className="p-3 font-bold text-primary">
-                      <Link to={ROUTES.app.orderDetail(ord.id)}>{ord.id}</Link>
-                    </td>
-                    <td className="p-3 font-medium text-foreground">{ord.clientName}</td>
+                  <tr key={ord.id} className="hover:bg-slate-50 transition-colors">
                     <td className="p-3">
-                      {ord.deviceBrand} {ord.deviceModel}
+                      <div className="flex items-center gap-2.5">
+                        {ord.deviceImageUrl ? (
+                          <img
+                            src={ord.deviceImageUrl}
+                            alt={ord.deviceModel}
+                            className="w-9 h-9 rounded-lg object-contain bg-slate-100 p-1 border border-slate-200 shrink-0"
+                          />
+                        ) : (
+                          <div className="w-9 h-9 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center shrink-0 text-blue-600">
+                            <Smartphone className="w-4 h-4" />
+                          </div>
+                        )}
+                        <div>
+                          <Link to={ROUTES.app.orderDetail(ord.id)} className="font-extrabold text-blue-700 hover:underline block text-xs">
+                            #{ord.id}
+                          </Link>
+                          <strong className="text-slate-900 block font-bold text-xs">{ord.deviceBrand} {ord.deviceModel}</strong>
+                        </div>
+                      </div>
                     </td>
-                    <td className="p-3 text-muted-foreground truncate max-w-xs">{ord.reportedIssue}</td>
+
+                    <td className="p-3 font-bold text-slate-900">{ord.clientName}</td>
+
                     <td className="p-3">
-                      <span className={`px-2.5 py-0.5 rounded-md font-semibold text-[11px] border ${statusInfo.color}`}>
+                      <span className="inline-flex items-center gap-1 text-slate-700 font-medium">
+                        <UserCheck className="w-3.5 h-3.5 text-blue-600" />
+                        {ord.technicianName || 'Rafael Santos'}
+                      </span>
+                    </td>
+
+                    <td className="p-3 text-slate-600 truncate max-w-xs">{ord.reportedIssue}</td>
+
+                    <td className="p-3">
+                      <span className={`px-2.5 py-1 rounded-lg font-bold text-[10px] border ${statusInfo.color}`}>
                         {statusInfo.label}
                       </span>
                     </td>
-                    <td className="p-3 text-right font-bold text-foreground">
+
+                    <td className="p-3 text-right font-extrabold text-slate-900">
                       {formatCurrency(ord.totalValue)}
+                    </td>
+
+                    <td className="p-3 text-center">
+                      <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                        <Link to={ROUTES.app.orderDetail(ord.id)}>
+                          <Eye className="w-4 h-4 text-slate-500 hover:text-slate-900" />
+                        </Link>
+                      </Button>
                     </td>
                   </tr>
                 );

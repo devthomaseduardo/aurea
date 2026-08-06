@@ -18,35 +18,23 @@ const DashboardPage = lazy(() => import('@/modules/dashboard/pages/DashboardPage
 const OrdersPage = lazy(() => import('@/modules/orders/pages/OrdersPage'));
 const OrderFormPage = lazy(() => import('@/modules/orders/pages/OrderFormPage'));
 const OrderDetailPage = lazy(() => import('@/modules/orders/pages/OrderDetailPage'));
+const DevicesPage = lazy(() => import('@/modules/devices/pages/DevicesPage'));
 const InventoryPage = lazy(() => import('@/modules/inventory/pages/InventoryPage'));
 const POSPage = lazy(() => import('@/modules/pos/pages/POSPage'));
 
 const ClientsPage = lazy(() => import('@/modules/clients/pages/ClientsPage'));
 const ClientFormPage = lazy(() => import('@/modules/clients/pages/ClientFormPage'));
 const CalculatorPage = lazy(() => import('@/modules/calculator/pages/CalculatorPage'));
-const ProposalsPage = lazy(() => import('@/modules/proposals/pages/ProposalsPage'));
-const ProposalDetailPage = lazy(() => import('@/modules/proposals/pages/ProposalDetailPage'));
-const ContractsPage = lazy(() => import('@/modules/contracts/pages/ContractsPage'));
-const AnalyticsPage = lazy(() => import('@/modules/analytics/pages/AnalyticsPage'));
+const TeamPage = lazy(() => import('@/modules/team/pages/TeamPage'));
+const WarrantiesPage = lazy(() => import('@/modules/warranties/pages/WarrantiesPage'));
 const SettingsPage = lazy(() => import('@/modules/settings/pages/SettingsPage'));
 const ProfilePage = lazy(() => import('@/modules/profile/pages/ProfilePage'));
-const IntegrationsPage = lazy(
-  () => import('@/modules/integrations/pages/IntegrationsPage')
-);
 
 function Lazy({ children }: { children: React.ReactNode }) {
   return (
     <Suspense fallback={<LoadingState fullPage label="Carregando módulo…" />}>
       {children}
     </Suspense>
-  );
-}
-
-function ProtectedApp({ children }: { children: React.ReactNode }) {
-  return (
-    <ProtectedRoute>
-      <Lazy>{children}</Lazy>
-    </ProtectedRoute>
   );
 }
 
@@ -164,6 +152,14 @@ export function AppRoutes() {
             }
           />
           <Route
+            path="devices"
+            element={
+              <Lazy>
+                <DevicesPage />
+              </Lazy>
+            }
+          />
+          <Route
             path="inventory"
             element={
               <Lazy>
@@ -212,42 +208,18 @@ export function AppRoutes() {
             }
           />
           <Route
-            path="proposals"
+            path="team"
             element={
               <Lazy>
-                <ProposalsPage />
+                <TeamPage />
               </Lazy>
             }
           />
           <Route
-            path="proposals/:id"
+            path="warranties"
             element={
               <Lazy>
-                <ProposalDetailPage />
-              </Lazy>
-            }
-          />
-          <Route
-            path="contracts"
-            element={
-              <Lazy>
-                <ContractsPage />
-              </Lazy>
-            }
-          />
-          <Route
-            path="analytics"
-            element={
-              <Lazy>
-                <AnalyticsPage />
-              </Lazy>
-            }
-          />
-          <Route
-            path="integrations"
-            element={
-              <Lazy>
-                <IntegrationsPage />
+                <WarrantiesPage />
               </Lazy>
             }
           />

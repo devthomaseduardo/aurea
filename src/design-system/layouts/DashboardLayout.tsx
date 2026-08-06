@@ -5,9 +5,7 @@ import {
   ShoppingBag,
   Package,
   Users,
-  BarChart3,
   Settings,
-  User,
   Menu,
   X,
   PanelLeftClose,
@@ -17,12 +15,16 @@ import {
   ExternalLink,
   Plus,
   ShoppingCart,
+  Smartphone,
+  ShieldCheck,
+  UserCheck,
+  Calculator,
 } from 'lucide-react';
 import { cn } from '@/shared/utils/utils';
 import { useUiStore } from '@/stores/ui.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
-import { profileService } from '@/services/profile.service';
+import { settingsService } from '@/services/settings.service';
 import { Button } from '@/shared/components/ui/button';
 import { BrandLogo } from '@/design-system/components/BrandLogo';
 import {
@@ -35,25 +37,27 @@ const navGroups = [
   {
     label: 'Operações de Assistência',
     items: [
-      { to: ROUTES.app.dashboard, label: 'Visão geral', icon: LayoutDashboard },
+      { to: ROUTES.app.dashboard, label: 'Visão Geral Operacional', icon: LayoutDashboard },
       { to: ROUTES.app.orders, label: 'Ordens de Serviço (OS)', icon: Wrench },
+      { to: ROUTES.app.devices, label: 'Aparelhos & Modelos', icon: Smartphone },
+      { to: ROUTES.app.calculator, label: 'Orçamentos Rápido', icon: Calculator },
       { to: ROUTES.app.pos, label: 'Frente de Caixa (PDV)', icon: ShoppingBag },
-      { to: ROUTES.app.inventory, label: 'Estoque & Peças', icon: Package },
     ],
   },
   {
     label: 'Gestão & Clientes',
     items: [
-      { to: ROUTES.app.clients, label: 'Clientes & Dispositivos', icon: Users },
-      { to: ROUTES.app.analytics, label: 'Relatórios Financeiros', icon: BarChart3 },
-      { to: ROUTES.statusPortal, label: 'Portal de Status (Cliente)', icon: ExternalLink },
+      { to: ROUTES.app.clients, label: 'Clientes (CRM)', icon: Users },
+      { to: ROUTES.app.inventory, label: 'Estoque & Peças', icon: Package },
+      { to: ROUTES.app.warranties, label: 'Garantias 90 Dias', icon: ShieldCheck },
+      { to: ROUTES.app.team, label: 'Equipe Técnica & Bancada', icon: UserCheck },
     ],
   },
   {
-    label: 'Administração',
+    label: 'Plataforma SaaS',
     items: [
-      { to: ROUTES.app.profile, label: 'Dados da Oficina', icon: User },
-      { to: ROUTES.app.settings, label: 'Configurações & Garantia', icon: Settings },
+      { to: ROUTES.app.settings, label: 'Minha Loja (White-Label)', icon: Settings },
+      { to: ROUTES.statusPortal, label: 'Portal Público da OS', icon: ExternalLink },
     ],
   },
 ];
@@ -77,7 +81,7 @@ function NavItem({
         cn(
           'group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
           isActive
-            ? 'bg-primary/10 text-foreground shadow-[inset_0_0_0_1px_hsla(239,84%,57%,0.2)]'
+            ? 'bg-blue-50 text-blue-900 border border-blue-200 font-bold'
             : 'text-muted-foreground hover:text-foreground hover:bg-muted'
         )
       }
@@ -88,12 +92,12 @@ function NavItem({
           <Icon
             className={cn(
               'w-4 h-4 shrink-0 transition-colors',
-              isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+              isActive ? 'text-blue-600' : 'text-muted-foreground group-hover:text-foreground'
             )}
           />
           {!collapsed && <span className="truncate flex-1">{label}</span>}
           {!collapsed && isActive && (
-            <ChevronRight className="w-3.5 h-3.5 text-primary/60" />
+            <ChevronRight className="w-3.5 h-3.5 text-blue-600/70" />
           )}
         </>
       )}
@@ -116,15 +120,17 @@ function NavItem({
 
 function pageTitle(pathname: string) {
   const map: Record<string, string> = {
-    [ROUTES.app.dashboard]: 'Visão geral da oficina',
+    [ROUTES.app.dashboard]: 'Visão Geral da Operação',
     [ROUTES.app.orders]: 'Ordens de Serviço (OS)',
     [ROUTES.app.ordersNew]: 'Nova Ordem de Serviço',
+    [ROUTES.app.devices]: 'Aparelhos & Modelos Atendidos',
     [ROUTES.app.inventory]: 'Estoque de Peças e Aparelhos',
     [ROUTES.app.pos]: 'Frente de Caixa (PDV)',
-    [ROUTES.app.clients]: 'Clientes & Aparelhos',
-    [ROUTES.app.analytics]: 'Relatórios & Desempenho',
-    [ROUTES.app.settings]: 'Configurações da Oficina',
-    [ROUTES.app.profile]: 'Dados da Loja',
+    [ROUTES.app.clients]: 'Clientes & Histórico de Reparos',
+    [ROUTES.app.calculator]: 'Calculadora de Orçamentos',
+    [ROUTES.app.team]: 'Equipe Técnica & Bancada',
+    [ROUTES.app.warranties]: 'Controle de Garantias 90 Dias',
+    [ROUTES.app.settings]: 'Configurações da Loja (White-Label)',
   };
   if (map[pathname]) return map[pathname];
   if (pathname.startsWith('/app/orders')) return 'Ordem de Serviço';
@@ -138,9 +144,9 @@ export function DashboardLayout() {
   const { sidebarCollapsed, sidebarMobileOpen, toggleSidebar, setSidebarMobileOpen } =
     useUiStore();
   const { user, logout } = useAuthStore();
-  const profile = profileService.get();
-  const displayName = user?.name || profile.name;
-  const displayEmail = user?.email || profile.email;
+  const activeTenant = settingsService.getActiveTenant();
+  const displayName = user?.name || 'Técnico Operador';
+  const displayEmail = user?.email || 'operacao@cambucimobile.com.br';
 
   const handleLogout = async () => {
     await logout();
@@ -160,12 +166,12 @@ export function DashboardLayout() {
 
       <aside
         className={cn(
-          'fixed lg:sticky top-0 left-0 z-50 h-svh flex flex-col border-r border-sidebar-border bg-[hsl(var(--sidebar-background))] transition-[width,transform] duration-200 ease-out',
+          'fixed lg:sticky top-0 left-0 z-50 h-svh flex flex-col border-r border-sidebar-border bg-white transition-[width,transform] duration-200 ease-out',
           sidebarCollapsed ? 'w-[68px]' : 'w-[260px]',
           sidebarMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
-        {/* Brand */}
+        {/* Brand Header */}
         <div
           className={cn(
             'flex items-center h-14 border-b border-sidebar-border shrink-0',
@@ -193,7 +199,7 @@ export function DashboardLayout() {
           {navGroups.map((group) => (
             <div key={group.label}>
               {!sidebarCollapsed && (
-                <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
+                <p className="px-2.5 mb-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">
                   {group.label}
                 </p>
               )}
@@ -213,12 +219,12 @@ export function DashboardLayout() {
         {/* Footer */}
         <div className="p-2.5 border-t border-sidebar-border space-y-2 shrink-0">
           {!sidebarCollapsed && (
-            <div className="px-2.5 py-2 rounded-lg bg-slate-50 border border-border">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                Operador Logado
+            <div className="px-2.5 py-2 rounded-lg bg-blue-50/60 border border-blue-100">
+              <p className="text-[10px] font-extrabold uppercase tracking-wider text-blue-700 mb-0.5">
+                {activeTenant.name}
               </p>
-              <p className="text-xs font-medium truncate">{displayName}</p>
-              <p className="text-[11px] text-muted-foreground truncate">{displayEmail}</p>
+              <p className="text-xs font-bold truncate text-slate-900">{displayName}</p>
+              <p className="text-[11px] text-slate-500 truncate">{displayEmail}</p>
             </div>
           )}
           <div className={cn('flex gap-1', sidebarCollapsed && 'flex-col items-center')}>
@@ -263,28 +269,28 @@ export function DashboardLayout() {
             <Menu className="w-4 h-4" />
           </button>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground hidden sm:block">
-              {APP_CONFIG.name} · Sistema da Oficina
+            <p className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground hidden sm:block font-bold text-blue-700">
+              {activeTenant.name} · Plataforma de Assistência Técnica
             </p>
-            <p className="text-sm font-semibold truncate text-slate-900">
+            <p className="text-sm font-bold truncate text-slate-900">
               {pageTitle(location.pathname)}
             </p>
           </div>
-          <Button asChild size="sm" variant="outline" className="hidden md:inline-flex gap-1.5">
+          <Button asChild size="sm" variant="outline" className="hidden md:inline-flex gap-1.5 border-slate-300 font-bold text-xs">
             <Link to={ROUTES.app.pos}>
-              <ShoppingCart className="w-3.5 h-3.5" />
+              <ShoppingCart className="w-3.5 h-3.5 text-blue-600" />
               PDV Venda
             </Link>
           </Button>
-          <Button asChild size="sm" variant="brand" className="hidden sm:inline-flex gap-1.5">
+          <Button asChild size="sm" className="hidden sm:inline-flex gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm">
             <Link to={ROUTES.app.ordersNew}>
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5 text-yellow-300" />
               Nova OS
             </Link>
           </Button>
         </header>
 
-        <main className="flex-1 overflow-x-hidden">
+        <main className="flex-1 overflow-x-hidden bg-slate-50/50">
           <Outlet />
         </main>
       </div>

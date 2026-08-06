@@ -6,13 +6,12 @@ import {
   Search,
   MessageCircle,
   Eye,
-  Printer,
   Smartphone,
   CheckCircle2,
   Clock,
-  AlertTriangle,
   FileText,
   Filter,
+  UserCheck,
 } from 'lucide-react';
 import {
   PageContainer,
@@ -56,11 +55,11 @@ export default function OrdersPage() {
     <PageContainer className="space-y-6">
       <PageHeader
         title="Ordens de Serviço (OS)"
-        description="Gestão completa do fluxo de manutenção de celulares, tablets e dispositivos."
+        description="Gestão completa do fluxo de manutenção de celulares, aparelhos e técnicos de bancada."
         actions={
-          <Button asChild variant="brand">
+          <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs gap-1.5 shadow-sm">
             <Link to={ROUTES.app.ordersNew}>
-              <Plus className="w-4 h-4 mr-1.5" />
+              <Plus className="w-4 h-4 text-yellow-300" />
               Nova Ordem de Serviço
             </Link>
           </Button>
@@ -94,12 +93,12 @@ export default function OrdersPage() {
         />
       </MetricGrid>
 
-      <div className="bg-card rounded-xl border border-border p-4 space-y-4">
+      <div className="bg-card rounded-2xl border border-border p-4 space-y-4 shadow-sm">
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Buscar por código de OS, nome do cliente, telefone, modelo do celular ou IMEI..."
+              placeholder="Buscar por código de OS (Ex: #CM-1048), cliente, telefone, modelo ou IMEI..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9 bg-background"
@@ -113,9 +112,10 @@ export default function OrdersPage() {
               [
                 { key: 'all', label: 'Todas' },
                 { key: 'received', label: 'Recebidas' },
-                { key: 'analyzing', label: 'Em Análise' },
+                { key: 'analyzing', label: 'Em Diagnóstico' },
                 { key: 'budget_pending', label: 'Orçamento' },
                 { key: 'repairing', label: 'Em Reparo' },
+                { key: 'testing', label: 'Em Testes' },
                 { key: 'ready', label: 'Prontas' },
                 { key: 'delivered', label: 'Entregues' },
               ] as const
@@ -123,9 +123,9 @@ export default function OrdersPage() {
               <button
                 key={item.key}
                 onClick={() => setStatusFilter(item.key)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shrink-0 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shrink-0 ${
                   statusFilter === item.key
-                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'bg-muted text-muted-foreground hover:bg-muted/80'
                 }`}
               >
@@ -135,16 +135,16 @@ export default function OrdersPage() {
           </div>
         </div>
 
-        {/* Tabela de OS */}
-        <div className="overflow-x-auto rounded-lg border border-border">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 border-b border-border text-xs uppercase font-semibold text-slate-600">
+        {/* Tabela de OS com Imagens de Aparelhos */}
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50 border-b border-border uppercase text-[10px] font-extrabold text-slate-500">
               <tr>
-                <th className="px-4 py-3">OS / Data</th>
+                <th className="px-4 py-3">Aparelho & OS</th>
                 <th className="px-4 py-3">Cliente / Contato</th>
-                <th className="px-4 py-3">Dispositivo / IMEI</th>
+                <th className="px-4 py-3">Técnico Bancada</th>
                 <th className="px-4 py-3">Defeito Relatado</th>
-                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Status Pipeline</th>
                 <th className="px-4 py-3 text-right">Valor Total</th>
                 <th className="px-4 py-3 text-center">Ações</th>
               </tr>
@@ -154,7 +154,7 @@ export default function OrdersPage() {
                 <tr>
                   <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
                     <Wrench className="w-8 h-8 mx-auto mb-2 text-muted-foreground/50" />
-                    <p className="font-medium text-base text-foreground">Nenhuma Ordem de Serviço encontrada</p>
+                    <p className="font-bold text-base text-foreground">Nenhuma Ordem de Serviço encontrada</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Tente alterar os termos de busca ou cadastrar uma nova OS.
                     </p>
@@ -166,44 +166,49 @@ export default function OrdersPage() {
                   const whatsappLink = ordersService.generateWhatsAppLink(order);
 
                   return (
-                    <tr key={order.id} className="hover:bg-muted/40 transition-colors">
+                    <tr key={order.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="px-4 py-3.5 align-top">
-                        <Link
-                          to={ROUTES.app.orderDetail(order.id)}
-                          className="font-bold text-primary hover:underline block"
-                        >
-                          {order.id}
-                        </Link>
-                        <span className="text-[11px] text-muted-foreground">
-                          {formatRelativeDate(order.createdAt)}
-                        </span>
-                      </td>
-
-                      <td className="px-4 py-3.5 align-top">
-                        <p className="font-medium text-foreground">{order.clientName}</p>
-                        {order.clientPhone && (
-                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                            {order.clientPhone}
-                          </p>
-                        )}
-                      </td>
-
-                      <td className="px-4 py-3.5 align-top">
-                        <div className="flex items-center gap-1.5">
-                          <Smartphone className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                          <span className="font-semibold text-foreground">
-                            {order.deviceBrand} {order.deviceModel}
-                          </span>
+                        <div className="flex items-center gap-3">
+                          {order.deviceImageUrl ? (
+                            <img
+                              src={order.deviceImageUrl}
+                              alt={order.deviceModel}
+                              className="w-10 h-10 rounded-lg object-contain bg-slate-100 p-1 border border-slate-200 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center shrink-0 text-blue-600">
+                              <Smartphone className="w-5 h-5" />
+                            </div>
+                          )}
+                          <div>
+                            <Link
+                              to={ROUTES.app.orderDetail(order.id)}
+                              className="font-extrabold text-blue-700 hover:underline block text-xs"
+                            >
+                              #{order.id}
+                            </Link>
+                            <strong className="text-slate-900 block font-bold text-xs">{order.deviceBrand} {order.deviceModel}</strong>
+                            <span className="text-[10px] text-slate-400">{formatRelativeDate(order.createdAt)}</span>
+                          </div>
                         </div>
-                        {order.serialNumber && (
-                          <span className="text-[11px] text-muted-foreground font-mono block mt-0.5">
-                            SN: {order.serialNumber}
-                          </span>
+                      </td>
+
+                      <td className="px-4 py-3.5 align-top">
+                        <p className="font-bold text-slate-900">{order.clientName}</p>
+                        {order.clientPhone && (
+                          <p className="text-[11px] text-slate-500 font-medium">{order.clientPhone}</p>
                         )}
+                      </td>
+
+                      <td className="px-4 py-3.5 align-top">
+                        <div className="flex items-center gap-1.5 text-slate-700 font-medium">
+                          <UserCheck className="w-3.5 h-3.5 text-blue-600" />
+                          <span>{order.technicianName || 'Rafael Santos'}</span>
+                        </div>
                       </td>
 
                       <td className="px-4 py-3.5 align-top max-w-xs">
-                        <p className="text-xs text-foreground/90 line-clamp-2" title={order.reportedIssue}>
+                        <p className="text-xs text-slate-700 line-clamp-2" title={order.reportedIssue}>
                           {order.reportedIssue}
                         </p>
                       </td>
@@ -212,7 +217,7 @@ export default function OrdersPage() {
                         <select
                           value={order.status}
                           onChange={(e) => handleStatusChange(order.id, e.target.value as OSStatus)}
-                          className={`text-xs font-semibold px-2.5 py-1 rounded-md border cursor-pointer ${statusInfo.color}`}
+                          className={`text-xs font-bold px-2.5 py-1 rounded-lg border cursor-pointer ${statusInfo.color}`}
                         >
                           {Object.entries(OS_STATUS_LABELS).map(([key, val]) => (
                             <option key={key} value={key}>
@@ -223,12 +228,12 @@ export default function OrdersPage() {
                       </td>
 
                       <td className="px-4 py-3.5 align-top text-right">
-                        <span className="font-semibold tabular-nums text-foreground block">
+                        <span className="font-extrabold text-slate-900 block text-xs">
                           {formatCurrency(order.totalValue)}
                         </span>
                         <Badge
                           variant="outline"
-                          className={`text-[10px] uppercase mt-0.5 ${
+                          className={`text-[10px] uppercase font-bold mt-0.5 ${
                             order.paymentStatus === 'paid'
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                               : 'bg-amber-50 text-amber-700 border-amber-200'
@@ -242,7 +247,7 @@ export default function OrdersPage() {
                         <div className="flex items-center justify-center gap-1">
                           <Button asChild variant="ghost" size="icon" className="h-8 w-8" title="Ver Detalhes">
                             <Link to={ROUTES.app.orderDetail(order.id)}>
-                              <Eye className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+                              <Eye className="w-4 h-4 text-slate-600 hover:text-slate-900" />
                             </Link>
                           </Button>
 
