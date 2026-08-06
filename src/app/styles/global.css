@@ -5,128 +5,64 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════
-   Aurea Design System v4 Light Professional
+   Cambuci Mobile - Identidade Visual Oficial
+   Azul: #0055FF | Amarelo: #FFD100 | Texto: #0B1633 | Fundo: #F5F7FA
    ═══════════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    /* Clean white canvas for realistic shop system */
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    --background: 220 20% 97%; /* #F5F7FA */
+    --foreground: 222 64% 12%; /* #0B1633 */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 222 64% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 222 64% 12%;
 
-    /* Cobalt Blue primary for clean highlight */
-    --primary: 221 83% 53%;
+    /* Azul Principal Cambuci Mobile #0055FF */
+    --primary: 220 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 214 32% 95%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 220 20% 95%;
+    --secondary-foreground: 222 64% 12%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 42%;
+    --muted: 220 20% 94%;
+    --muted-foreground: 215 16% 40%;
 
-    --accent: 214 32% 94%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 220 20% 94%;
+    --accent-foreground: 222 64% 12%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 28% 88%;
-    --input: 214 28% 90%;
-    --ring: 221 83% 53%;
+    --border: 220 13% 91%; /* #E5E7EB */
+    --input: 220 13% 91%;
+    --ring: 220 100% 50%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Sidebar light with white background */
+    /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-foreground: 222 64% 12%;
+    --sidebar-primary: 220 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 214 32% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 28% 91%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-accent: 220 20% 96%;
+    --sidebar-accent-foreground: 222 64% 12%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 220 100% 50%;
 
     /* Semantic */
-    --success: 152 60% 36%;
+    --success: 152 70% 38%;
     --success-foreground: 0 0% 100%;
-    --warning: 45 93% 47%;
-    --warning-foreground: 0 0% 100%;
-    --info: 210 90% 48%;
-    --info-foreground: 0 0% 100%;
+    --warning: 49 100% 50%; /* #FFD100 */
+    --warning-foreground: 222 64% 12%;
+    --info: 220 100% 50%;
 
-    /* Brand */
-    --brand-violet: 221 83% 53%;
-    --brand-blue: 221 83% 53%;
-    --brand-gold: 45 93% 47%;
-    --brand-glow: 221 83% 65%;
-
-    /* Elevation */
-    --elevation-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-    --elevation-md: 0 4px 16px rgba(15, 23, 42, 0.06);
-    --elevation-lg: 0 12px 40px rgba(15, 23, 42, 0.08);
-    --elevation-xl: 0 24px 64px rgba(15, 23, 42, 0.1);
-    --elevation-glow: 0 0 40px rgba(79, 70, 229, 0.12);
-    --elevation-glass: 0 8px 32px rgba(15, 23, 42, 0.06);
-
-    --surface-raised: 0 0% 100%;
-    --surface-sunken: 210 40% 97%;
-    --hairline: 222 47% 11% / 0.08;
-  }
-
-  /* Optional dark mode preserved */
-  .dark {
-    --background: 230 25% 5%;
-    --foreground: 220 20% 96%;
-    --card: 230 22% 7.5%;
-    --card-foreground: 220 20% 96%;
-    --popover: 230 22% 8.5%;
-    --popover-foreground: 220 20% 96%;
-    --primary: 239 84% 67%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 230 16% 12%;
-    --secondary-foreground: 220 15% 92%;
-    --muted: 230 14% 11%;
-    --muted-foreground: 220 10% 55%;
-    --accent: 230 16% 14%;
-    --accent-foreground: 220 20% 96%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 230 14% 14%;
-    --input: 230 14% 12%;
-    --ring: 239 84% 67%;
-    --sidebar-background: 230 28% 4.5%;
-    --sidebar-foreground: 220 15% 88%;
-    --sidebar-primary: 239 84% 67%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 230 16% 10%;
-    --sidebar-accent-foreground: 220 20% 96%;
-    --sidebar-border: 230 14% 11%;
-    --sidebar-ring: 239 84% 67%;
-    --success: 152 60% 42%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 8%;
-    --info: 210 90% 60%;
-    --info-foreground: 0 0% 100%;
-    --brand-violet: 239 84% 67%;
-    --brand-blue: 221 83% 60%;
-    --brand-gold: 42 55% 58%;
-    --brand-glow: 239 84% 72%;
-    --elevation-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
-    --elevation-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-    --elevation-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
-    --elevation-xl: 0 24px 64px rgba(0, 0, 0, 0.55);
-    --elevation-glow: 0 0 40px rgba(99, 102, 241, 0.15);
-    --elevation-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
-    --surface-raised: 230 20% 8%;
-    --surface-sunken: 230 30% 3.5%;
-    --hairline: 0 0% 100% / 0.06;
+    /* Brand tokens */
+    --brand-blue: 220 100% 50%; /* #0055FF */
+    --brand-yellow: 49 100% 50%; /* #FFD100 */
+    --brand-navy: 222 64% 12%; /* #0B1633 */
   }
 }
 
@@ -142,308 +78,35 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-[#F5F7FA] text-[#0B1633] antialiased;
     font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
-    font-optical-sizing: auto;
-    letter-spacing: -0.011em;
+    letter-spacing: -0.015em;
     line-height: 1.5;
-    background-color: hsl(var(--background));
-    background-image:
-      radial-gradient(ellipse 90% 60% at 50% -20%, hsla(239, 84%, 57%, 0.08), transparent 55%),
-      radial-gradient(ellipse 40% 30% at 100% 0%, hsla(42, 55%, 52%, 0.06), transparent 50%);
-    background-attachment: fixed;
     min-height: 100vh;
-    transition: background-color 0.2s ease, color 0.2s ease;
-  }
-
-  .dark body,
-  html.dark body {
-    background-image:
-      radial-gradient(ellipse 90% 60% at 50% -20%, hsla(239, 84%, 60%, 0.12), transparent 55%),
-      radial-gradient(ellipse 40% 30% at 100% 0%, hsla(221, 83%, 50%, 0.08), transparent 50%);
-  }
-
-  ::selection {
-    background: hsla(239, 84%, 57%, 0.22);
-    color: hsl(var(--foreground));
   }
 
   h1, h2, h3, h4, h5, h6 {
-    letter-spacing: -0.03em;
-    font-weight: 600;
-    color: inherit;
-    line-height: 1.2;
-  }
-
-  p {
-    line-height: 1.6;
-  }
-
-  a {
-    color: inherit;
-    text-underline-offset: 3px;
-    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
-  }
-
-  button, [role="button"] {
-    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
-  }
-
-  :focus-visible {
-    outline: 2px solid hsl(var(--ring));
-    outline-offset: 2px;
+    color: #0B1633;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
   }
 }
 
 @layer components {
-  .surface {
-    @apply bg-card border border-border rounded-xl;
-    box-shadow: var(--elevation-sm);
+  .btn-cambuci-primary {
+    @apply bg-[#0055FF] hover:bg-[#0044CC] text-white font-bold px-5 py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-sm;
   }
 
-  .surface-raised {
-    background: hsl(var(--surface-raised));
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius);
-    box-shadow: var(--elevation-md);
+  .btn-cambuci-whatsapp {
+    @apply bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold px-5 py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-sm;
   }
 
-  .glass-card {
-    background: hsl(var(--card) / 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--border));
-    box-shadow: var(--elevation-md);
+  .btn-cambuci-yellow {
+    @apply bg-[#FFD100] hover:bg-[#e6bd00] text-[#0B1633] font-bold px-5 py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-sm;
   }
 
-  /* Accessible text/link hover — works light + dark */
-  .link-hover {
-    @apply text-primary transition-colors duration-150;
+  .card-cambuci {
+    @apply bg-white border border-[#E5E7EB] rounded-2xl p-6 shadow-sm transition-all;
   }
-  .link-hover:hover {
-    color: hsl(var(--primary) / 0.85);
-    text-decoration: underline;
-  }
-
-  .nav-link {
-    @apply text-muted-foreground transition-colors duration-150;
-  }
-  .nav-link:hover {
-    @apply text-foreground bg-accent;
-  }
-
-  .text-hover {
-    @apply text-muted-foreground transition-colors duration-150;
-  }
-  .text-hover:hover {
-    @apply text-foreground;
-  }
-
-  .muted-hover:hover {
-    color: hsl(var(--foreground));
-  }
-
-  .glass-card-hover {
-    @apply glass-card transition-all duration-300 ease-out;
-  }
-
-  .glass-card-hover:hover {
-    border-color: hsla(239, 84%, 57%, 0.35);
-    transform: translateY(-2px);
-    box-shadow: var(--elevation-lg), var(--elevation-glow);
-  }
-
-  .btn-primary {
-    @apply relative inline-flex items-center justify-center gap-2 font-medium overflow-hidden transition-all duration-200;
-    border-radius: calc(var(--radius) - 2px);
-    background: linear-gradient(135deg, hsl(239, 84%, 57%) 0%, hsl(221, 83%, 53%) 100%);
-    color: white;
-    box-shadow:
-      0 1px 2px rgba(15, 23, 42, 0.08),
-      0 0 0 1px hsla(239, 84%, 50%, 0.15),
-      inset 0 1px 0 hsla(0, 0%, 100%, 0.2);
-  }
-
-  .btn-primary:hover {
-    filter: brightness(1.05);
-    box-shadow:
-      0 8px 20px hsla(239, 84%, 50%, 0.22),
-      0 0 0 1px hsla(239, 84%, 50%, 0.2);
-  }
-
-  .btn-primary:active {
-    transform: scale(0.98);
-  }
-
-  .btn-ghost {
-    @apply relative inline-flex items-center justify-center gap-2 font-medium transition-all duration-200;
-    border-radius: calc(var(--radius) - 2px);
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    color: hsl(var(--foreground));
-  }
-
-  .btn-ghost:hover {
-    background: hsl(var(--muted));
-    border-color: hsl(var(--border));
-    color: hsl(var(--foreground));
-  }
-
-  .dark .btn-ghost:hover {
-    background: hsl(var(--accent));
-    border-color: hsl(var(--border));
-  }
-
-  .gradient-text {
-    background: linear-gradient(135deg, hsl(239, 84%, 48%) 0%, hsl(221, 83%, 45%) 55%, hsl(42, 55%, 42%) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .gradient-text-subtle {
-    background: linear-gradient(180deg, hsl(var(--foreground)) 30%, hsl(var(--muted-foreground)) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .section-divider {
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      hsl(var(--border)) 50%,
-      transparent
-    );
-  }
-
-  .badge-pill {
-    @apply inline-flex items-center gap-1.5 rounded-full text-xs font-medium tracking-wide px-2.5 py-1;
-    background: hsla(239, 84%, 57%, 0.08);
-    border: 1px solid hsla(239, 84%, 57%, 0.18);
-    color: hsl(239, 70%, 42%);
-  }
-
-  .step-number {
-    @apply w-9 h-9 rounded-lg flex items-center justify-center text-xs font-semibold;
-    background: hsla(239, 84%, 57%, 0.1);
-    border: 1px solid hsla(239, 84%, 57%, 0.2);
-    color: hsl(239, 70%, 42%);
-  }
-
-  .feature-icon {
-    @apply w-10 h-10 rounded-lg flex items-center justify-center;
-    background: hsla(239, 84%, 57%, 0.08);
-    border: 1px solid hsla(239, 84%, 57%, 0.14);
-  }
-
-  .stat-card {
-    @apply surface p-5 text-center;
-  }
-
-  .app-panel {
-    @apply rounded-xl border border-border bg-card;
-    box-shadow: var(--elevation-sm);
-  }
-
-  .app-panel-header {
-    @apply flex items-center justify-between gap-3 px-5 py-4 border-b border-border;
-  }
-
-  .input-dark {
-    width: 100%;
-    padding: 0.625rem 0.875rem;
-    background: hsl(var(--surface-sunken));
-    border: 1px solid hsl(var(--border));
-    border-radius: calc(var(--radius) - 2px);
-    color: hsl(var(--foreground));
-    font-size: 0.875rem;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    outline: none;
-  }
-
-  .input-dark::placeholder {
-    color: hsl(var(--muted-foreground));
-  }
-
-  .input-dark:focus {
-    border-color: hsla(239, 84%, 57%, 0.5);
-    box-shadow: 0 0 0 3px hsla(239, 84%, 57%, 0.12);
-  }
-
-  .page-mesh {
-    position: relative;
-  }
-
-  .page-mesh::before {
-    content: '';
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(hsla(222, 47%, 11%, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, hsla(222, 47%, 11%, 0.035) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black, transparent);
-    z-index: 0;
-  }
-
-  .brand-gold {
-    color: hsl(var(--brand-gold));
-  }
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; }
-  50%       { opacity: 0.75; }
-}
-
-@keyframes floatY {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-8px); }
-}
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-up    { animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-.animate-fade-in    { animation: fadeIn 0.4s ease forwards; }
-.animate-pulse-glow { animation: pulseGlow 5s ease-in-out infinite; }
-.animate-float      { animation: floatY 7s ease-in-out infinite; }
-.animate-slide-down { animation: slideDown 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-
-.delay-100 { animation-delay: 0.08s; opacity: 0; }
-.delay-200 { animation-delay: 0.16s; opacity: 0; }
-.delay-300 { animation-delay: 0.24s; opacity: 0; }
-.delay-400 { animation-delay: 0.32s; opacity: 0; }
-
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: hsla(215, 16%, 50%, 0.28);
-  border-radius: 99px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: hsla(215, 16%, 40%, 0.4);
-  background-clip: padding-box;
 }

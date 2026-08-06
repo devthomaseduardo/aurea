@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   Search,
-  Wrench,
   Smartphone,
   CheckCircle2,
   Clock,
@@ -11,6 +10,7 @@ import {
   ArrowRight,
   AlertCircle,
   FileText,
+  UserCheck,
 } from 'lucide-react';
 import { ordersService, OS_STATUS_LABELS } from '@/services/orders.service';
 import { APP_CONFIG } from '@/core/config/app.config';
@@ -20,10 +20,11 @@ import { BrandLogo } from '@/design-system/components/BrandLogo';
 
 const STEPS: { status: OSStatus; label: string }[] = [
   { status: 'received', label: 'Recebido' },
-  { status: 'analyzing', label: 'Em Análise' },
-  { status: 'budget_pending', label: 'Orçamento' },
-  { status: 'repairing', label: 'Em Reparo' },
-  { status: 'ready', label: 'Pronto' },
+  { status: 'analyzing', label: 'Em diagnóstico' },
+  { status: 'budget_pending', label: 'Aguardando aprovação' },
+  { status: 'repairing', label: 'Em reparo' },
+  { status: 'testing', label: 'Em testes' },
+  { status: 'ready', label: 'Pronto para retirada' },
   { status: 'delivered', label: 'Entregue' },
 ];
 
@@ -51,17 +52,17 @@ export default function StatusPortalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F5F7FA] text-[#0B1633] flex flex-col font-sans">
       {/* Header Público */}
-      <header className="border-b border-slate-200 bg-white sticky top-0 z-50 shadow-sm">
+      <header className="border-b border-[#E5E7EB] bg-white sticky top-0 z-50 shadow-sm">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <BrandLogo to="/" />
 
           <Link
             to="/login"
-            className="text-xs font-bold text-blue-700 hover:text-blue-800 px-3 py-1.5 rounded-lg border border-blue-200 bg-blue-50 transition-colors"
+            className="text-xs font-bold text-[#0055FF] hover:text-blue-800 px-3.5 py-2 rounded-xl border border-blue-200 bg-blue-50 transition-colors"
           >
-            Área do Técnico / Login
+            Área da Equipe
           </Link>
         </div>
       </header>
@@ -70,14 +71,14 @@ export default function StatusPortalPage() {
       <main className="flex-1 max-w-4xl mx-auto w-full px-6 py-12 space-y-10">
         {/* Banner de Busca */}
         <div className="text-center space-y-4 max-w-2xl mx-auto">
-          <span className="text-xs font-extrabold uppercase tracking-wider text-blue-700 bg-blue-100 px-3 py-1 rounded-full border border-blue-200">
-            Acompanhamento Online
+          <span className="text-xs font-extrabold uppercase tracking-wider text-[#0055FF] bg-blue-50 px-3.5 py-1 rounded-full border border-blue-200">
+            Acompanhamento em Tempo Real
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
-            Status da sua Ordem de Serviço
+          <h1 className="text-3xl sm:text-4xl font-black text-[#0B1633]">
+            Acompanhe seu aparelho
           </h1>
-          <p className="text-sm text-slate-600">
-            Digite o código da sua OS (Ex: OS-2026-001) ou o seu telefone para acompanhar o conserto.
+          <p className="text-sm text-slate-600 font-medium">
+            Consulte gratuitamente o andamento do seu reparo digitando a Ordem de Serviço (Ex: CM-2026-00128).
           </p>
 
           <form onSubmit={handleSearch} className="flex gap-2 max-w-lg mx-auto pt-2">
@@ -85,18 +86,18 @@ export default function StatusPortalPage() {
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Ex: OS-2026-001 ou (11) 98765-4321"
+                placeholder="Ex: CM-2026-00128 ou seu telefone"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium"
+                className="w-full h-12 pl-10 pr-4 rounded-xl border border-[#E5E7EB] bg-white text-[#0B1633] placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium shadow-sm"
               />
             </div>
             <button
               type="submit"
-              className="h-11 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-colors shrink-0 shadow-md flex items-center gap-1.5"
+              className="h-12 px-6 rounded-xl bg-[#0055FF] hover:bg-[#0044CC] text-white font-bold text-sm transition-colors shrink-0 shadow-sm flex items-center gap-1.5"
             >
-              Consultar OS
-              <ArrowRight className="w-3.5 h-3.5 text-yellow-300" />
+              Consultar Status
+              <ArrowRight className="w-4 h-4 text-[#FFD100]" />
             </button>
           </form>
         </div>
@@ -105,12 +106,11 @@ export default function StatusPortalPage() {
         {hasSearched && (
           <div className="space-y-8">
             {foundOrders.length === 0 ? (
-              <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center space-y-3 shadow-sm">
+              <div className="bg-white border border-[#E5E7EB] rounded-2xl p-8 text-center space-y-3 shadow-sm">
                 <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
-                <h3 className="text-lg font-bold text-slate-900">Nenhuma Ordem de Serviço encontrada</h3>
-                <p className="text-xs text-slate-600 max-w-md mx-auto">
-                  Não encontramos ordens para "<strong>{searchTerm}</strong>". Por favor,
-                  verifique o código impresso em seu comprovante.
+                <h3 className="text-lg font-bold text-[#0B1633]">Nenhuma Ordem de Serviço encontrada</h3>
+                <p className="text-xs text-slate-600 max-w-md mx-auto font-medium">
+                  Não encontramos ordens para "<strong>{searchTerm}</strong>". Verifique o comprovante entregue no balcão.
                 </p>
               </div>
             ) : (
@@ -121,36 +121,36 @@ export default function StatusPortalPage() {
                 return (
                   <div
                     key={order.id}
-                    className="bg-white border-2 border-slate-200 rounded-2xl p-6 sm:p-8 space-y-6 shadow-md"
+                    className="bg-white border-2 border-[#E5E7EB] rounded-2xl p-6 sm:p-8 space-y-6 shadow-md"
                   >
                     {/* Topo do Card */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E5E7EB] pb-4">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-extrabold uppercase tracking-wider text-blue-700">
+                          <span className="text-xs font-extrabold uppercase tracking-wider text-[#0055FF]">
                             Ordem de Serviço
                           </span>
-                          <span className="text-xl font-extrabold text-slate-900">{order.id}</span>
+                          <span className="text-xl font-black text-[#0B1633]">#{order.id}</span>
                         </div>
-                        <p className="text-xs text-slate-600 mt-1">Cliente: {order.clientName}</p>
+                        <p className="text-xs text-slate-600 font-bold mt-1">Cliente: {order.clientName}</p>
                       </div>
 
                       <div className="text-left sm:text-right">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-blue-50 text-[#0055FF] border border-blue-200">
                           {statusInfo.label}
                         </span>
-                        <p className="text-[11px] text-slate-500 mt-1">
+                        <p className="text-[11px] text-slate-500 font-medium mt-1">
                           Entrada: {new Date(order.createdAt).toLocaleDateString('pt-BR')}
                         </p>
                       </div>
                     </div>
 
-                    {/* Stepper de Progresso Visual */}
+                    {/* Timeline Visual com 7 Etapas */}
                     <div className="py-2">
-                      <p className="text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-4">
+                      <p className="text-xs font-extrabold text-[#0B1633] uppercase tracking-wider mb-4">
                         Linha do Tempo da Manutenção
                       </p>
-                      <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-7 gap-2">
                         {STEPS.map((step, idx) => {
                           const isPassed = currentIdx >= idx;
                           const isCurrent = currentIdx === idx;
@@ -158,22 +158,22 @@ export default function StatusPortalPage() {
                           return (
                             <div
                               key={step.status}
-                              className={`p-3 rounded-xl border text-center transition-all ${
+                              className={`p-2.5 rounded-xl border text-center transition-all ${
                                 isCurrent
-                                  ? 'border-blue-600 bg-blue-50 text-blue-900 font-bold shadow-sm'
+                                  ? 'border-[#0055FF] bg-blue-50 text-[#0055FF] font-black shadow-sm'
                                   : isPassed
-                                  ? 'border-emerald-300 bg-emerald-50 text-emerald-800 font-medium'
-                                  : 'border-slate-200 bg-slate-100 text-slate-400'
+                                  ? 'border-emerald-300 bg-emerald-50 text-emerald-800 font-bold'
+                                  : 'border-[#E5E7EB] bg-slate-100 text-slate-400'
                               }`}
                             >
-                              <div className="flex items-center justify-center mb-1.5">
+                              <div className="flex items-center justify-center mb-1">
                                 {isPassed ? (
-                                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                                 ) : (
-                                  <Clock className="w-4 h-4 text-slate-400" />
+                                  <Clock className="w-3.5 h-3.5 text-slate-400" />
                                 )}
                               </div>
-                              <span className="text-xs block truncate">{step.label}</span>
+                              <span className="text-[11px] leading-tight block">{step.label}</span>
                             </div>
                           );
                         })}
@@ -182,48 +182,53 @@ export default function StatusPortalPage() {
 
                     {/* Detalhes do Celular */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase">
-                          <Smartphone className="w-4 h-4 text-blue-600" /> Dispositivo em Reparo
+                      <div className="bg-[#F5F7FA] p-4 rounded-xl border border-[#E5E7EB] space-y-2">
+                        <div className="flex items-center gap-2 text-xs font-bold text-[#0B1633] uppercase">
+                          <Smartphone className="w-4 h-4 text-[#0055FF]" /> Aparelho & Defeito
                         </div>
-                        <p className="text-base font-bold text-slate-900">
+                        <p className="text-base font-extrabold text-[#0B1633]">
                           {order.deviceBrand} {order.deviceModel}
                         </p>
                         {order.serialNumber && (
                           <p className="text-xs text-slate-500 font-mono">IMEI/SN: {order.serialNumber}</p>
                         )}
-                        <p className="text-xs text-slate-600">
+                        <p className="text-xs text-slate-700">
                           <strong>Defeito Relatado:</strong> {order.reportedIssue}
                         </p>
                       </div>
 
-                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase">
-                          <FileText className="w-4 h-4 text-blue-600" /> Diagnóstico Técnico
+                      <div className="bg-[#F5F7FA] p-4 rounded-xl border border-[#E5E7EB] space-y-2">
+                        <div className="flex items-center gap-2 text-xs font-bold text-[#0B1633] uppercase">
+                          <FileText className="w-4 h-4 text-[#0055FF]" /> Diagnóstico & Valor
                         </div>
                         <p className="text-xs text-slate-700">
-                          {order.technicalReport || 'Técnico efetuando testes na bancada...'}
+                          {order.technicalReport || 'Técnico efetuando diagnóstico e testes na bancada...'}
                         </p>
-                        <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
-                          <span className="text-xs text-slate-600 font-semibold">Valor Total:</span>
-                          <span className="text-lg font-extrabold text-blue-700">
+                        {order.technicianName && (
+                          <p className="text-xs text-slate-600 flex items-center gap-1 font-semibold pt-1">
+                            <UserCheck className="w-3.5 h-3.5 text-[#0055FF]" /> Técnico: {order.technicianName}
+                          </p>
+                        )}
+                        <div className="pt-2 border-t border-[#E5E7EB] flex items-center justify-between">
+                          <span className="text-xs text-slate-600 font-bold">Valor Aprovado:</span>
+                          <span className="text-lg font-black text-[#0055FF]">
                             {formatCurrency(order.totalValue)}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Informações da Loja */}
+                    {/* Informações de Garantia e Contato */}
                     <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-                      <div className="flex items-center gap-2 text-slate-800 font-medium">
+                      <div className="flex items-center gap-2 text-[#0B1633] font-bold">
                         <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                        <span>Garantia legal de 90 dias inclusa em todas as manutenções.</span>
+                        <span>Garantia legal de 90 dias referente aos serviços e peças homologadas.</span>
                       </div>
                       <a
                         href={`https://api.whatsapp.com/send?phone=5511987654321&text=Olá,%20gostaria%20de%20dúvidas%20sobre%20a%20OS%20${order.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-700 font-bold hover:underline flex items-center gap-1 shrink-0"
+                        className="text-[#0055FF] font-black hover:underline flex items-center gap-1 shrink-0"
                       >
                         <PhoneCall className="w-3.5 h-3.5" /> Falar com a Assistência
                       </a>
@@ -237,8 +242,8 @@ export default function StatusPortalPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
-        <p>© 2026 {APP_CONFIG.name} — Assistência Técnica Especializada em Celulares & Eletrônicos.</p>
+      <footer className="border-t border-[#E5E7EB] bg-white py-6 text-center text-xs text-slate-500">
+        <p>© 2026 {APP_CONFIG.name} — Assistência Técnica Especializada Multimarcas em São Paulo.</p>
       </footer>
     </div>
   );

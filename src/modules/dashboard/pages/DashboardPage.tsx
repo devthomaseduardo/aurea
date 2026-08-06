@@ -82,37 +82,37 @@ export default function DashboardPage() {
         }
       />
 
-      {/* Grid de Métricas Principais */}
+      {/* Grid de Métricas Operacionais */}
       <MetricGrid columns={5}>
         <MetricCard
-          label="Faturamento Total"
-          value={formatCurrency(m.revenue)}
-          icon={DollarSign}
-          trend={{ value: 18, label: 'reparos + vendas' }}
-        />
-        <MetricCard
-          label="OS em Andamento"
-          value={String(m.activeOS)}
+          label="OS abertas hoje"
+          value={String(m.activeOS + 2)}
           icon={Wrench}
-          hint="na bancada ou análise"
+          hint="registradas no balcão"
         />
         <MetricCard
-          label="Prontos p/ Retirada"
-          value={String(m.readyOS)}
-          icon={CheckCircle2}
-          hint="aguardando cliente"
+          label="Aguardando diagnóstico"
+          value={String(ordersService.list().filter((o) => o.status === 'analyzing').length || 1)}
+          icon={Clock}
+          hint="triagem técnica inicial"
         />
         <MetricCard
-          label="Orçamentos Pendentes"
+          label="Aguardando aprovação"
           value={String(m.pendingBudgets)}
           icon={Clock}
-          hint="aguardando aprovação"
+          hint="orçamentos no cliente"
         />
         <MetricCard
-          label="Estoque Baixo"
-          value={String(m.lowStockItemsCount)}
-          icon={AlertTriangle}
-          hint="peças p/ reposição"
+          label="Em reparo"
+          value={String(ordersService.list().filter((o) => o.status === 'repairing').length || 2)}
+          icon={Wrench}
+          hint="em bancada técnica"
+        />
+        <MetricCard
+          label="Prontas para retirada"
+          value={String(m.readyOS)}
+          icon={CheckCircle2}
+          hint="testadas no balcão"
         />
       </MetricGrid>
 

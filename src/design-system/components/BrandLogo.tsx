@@ -33,7 +33,7 @@ export function BrandLogo({
     >
       <span
         className={cn(
-          'relative shrink-0 rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm flex items-center justify-center p-0.5',
+          'relative shrink-0 rounded-xl overflow-hidden border border-[#E5E7EB] bg-white shadow-sm flex items-center justify-center p-0.5',
           s.box
         )}
       >
@@ -46,9 +46,9 @@ export function BrandLogo({
         />
       </span>
       {showWordmark && (
-        <span className={cn('font-black tracking-tight truncate leading-none text-slate-900', s.text)}>
-          Cambuci <span className="text-blue-600">Mobile</span>
-          <span className="text-yellow-500 font-extrabold ml-0.5">.</span>
+        <span className={cn('font-black tracking-tight truncate leading-none text-[#0B1633]', s.text)}>
+          Cambuci <span className="text-[#0055FF]">Mobile</span>
+          <span className="text-[#FFD100] font-extrabold ml-0.5">.</span>
         </span>
       )}
     </Link>

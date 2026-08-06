@@ -15,6 +15,7 @@ describe('Hero (frontend)', () => {
       })
     ).toBeInTheDocument();
 
-    expect(screen.getByRole('button', { name: /Consultar OS/i })).toBeInTheDocument();
+    expect(screen.getByText(/Consultar minha OS/i)).toBeInTheDocument();
+    expect(screen.getByText(/Solicitar orçamento/i)).toBeInTheDocument();
   });
 });

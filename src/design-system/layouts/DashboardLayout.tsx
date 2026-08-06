@@ -35,29 +35,18 @@ import {
 
 const navGroups = [
   {
-    label: 'Operações de Assistência',
+    label: 'Painel da Oficina',
     items: [
-      { to: ROUTES.app.dashboard, label: 'Visão Geral Operacional', icon: LayoutDashboard },
-      { to: ROUTES.app.orders, label: 'Ordens de Serviço (OS)', icon: Wrench },
-      { to: ROUTES.app.devices, label: 'Aparelhos & Modelos', icon: Smartphone },
-      { to: ROUTES.app.calculator, label: 'Orçamentos Rápido', icon: Calculator },
-      { to: ROUTES.app.pos, label: 'Frente de Caixa (PDV)', icon: ShoppingBag },
-    ],
-  },
-  {
-    label: 'Gestão & Clientes',
-    items: [
-      { to: ROUTES.app.clients, label: 'Clientes (CRM)', icon: Users },
-      { to: ROUTES.app.inventory, label: 'Estoque & Peças', icon: Package },
-      { to: ROUTES.app.warranties, label: 'Garantias 90 Dias', icon: ShieldCheck },
-      { to: ROUTES.app.team, label: 'Equipe Técnica & Bancada', icon: UserCheck },
-    ],
-  },
-  {
-    label: 'Plataforma SaaS',
-    items: [
-      { to: ROUTES.app.settings, label: 'Minha Loja (White-Label)', icon: Settings },
-      { to: ROUTES.statusPortal, label: 'Portal Público da OS', icon: ExternalLink },
+      { to: ROUTES.app.dashboard, label: 'Visão Geral', icon: LayoutDashboard },
+      { to: ROUTES.app.orders, label: 'Ordens de Serviço', icon: Wrench },
+      { to: ROUTES.app.clients, label: 'Clientes', icon: Users },
+      { to: ROUTES.app.devices, label: 'Aparelhos', icon: Smartphone },
+      { to: ROUTES.app.calculator, label: 'Serviços', icon: Calculator },
+      { to: ROUTES.app.inventory, label: 'Estoque', icon: Package },
+      { to: ROUTES.app.warranties, label: 'Garantias', icon: ShieldCheck },
+      { to: ROUTES.app.pos, label: 'Financeiro', icon: ShoppingBag },
+      { to: ROUTES.app.team, label: 'Equipe', icon: UserCheck },
+      { to: ROUTES.app.settings, label: 'Configurações', icon: Settings },
     ],
   },
 ];
