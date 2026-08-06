@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { PhoneCall, Instagram, Mail, Lock } from 'lucide-react';
 import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
 import { BrandLogo } from '@/design-system/components/BrandLogo';
 
@@ -7,83 +6,32 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-[#E5E7EB] bg-white">
-      <div className="max-w-7xl mx-auto px-5 md:px-6 py-12 md:py-14">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-10">
+    <footer className="border-t border-[#E5E7EB] bg-white py-10">
+      <div className="max-w-7xl mx-auto px-5 md:px-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-[#E5E7EB]">
           
-          {/* Logo e Resumo */}
-          <div className="md:col-span-4 space-y-3">
-            <BrandLogo />
-            <p className="text-xs text-slate-600 leading-relaxed font-medium max-w-sm">
-              Assistência técnica multimarcas especializada em smartphones e tablets. Orçamentos sem compromisso e acompanhamento digital de ordens de serviço.
-            </p>
-            <p className="text-xs text-slate-500 font-semibold">
-              São Paulo - SP · CNPJ: 42.189.902/0001-88
-            </p>
+          <BrandLogo />
+
+          <div className="flex flex-wrap items-center gap-6 text-xs font-semibold text-[#667085]">
+            <a href="#servicos" className="hover:text-[#0055FF]">Serviços</a>
+            <a href="#status" className="hover:text-[#0055FF]">Consultar OS</a>
+            <a href="#garantia" className="hover:text-[#0055FF]">Garantia</a>
+            <a href="#loja" className="hover:text-[#0055FF]">Contato</a>
+            <a href="#garantia" className="hover:text-[#0055FF]">Política de Privacidade</a>
+            <a href="#garantia" className="hover:text-[#0055FF]">Termos</a>
           </div>
 
-          {/* Links Principais */}
-          <div className="md:col-span-3">
-            <p className="text-xs font-extrabold uppercase tracking-wider text-[#0B1633] mb-3">
-              Navegação
-            </p>
-            <ul className="space-y-2 text-xs font-semibold text-slate-600">
-              <li><Link to={ROUTES.servicos} className="hover:text-[#0055FF]">Serviços Prestados</Link></li>
-              <li><Link to={ROUTES.aparelhos} className="hover:text-[#0055FF]">Catálogo de Aparelhos</Link></li>
-              <li><Link to={ROUTES.sobre} className="hover:text-[#0055FF]">Nossa Loja & Bancada</Link></li>
-              <li><Link to={ROUTES.statusPortal} className="hover:text-[#0055FF]">Consultar Minha OS</Link></li>
-            </ul>
-          </div>
-
-          {/* Contato Direct */}
-          <div className="md:col-span-3">
-            <p className="text-xs font-extrabold uppercase tracking-wider text-[#0B1633] mb-3">
-              Contato & Redes
-            </p>
-            <ul className="space-y-2.5 text-xs text-slate-700 font-medium">
-              <li>
-                <a
-                  href="https://wa.me/5511987654321"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 hover:text-[#0055FF]"
-                >
-                  <PhoneCall className="w-3.5 h-3.5 text-[#25D366]" /> WhatsApp: (11) 98765-4321
-                </a>
-              </li>
-              <li>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#0055FF]">
-                  <Instagram className="w-3.5 h-3.5 text-pink-600" /> @cambuci.mobile
-                </a>
-              </li>
-              <li>
-                <a href="mailto:contato@cambucimobile.com.br" className="flex items-center gap-2 hover:text-[#0055FF]">
-                  <Mail className="w-3.5 h-3.5 text-[#0055FF]" /> contato@cambucimobile.com.br
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Entrada Discreta Área da Equipe */}
-          <div className="md:col-span-2 flex flex-col justify-between">
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-wider text-[#0B1633] mb-3">
-                Acesso Restrito
-              </p>
-              <Link
-                to={ROUTES.auth.login}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#0B1633] font-bold text-xs transition-colors border border-[#E5E7EB]"
-              >
-                <Lock className="w-3.5 h-3.5 text-[#0055FF]" /> Área da Equipe
-              </Link>
-            </div>
-          </div>
-
+          <Link
+            to={ROUTES.auth.login}
+            className="text-xs text-[#667085] hover:text-[#0055FF] font-semibold flex items-center gap-1 shrink-0"
+          >
+            • Área da equipe
+          </Link>
         </div>
 
-        <div className="pt-6 border-t border-[#E5E7EB] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-medium">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-[#667085] font-medium">
           <p>© {year} {APP_CONFIG.legalName}. Todos os direitos reservados.</p>
-          <p>Cambuci Mobile — Sistema da Assistência Técnica</p>
+          <p>Av. Lins de Vasconcelos, 1200 — Cambuci, São Paulo SP</p>
         </div>
       </div>
     </footer>
