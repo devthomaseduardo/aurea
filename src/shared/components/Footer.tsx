@@ -17,6 +17,9 @@ const Footer = () => {
             <a href="#status" className="hover:text-[#0055FF]">Consultar OS</a>
             <a href="#garantia" className="hover:text-[#0055FF]">Garantia</a>
             <a href="#loja" className="hover:text-[#0055FF]">Contato</a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#0055FF] flex items-center gap-1">
+              <img src="/brands/instagram.svg" alt="Instagram" className="w-3.5 h-3.5" /> Instagram
+            </a>
             <a href="#garantia" className="hover:text-[#0055FF]">Política de Privacidade</a>
             <a href="#garantia" className="hover:text-[#0055FF]">Termos</a>
           </div>

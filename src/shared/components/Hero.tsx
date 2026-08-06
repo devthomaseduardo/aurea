@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, PhoneCall, ShieldCheck, Wrench, Clock, CheckCircle2 } from 'lucide-react';
+import { Search, CheckCircle2 } from 'lucide-react';
 
 const Hero = () => {
   const [osSearch, setOsSearch] = useState('');
@@ -49,7 +49,8 @@ const Hero = () => {
                 rel="noopener noreferrer"
                 className="h-11 px-6 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm"
               >
-                <PhoneCall className="w-4 h-4 text-white" /> Solicitar orçamento no WhatsApp
+                <img src="/brands/whatsapp.svg" alt="WhatsApp" className="w-4 h-4 filter brightness-0 invert" />
+                Solicitar orçamento no WhatsApp
               </a>
             </div>
           </div>
