@@ -7,6 +7,7 @@ import { ProtectedRoute } from '@/modules/auth/components/ProtectedRoute';
 import { AuthBootstrap } from '@/modules/auth/components/AuthBootstrap';
 
 const LandingPage = lazy(() => import('@/modules/landing/pages/Landing'));
+const StatusPortalPage = lazy(() => import('@/modules/status/pages/StatusPortalPage'));
 const NotFound = lazy(() => import('@/shared/components/NotFound'));
 const DesignSystemPage = lazy(() => import('@/modules/design-system/pages/DesignSystemPage'));
 const LoginPage = lazy(() => import('@/modules/auth/pages/LoginPage'));
@@ -14,6 +15,12 @@ const RegisterPage = lazy(() => import('@/modules/auth/pages/RegisterPage'));
 const AuthCallbackPage = lazy(() => import('@/modules/auth/pages/AuthCallbackPage'));
 
 const DashboardPage = lazy(() => import('@/modules/dashboard/pages/DashboardPage'));
+const OrdersPage = lazy(() => import('@/modules/orders/pages/OrdersPage'));
+const OrderFormPage = lazy(() => import('@/modules/orders/pages/OrderFormPage'));
+const OrderDetailPage = lazy(() => import('@/modules/orders/pages/OrderDetailPage'));
+const InventoryPage = lazy(() => import('@/modules/inventory/pages/InventoryPage'));
+const POSPage = lazy(() => import('@/modules/pos/pages/POSPage'));
+
 const ClientsPage = lazy(() => import('@/modules/clients/pages/ClientsPage'));
 const ClientFormPage = lazy(() => import('@/modules/clients/pages/ClientFormPage'));
 const CalculatorPage = lazy(() => import('@/modules/calculator/pages/CalculatorPage'));
@@ -52,6 +59,23 @@ export function AppRoutes() {
           element={
             <Lazy>
               <LandingPage />
+            </Lazy>
+          }
+        />
+
+        <Route
+          path={ROUTES.statusPortal}
+          element={
+            <Lazy>
+              <StatusPortalPage />
+            </Lazy>
+          }
+        />
+        <Route
+          path="/status/:id"
+          element={
+            <Lazy>
+              <StatusPortalPage />
             </Lazy>
           }
         />
@@ -104,6 +128,54 @@ export function AppRoutes() {
             element={
               <Lazy>
                 <DashboardPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="orders"
+            element={
+              <Lazy>
+                <OrdersPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="orders/new"
+            element={
+              <Lazy>
+                <OrderFormPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="orders/:id"
+            element={
+              <Lazy>
+                <OrderDetailPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="orders/:id/edit"
+            element={
+              <Lazy>
+                <OrderFormPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="inventory"
+            element={
+              <Lazy>
+                <InventoryPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="pos"
+            element={
+              <Lazy>
+                <POSPage />
               </Lazy>
             }
           />

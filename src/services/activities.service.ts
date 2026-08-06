@@ -51,4 +51,7 @@ export const activitiesService = {
     localStore.set(KEY, [activity, ...localList()]);
     return activity;
   },
+  log(input: Omit<Activity, 'id' | 'createdAt'>): Activity {
+    return this.add(input);
+  },
 };

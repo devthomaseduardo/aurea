@@ -18,14 +18,13 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         </div>
         <div className="relative z-10 max-w-sm">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-300 mb-3">
-            Aurea Enterprise
+            {APP_CONFIG.name} · Assistência & Vendas
           </p>
           <h2 className="text-3xl font-semibold tracking-tight leading-tight mb-3">
-            Seu workspace comercial, com dados reais por conta
+            Sistema Integrado para Gestão da sua Oficina de Celulares
           </h2>
           <p className="text-sm text-slate-300 leading-relaxed">
-            Clientes, propostas, contratos e plugins ficam isolados por usuário.
-            Pronto para evoluir para SSO e OAuth reais.
+            Ordens de serviço com checklist físico, laudos técnicos, baixa automática de estoque de peças, frente de caixa (PDV) e acompanhamento em tempo real via WhatsApp.
           </p>
         </div>
         <p className="relative z-10 text-xs text-slate-500">

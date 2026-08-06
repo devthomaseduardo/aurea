@@ -1,19 +1,19 @@
 export const APP_CONFIG = {
-  name: 'Aurea',
-  legalName: 'Aurea Technologies',
-  tagline: 'Plataforma comercial para profissionais independentes',
+  name: 'Cambuci Mobile',
+  legalName: 'Cambuci Mobile LTDA',
+  tagline: 'Assistência técnica especializada em celulares, ordens de serviço e vendas',
   version: '4.1.0',
   description:
-    'Aurea é a plataforma empresarial para precificação de projetos, gestão de propostas e operação do pipeline comercial de freelancers e consultores.',
-  supportEmail: 'enterprise@aurea.app',
+    'Cambuci Mobile é o sistema completo para controle de ordens de serviço (OS), status de reparo em tempo real, orçamento de peças/mão de obra e CRM para assistência técnica de celulares.',
+  supportEmail: 'contato@cambucimobile.com.br',
   defaultCurrency: 'BRL' as const,
-  defaultHourlyRate: 120,
-  storagePrefix: 'aurea_v1',
+  defaultHourlyRate: 80,
+  storagePrefix: 'cambucimobile_v1',
   brand: {
-    primary: '#4F46E5',
-    gold: '#C5A04A',
+    primary: '#1D4ED8',
+    gold: '#EAB308',
     ink: '#0F172A',
-    paper: '#F8FAFC',
+    paper: '#FFFFFF',
     logo: '/brand/logo.png',
     logoMark: '/brand/logo-mark.jpg',
     hero: '/brand/hero.jpg',
@@ -28,6 +28,8 @@ export const APP_CONFIG = {
 
 export const ROUTES = {
   home: '/',
+  statusPortal: '/status',
+  statusDetail: (id: string) => `/status/${id}`,
   auth: {
     login: '/login',
     register: '/register',
@@ -36,6 +38,11 @@ export const ROUTES = {
   app: {
     root: '/app',
     dashboard: '/app/dashboard',
+    orders: '/app/orders',
+    ordersNew: '/app/orders/new',
+    orderDetail: (id: string) => `/app/orders/${id}`,
+    inventory: '/app/inventory',
+    pos: '/app/pos',
     clients: '/app/clients',
     clientsNew: '/app/clients/new',
     clientDetail: (id: string) => `/app/clients/${id}`,

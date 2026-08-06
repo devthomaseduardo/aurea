@@ -1,396 +1,293 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { LandingLayout } from '@/design-system/layouts/LandingLayout';
 import Hero from '@/shared/components/Hero';
 import {
-  FileText,
-  Calculator,
-  BarChart3,
-  ArrowRight,
-  LayoutDashboard,
-  Users,
-  FileSignature,
-  CheckCircle2,
+  Wrench,
+  Smartphone,
   ShieldCheck,
-  Building2,
-  ClipboardList,
-  Scale,
-  Workflow,
-  BadgeCheck,
-  Lock,
-  Layers,
+  Search,
+  CheckCircle2,
+  PhoneCall,
+  MapPin,
+  Clock,
+  BatteryCharging,
+  Zap,
+  Camera,
+  ShoppingBag,
+  ArrowRight,
+  Star,
+  Award,
 } from 'lucide-react';
 import { APP_CONFIG, ROUTES } from '@/core/config/app.config';
 
-const trustItems = [
-  'Processo padronizado',
-  'Documentação comercial',
-  'Governança de status',
-  'Exportação auditável',
-];
-
-const capabilities = [
+const servicesList = [
   {
-    icon: Calculator,
-    title: 'Precificação estruturada',
+    icon: Smartphone,
+    title: 'Troca de Tela / Display',
     description:
-      'Modele escopo, stack, impostos e margem com validação por etapa e modelos comerciais.',
+      'Substituição de displays OLED e LCD trincados ou sem imagem para iPhone, Samsung, Xiaomi e Motorola com testes de touch e brilho original.',
+    badge: 'Mais Solicitado',
   },
   {
-    icon: FileText,
-    title: 'Gestão de propostas',
+    icon: BatteryCharging,
+    title: 'Troca de Bateria Homologada',
     description:
-      'Pipeline com status, valores, tecnologias e ações de duplicar, exportar e arquivar.',
+      'Substituição de baterias estufadas, viciadas ou descarregando rápido por baterias novas com garantia total.',
+    badge: 'Express (30 min)',
   },
   {
-    icon: Users,
-    title: 'Base de clientes',
+    icon: Zap,
+    title: 'Conector de Carga USB-C / Lightning',
     description:
-      'Cadastro corporativo com busca, filtros, ordenação e paginação para operação diária.',
+      'Reparo para celulares que não carregam, mau contato no cabo ou aquecimento excessivo na tomada.',
+    badge: 'Peça Original',
   },
   {
-    icon: FileSignature,
-    title: 'Contratos e entregas',
+    icon: Wrench,
+    title: 'Reparo Avançado em Placa',
     description:
-      'Vincule contratos a propostas, acompanhe assinatura e prazos de entrega.',
+      'Recuperação de aparelhos molhados, curtos na placa mãe, desoxidação ultrassônica e reparos em CI de carga / áudio.',
+    badge: 'Técnico Senior',
   },
   {
-    icon: LayoutDashboard,
-    title: 'Painel executivo',
+    icon: Camera,
+    title: 'Lentes de Câmera & Vidro Traseiro',
     description:
-      'Receita, horas, lucro e atividades recentes em visão consolidada para decisão.',
+      'Troca de lentes de câmera fotográfica e remoção de tampa traseira de vidro a laser com acabamento original de fábrica.',
+    badge: 'Tecnologia a Laser',
   },
   {
-    icon: BarChart3,
-    title: 'Analytics comercial',
+    icon: ShoppingBag,
+    title: 'Venda de Acessórios & Seminovos',
     description:
-      'Distribuição de status e séries de performance para acompanhamento contínuo.',
-  },
-];
-
-const process = [
-  {
-    step: '01',
-    title: 'Qualificar e modelar',
-    body: 'Capture requisitos, complexidade e parâmetros fiscais com validação de formulário.',
-  },
-  {
-    step: '02',
-    title: 'Precificar e documentar',
-    body: 'Gere breakdown, cronograma de pagamentos e modelos Básico, Padrão ou Premium.',
-  },
-  {
-    step: '03',
-    title: 'Operar e acompanhar',
-    body: 'Mova propostas no pipeline, exporte contratos e monitore indicadores.',
-  },
-];
-
-const governance = [
-  {
-    icon: ShieldCheck,
-    title: 'Controle de status',
-    text: 'Estados padronizados para propostas e contratos, sem ambiguidade operacional.',
-  },
-  {
-    icon: Lock,
-    title: 'Dados no edge',
-    text: 'Persistência local com prefixo versionado, pronta para evolução API/SSO.',
-  },
-  {
-    icon: Scale,
-    title: 'Transparência de custos',
-    text: 'Horas, buffer, impostos e serviços expostos no detalhamento da proposta.',
-  },
-  {
-    icon: ClipboardList,
-    title: 'Rastreabilidade',
-    text: 'Histórico de atividades e snapshots de cálculo associados a cada proposta.',
+      'Capas de alta resistência, películas 3D cerâmicas, carregadores GaN ultra-rápidos e iPhones seminovos revisados com garantia.',
+    badge: 'Pronta Entrega',
   },
 ];
 
 export default function Landing() {
+  const [osInput, setOsInput] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearchOS = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (osInput.trim()) {
+      navigate(`/status/${osInput.trim()}`);
+    }
+  };
+
   return (
     <LandingLayout>
       <Hero />
 
-      {/* Trust strip */}
-      <section className="border-b border-border bg-slate-50">
-        <div className="max-w-7xl mx-auto px-5 md:px-6 py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-            Construído para operação comercial séria
+      {/* Seção 1: Consultar OS (#status) */}
+      <section id="status" className="bg-slate-50 py-16 md:py-20 border-b border-slate-200">
+        <div className="max-w-5xl mx-auto px-5 md:px-6 text-center space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-blue-800 text-xs font-bold uppercase tracking-wider">
+            <Search className="w-3.5 h-3.5 text-blue-600" />
+            Consulta Online de Reparos
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+            Consultar Status da sua Ordem de Serviço (OS)
+          </h2>
+
+          <p className="text-slate-600 text-sm max-w-xl mx-auto">
+            Digite o número impresso em seu comprovante para visualizar o andamento em tempo real do conserto do seu celular.
           </p>
-          <ul className="flex flex-wrap gap-x-6 gap-y-2">
-            {trustItems.map((item) => (
-              <li key={item} className="flex items-center gap-1.5 text-sm text-slate-600">
-                <BadgeCheck className="w-3.5 h-3.5 text-primary" />
-                {item}
-              </li>
-            ))}
-          </ul>
+
+          <form onSubmit={handleSearchOS} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto pt-2">
+            <input
+              type="text"
+              placeholder="Digite a OS (Ex: OS-2026-001) ou seu Telefone"
+              value={osInput}
+              onChange={(e) => setOsInput(e.target.value)}
+              className="flex-1 h-12 px-4 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium"
+            />
+            <button
+              type="submit"
+              className="h-12 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-sm text-white transition-colors shrink-0 shadow-md flex items-center justify-center gap-2"
+            >
+              <Search className="w-4 h-4 text-yellow-300" />
+              Buscar Status
+            </button>
+          </form>
         </div>
       </section>
 
-      {/* Platform */}
-      <section id="plataforma" className="bg-white py-20 md:py-28">
+      {/* Seção 2: Serviços Técnico (#servicos) */}
+      <section id="servicos" className="bg-white py-20 md:py-24 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-5 md:px-6">
-          <div className="grid lg:grid-cols-2 gap-14 items-center">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-3">
-                Plataforma
-              </p>
-              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-4 text-balance">
-                Do orçamento ao contrato, com disciplina de software corporativo
-              </h2>
-              <p className="text-slate-600 leading-relaxed mb-6">
-                A {APP_CONFIG.name} substitui planilhas e documentos soltos por um fluxo
-                único: precificação validada, propostas versionáveis e visão executiva do
-                pipeline.
-              </p>
-              <ul className="space-y-3 mb-8">
-                {[
-                  'Wizard multi-etapa com regras de negócio e Zod',
-                  'Módulos independentes para clientes, propostas e contratos',
-                  'Exportação de documentos comerciais e snapshots de cálculo',
-                  'Arquitetura preparada para escala e integração backend',
-                ].map((item) => (
-                  <li key={item} className="flex gap-2.5 text-sm text-slate-700">
-                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to={ROUTES.app.dashboard}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
-              >
-                Abrir console operacional
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+          <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 inline-block">
+              Manutenção & Conserto
+            </p>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
+              Serviços Técnicos Especializados
+            </h2>
+            <p className="text-slate-600 text-sm">
+              Componentes testados com laudo técnico e transparência do início ao fim.
+            </p>
+          </div>
 
-            <div className="relative">
-              <div className="rounded-xl border border-slate-200 overflow-hidden shadow-lg bg-white">
-                <img
-                  src={APP_CONFIG.brand.hero}
-                  alt="Visão da plataforma Aurea"
-                  className="w-full h-auto object-cover"
-                  loading="lazy"
-                />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {servicesList.map((service) => {
+              const Icon = service.icon;
+              return (
+                <div
+                  key={service.title}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-6 hover:border-blue-500 hover:shadow-lg transition-all group flex flex-col justify-between"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="w-12 h-12 rounded-xl bg-blue-600 text-yellow-400 flex items-center justify-center shadow-md">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-yellow-100 text-yellow-800 border border-yellow-300">
+                        {service.badge}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-700 transition-colors">
+                      {service.title}
+                    </h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">{service.description}</p>
+                  </div>
+
+                  <div className="pt-5 border-t border-slate-200 mt-6 flex items-center justify-between">
+                    <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Garantia 90 dias
+                    </span>
+                    <a
+                      href={`https://api.whatsapp.com/send?phone=5511987654321&text=Olá,%20gostaria%20de%20um%20orçamento%20para%20${encodeURIComponent(
+                        service.title
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-bold text-blue-700 hover:underline flex items-center gap-1"
+                    >
+                      Orçamento WhatsApp <ArrowRight className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Seção 3: Garantia 90 Dias (#garantia) */}
+      <section id="garantia" className="bg-slate-50 py-20 md:py-24 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-5 md:px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold uppercase tracking-wider">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                Segurança Legal
               </div>
-              <div className="mt-4 grid grid-cols-3 gap-3">
+
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                Garantia de 90 Dias em Todas as Peças e Serviços
+              </h2>
+
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Cada serviço realizado na Cambuci Mobile acompanha nota e comprovante com garantia formal de 90 dias para os componentes trocados e trabalho executado.
+              </p>
+
+              <div className="space-y-3 pt-2">
                 {[
-                  { label: 'Módulos', value: '8+' },
-                  { label: 'Status de proposta', value: '6' },
-                  { label: 'Modelos', value: '3' },
-                ].map((kpi) => (
-                  <div
-                    key={kpi.label}
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-center"
-                  >
-                    <p className="text-lg font-semibold text-slate-900 tabular-nums">{kpi.value}</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">{kpi.label}</p>
+                  'Checklist físico completo com o cliente na entrega do celular (tela, som, biometria)',
+                  'Laudo técnico discriminando cada peça substituída e os custos',
+                  'Peças com teste de qualidade e procedência garantida',
+                  'Acompanhamento online da Ordem de Serviço pelo celular',
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-3 text-xs text-slate-700">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span className="font-medium">{item}</span>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Solutions / capabilities */}
-      <section id="solucoes" className="bg-slate-50 border-y border-border py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-5 md:px-6">
-          <div className="max-w-2xl mb-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-3">
-              Soluções
-            </p>
-            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-3">
-              Capacidades da suíte comercial
-            </h2>
-            <p className="text-slate-600">
-              Módulos integrados para cobrir o ciclo completo, da estimativa à governança
-              do contrato.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {capabilities.map((item) => (
-              <article
-                key={item.title}
-                className="rounded-xl border border-slate-200 bg-white p-6 hover:border-primary/30 hover:shadow-sm transition-all"
-              >
-                <div className="w-10 h-10 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-4">
-                  <item.icon className="w-4.5 h-4.5 text-primary w-4 h-4" />
+            <div className="bg-white border-2 border-blue-600/30 rounded-2xl p-8 space-y-6 shadow-md">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-200">
+                <div className="w-10 h-10 rounded-lg bg-blue-600 text-yellow-400 flex items-center justify-center">
+                  <Wrench className="w-5 h-5" />
                 </div>
-                <h3 className="text-[15px] font-semibold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{item.description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Process */}
-      <section id="processo" className="bg-white py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-5 md:px-6">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
-            <div className="max-w-xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-3">
-                Processo
-              </p>
-              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900">
-                Metodologia em três estágios
-              </h2>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <Workflow className="w-4 h-4 text-primary" />
-              Alinhado a operação comercial B2B
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-0 border border-slate-200 rounded-xl overflow-hidden">
-            {process.map((item, i) => (
-              <div
-                key={item.step}
-                className={`bg-white p-7 md:p-8 ${i > 0 ? 'border-t md:border-t-0 md:border-l border-slate-200' : ''}`}
-              >
-                <p className="text-xs font-semibold tracking-[0.16em] text-primary mb-4">
-                  ESTÁGIO {item.step}
-                </p>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Governance */}
-      <section id="seguranca" className="bg-slate-900 text-white py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-5 md:px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-300 mb-3">
-                Governança
-              </p>
-              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-balance">
-                Controles que transmitem confiança ao cliente final
-              </h2>
-              <p className="text-slate-300 leading-relaxed mb-8 max-w-lg">
-                Propostas e contratos com trilha clara de status, breakdowns legíveis e
-                documentação exportável no padrão que empresas esperam de um fornecedor
-                profissional.
-              </p>
-              <div className="flex items-center gap-3 text-sm text-slate-300">
-                <Building2 className="w-4 h-4 text-indigo-300" />
-                Ideal para freelancers senior, studios e consultores
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              {governance.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-xl border border-white/10 bg-white/5 p-5"
-                >
-                  <item.icon className="w-5 h-5 text-indigo-300 mb-3" />
-                  <h3 className="text-sm font-semibold text-white mb-1.5">{item.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{item.text}</p>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">Nossos Compromissos</h3>
+                  <span className="text-xs text-slate-500">Transparência total na bancada</span>
                 </div>
-              ))}
+              </div>
+
+              <div className="space-y-3 text-xs text-slate-700">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <strong className="text-slate-900 block font-bold mb-1">Aprovação Prévia de Orçamento</strong>
+                  Você só paga pelo que autorizar previamente. Sem taxas surpresa no balcão.
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <strong className="text-slate-900 block font-bold mb-1">Proteção e Privacidade dos Seus Dados</strong>
+                  Mantemos a integridade de suas fotos, mensagens e arquivos durante todo o processo técnico.
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Results */}
-      <section id="resultados" className="bg-white py-20 md:py-28 border-b border-border">
+      {/* Seção 4: Contato & Endereço (#contato) */}
+      <section id="contato" className="bg-white py-20 md:py-24">
         <div className="max-w-7xl mx-auto px-5 md:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-3">
-              Resultados
+          <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 inline-block">
+              Atendimento Balcão
             </p>
-            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-3">
-              Indicadores de operação
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
+              Endereço e Contato da Loja Física
             </h2>
-            <p className="text-slate-600">
-              O dashboard consolida o que importa para a saúde do negócio.
+            <p className="text-slate-600 text-sm">
+              Visite nossa loja ou fale diretamente com a equipe técnica via WhatsApp.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-            {[
-              { label: 'Receita acompanhada', value: 'Pipeline + aceitas' },
-              { label: 'Propostas', value: 'Status ponta a ponta' },
-              { label: 'Clientes', value: 'CRM operacional' },
-              { label: 'Contratos', value: 'Ciclo de assinatura' },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center"
-              >
-                <p className="text-sm font-semibold text-slate-900 mb-1">{item.value}</p>
-                <p className="text-xs text-slate-500 uppercase tracking-wide">{item.label}</p>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center space-y-3">
+              <div className="w-12 h-12 rounded-xl bg-blue-600 text-yellow-400 flex items-center justify-center mx-auto shadow-md">
+                <MapPin className="w-6 h-6" />
               </div>
-            ))}
-          </div>
-
-          <div className="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
-            <div className="grid md:grid-cols-2">
-              <div className="p-8 md:p-10 flex flex-col justify-center">
-                <Layers className="w-6 h-6 text-primary mb-4" />
-                <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                  Console unificado
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed mb-6">
-                  Navegação por áreas de negócio, métricas executivas e atalhos para
-                  criação de propostas com experiência de software corporativo, sem
-                  complexidade desnecessária.
-                </p>
-                <Link to={ROUTES.app.dashboard} className="btn-primary self-start h-10 px-5 text-sm">
-                  Entrar no console
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-              <div className="border-t md:border-t-0 md:border-l border-slate-200 bg-white">
-                <img
-                  src={APP_CONFIG.brand.product}
-                  alt="Console Aurea"
-                  className="w-full h-full object-cover min-h-[240px] max-h-[320px]"
-                  loading="lazy"
-                />
-              </div>
+              <h3 className="font-bold text-slate-900 text-base">Endereço da Oficina</h3>
+              <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                Av. Paulista, 1000 — Loja 42 (Galeria Central)
+                <br />
+                Bela Vista, São Paulo - SP
+              </p>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Enterprise CTA */}
-      <section className="bg-slate-50 py-20 md:py-24">
-        <div className="max-w-4xl mx-auto px-5 md:px-6 text-center">
-          <img
-            src={APP_CONFIG.brand.logo}
-            alt="Aurea"
-            className="w-12 h-12 rounded-lg mx-auto mb-6 ring-1 ring-border object-cover shadow-sm"
-          />
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-3 text-balance">
-            Eleve o padrão comercial do seu negócio
-          </h2>
-          <p className="text-slate-600 mb-8 max-w-xl mx-auto">
-            Adote um processo único de precificação e propostas, com a clareza que
-            clientes corporativos esperam.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to={ROUTES.app.dashboard} className="btn-primary h-11 px-6 text-sm">
-              Iniciar agora
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              to={ROUTES.app.calculator}
-              className="inline-flex items-center justify-center h-11 px-6 text-sm font-medium rounded-lg border border-slate-300 bg-white text-slate-800 hover:bg-slate-50"
-            >
-              Abrir calculadora
-            </Link>
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center space-y-3">
+              <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-md">
+                <PhoneCall className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-slate-900 text-base">Atendimento via WhatsApp</h3>
+              <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                WhatsApp: (11) 98765-4321
+                <br />
+                E-mail: contato@teronfix.com.br
+              </p>
+            </div>
+
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center space-y-3">
+              <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center mx-auto shadow-md">
+                <Clock className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-slate-900 text-base">Horário de Atendimento</h3>
+              <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                Segunda a Sexta: 08:00h às 19:00h
+                <br />
+                Sábado: 09:00h às 14:00h
+              </p>
+            </div>
           </div>
         </div>
       </section>

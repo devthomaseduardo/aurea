@@ -11,9 +11,9 @@ interface BrandLogoProps {
 }
 
 const sizes = {
-  sm: { box: 'w-7 h-7', img: 'w-7 h-7', text: 'text-sm' },
-  md: { box: 'w-8 h-8', img: 'w-8 h-8', text: 'text-[15px]' },
-  lg: { box: 'w-10 h-10', img: 'w-10 h-10', text: 'text-lg' },
+  sm: { box: 'w-8 h-8', img: 'w-8 h-8', text: 'text-sm' },
+  md: { box: 'w-9 h-9', img: 'w-9 h-9', text: 'text-[16px]' },
+  lg: { box: 'w-11 h-11', img: 'w-11 h-11', text: 'text-xl' },
 };
 
 export function BrandLogo({
@@ -29,26 +29,26 @@ export function BrandLogo({
     <Link
       to={to}
       onClick={onClick}
-      className={cn('flex items-center gap-2.5 min-w-0', className)}
+      className={cn('flex items-center gap-2.5 min-w-0 group', className)}
     >
       <span
         className={cn(
-          'relative shrink-0 rounded-lg overflow-hidden ring-1 ring-border bg-white shadow-sm',
+          'relative shrink-0 rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm flex items-center justify-center p-0.5',
           s.box
         )}
       >
         <img
           src={APP_CONFIG.brand.logo}
           alt={`${APP_CONFIG.name} logo`}
-          className={cn('object-cover', s.img)}
-          width={40}
-          height={40}
+          className={cn('object-contain rounded-lg', s.img)}
+          width={44}
+          height={44}
         />
       </span>
       {showWordmark && (
-        <span className={cn('font-semibold tracking-tight truncate leading-none', s.text)}>
-          {APP_CONFIG.name}
-          <span className="text-primary">.</span>
+        <span className={cn('font-black tracking-tight truncate leading-none text-slate-900', s.text)}>
+          Cambuci <span className="text-blue-600">Mobile</span>
+          <span className="text-yellow-500 font-extrabold ml-0.5">.</span>
         </span>
       )}
     </Link>

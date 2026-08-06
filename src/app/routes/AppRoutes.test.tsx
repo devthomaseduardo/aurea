@@ -7,7 +7,7 @@ import { ROUTES } from '@/core/config/app.config';
 const waitPage = { timeout: 5000 };
 
 describe('AppRoutes (frontend)', () => {
-  it('renderiza landing enterprise em /', async () => {
+  it('renderiza landing da oficina em /', async () => {
     renderWithProviders(<AppRoutes />, {
       routerProps: { initialEntries: [ROUTES.home] },
     });
@@ -16,8 +16,8 @@ describe('AppRoutes (frontend)', () => {
       expect(
         screen.getByRole('heading', {
           name: (_content, element) =>
-            (element?.textContent ?? '').toLowerCase().includes('operação comercial') &&
-            (element?.textContent ?? '').toLowerCase().includes('enterprise'),
+            (element?.textContent ?? '').toLowerCase().includes('conserto de celulares') &&
+            (element?.textContent ?? '').toLowerCase().includes('garantia de 90 dias'),
         })
       ).toBeInTheDocument();
     }, waitPage);
@@ -29,7 +29,7 @@ describe('AppRoutes (frontend)', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Acessar conta/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Acessar o Sistema da Oficina/i })).toBeInTheDocument();
     }, waitPage);
   });
 
@@ -39,10 +39,10 @@ describe('AppRoutes (frontend)', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Acessar conta/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Acessar o Sistema da Oficina/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Continuar com Google/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Continuar com GitHub/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Entrar com conta demo/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Entrar com Conta Demo da Oficina/i })).toBeInTheDocument();
     }, waitPage);
   });
 

@@ -65,8 +65,8 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      title="Acessar conta"
-      subtitle="Google, GitHub ou e-mail profissional."
+      title="Acessar o Sistema da Oficina"
+      subtitle="Entre com suas credenciais de operador ou técnico."
     >
       <SocialAuthButtons redirectTo={from} />
 
@@ -78,12 +78,12 @@ export default function LoginPage() {
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">E-mail</Label>
+          <Label htmlFor="email">E-mail do Técnico / Operador</Label>
           <Input
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="voce@empresa.com"
+            placeholder="tecnico@teronfix.com.br"
             {...form.register('email')}
           />
           {form.formState.errors.email && (
@@ -92,7 +92,7 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Senha</Label>
+          <Label htmlFor="password">Senha de Acesso</Label>
           <Input
             id="password"
             type="password"
@@ -111,7 +111,7 @@ export default function LoginPage() {
         )}
 
         <Button type="submit" className="w-full" variant="brand" disabled={isLoading}>
-          {isLoading ? 'Entrando…' : 'Entrar com e-mail'}
+          {isLoading ? 'Entrando…' : 'Entrar no Sistema'}
         </Button>
       </form>
 
@@ -122,16 +122,16 @@ export default function LoginPage() {
         onClick={loginDemo}
         disabled={demoLoading || isLoading}
       >
-        {demoLoading ? 'Preparando demo…' : 'Entrar com conta demo'}
+        {demoLoading ? 'Preparando conta demo…' : 'Entrar com Conta Demo da Oficina'}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground mt-6">
-        Não tem conta?{' '}
+        Precisa de acesso?{' '}
         <Link
           to={ROUTES.auth.register}
           className="text-primary font-medium link-hover"
         >
-          Criar workspace
+          Cadastrar nova loja
         </Link>
       </p>
     </AuthLayout>

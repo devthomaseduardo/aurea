@@ -6,7 +6,7 @@ import { DashboardLayout } from './DashboardLayout';
 import { ROUTES } from '@/core/config/app.config';
 
 describe('DashboardLayout (frontend)', () => {
-  it('renderiza navegação principal e outlet', () => {
+  it('renderiza navegação principal e outlet da oficina', () => {
     renderWithProviders(
       <Routes>
         <Route path="/app" element={<DashboardLayout />}>
@@ -18,10 +18,8 @@ describe('DashboardLayout (frontend)', () => {
 
     expect(screen.getByText('Conteúdo dashboard')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Visão geral' })).toBeInTheDocument();
-    expect(screen.getAllByRole('link', { name: 'Clientes' }).length).toBeGreaterThan(0);
-    expect(screen.getByRole('link', { name: 'Precificação' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Propostas' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Ordens de Serviço (OS)' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Frente de Caixa (PDV)' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Estoque & Peças' })).toBeInTheDocument();
   });
 });
-
-

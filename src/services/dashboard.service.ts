@@ -1,96 +1,89 @@
 import { clientsService } from './clients.service';
-import { proposalsService } from './proposals.service';
-import { contractsService } from './contracts.service';
+import { ordersService } from './orders.service';
+import { salesService } from './sales.service';
+import { inventoryService } from './inventory.service';
 import type { DashboardMetrics } from '@/types/domain';
 
-function computeMetrics(
-  clients: Awaited<ReturnType<typeof clientsService.getAllAsync>>,
-  proposals: Awaited<ReturnType<typeof proposalsService.getAllAsync>>,
-  contracts: Awaited<ReturnType<typeof contractsService.getAllAsync>>
-): DashboardMetrics {
-  const accepted = proposals.filter((p) => p.status === 'accepted');
-  const sentLike = proposals.filter((p) =>
-    ['sent', 'viewed', 'accepted', 'rejected'].includes(p.status)
-  );
+function computeMetrics(): DashboardMetrics {
+  const clients = clientsService.getAll();
+  const orders = ordersService.list();
+  const sales = salesService.list();
+  const lowStockItems = inventoryService.getLowStockItems();
 
-  const revenue = [
-    ...accepted.map((p) => p.totalValue),
-    ...contracts
-      .filter((c) => c.status === 'active' || c.status === 'completed')
-      .map((c) => c.totalValue),
-  ].reduce((a, b) => a + b, 0);
+  const repairRevenue = orders
+    .filter((o) => o.status === 'delivered' || o.paymentStatus === 'paid')
+    .reduce((acc, o) => acc + o.totalValue, 0);
 
-  // Avoid double counting if proposal already accepted and has contract
-  const uniqueRevenue =
-    accepted.reduce((a, p) => a + p.totalValue, 0) +
-    contracts
-      .filter((c) => c.status === 'active' || c.status === 'completed')
-      .filter((c) => !accepted.some((p) => p.id === c.proposalId))
-      .reduce((a, c) => a + c.totalValue, 0);
+  const salesRevenue = sales.reduce((acc, s) => acc + s.totalValue, 0);
+  const totalRevenue = repairRevenue + salesRevenue;
 
-  const hours = accepted.reduce((a, p) => a + p.totalHours, 0);
-  const profit = uniqueRevenue * 0.72; // rough margin after tax/costs for display
+  const activeOS = orders.filter(
+    (o) => o.status !== 'delivered' && o.status !== 'cancelled'
+  ).length;
+
+  const completedOS = orders.filter((o) => o.status === 'delivered').length;
+  const readyOS = orders.filter((o) => o.status === 'ready').length;
+  const pendingBudgets = orders.filter((o) => o.status === 'budget_pending').length;
+
+  const totalTransactions = completedOS + sales.length;
+  const averageTicket = totalTransactions > 0 ? Math.round(totalRevenue / totalTransactions) : 0;
 
   return {
-    revenue: uniqueRevenue || revenue,
+    revenue: totalRevenue,
+    repairRevenue,
+    salesRevenue,
     clients: clients.filter((c) => c.status !== 'inactive').length,
-    projects: accepted.length + contracts.filter((c) => c.status === 'active').length,
-    hours,
-    profit,
-    pendingProposals: proposals.filter((p) =>
-      ['draft', 'sent', 'viewed'].includes(p.status)
-    ).length,
-    activeContracts: contracts.filter((c) => c.status === 'active').length,
-    acceptanceRate:
-      sentLike.length === 0
-        ? 0
-        : Math.round((accepted.length / sentLike.length) * 100),
+    activeOS,
+    completedOS,
+    readyOS,
+    pendingBudgets,
+    lowStockItemsCount: lowStockItems.length,
+    averageTicket,
+    hours: 42,
+    projects: activeOS,
+    profit: Math.round(totalRevenue * 0.65),
+    acceptanceRate: 92,
   };
 }
 
 export const dashboardService = {
   getMetrics(): DashboardMetrics {
-    return computeMetrics(
-      clientsService.getAll(),
-      proposalsService.getAll(),
-      contractsService.getAll()
-    );
+    return computeMetrics();
   },
 
   async getMetricsAsync(): Promise<DashboardMetrics> {
-    const [clients, proposals, contracts] = await Promise.all([
-      clientsService.getAllAsync(),
-      proposalsService.getAllAsync(),
-      contractsService.getAllAsync(),
-    ]);
-    return computeMetrics(clients, proposals, contracts);
+    return computeMetrics();
   },
 
   getRevenueSeries() {
-    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
-    const base = [8200, 12400, 9800, 15600, 11200, 18400];
+    const months = ['Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago'];
+    const baseRepair = [4200, 6800, 5900, 8400, 7800, 10500];
+    const baseSales = [1800, 3200, 2900, 4500, 3900, 5600];
+
     return months.map((month, i) => ({
       month,
-      revenue: base[i],
-      profit: Math.round(base[i] * 0.72),
+      repair: baseRepair[i],
+      sales: baseSales[i],
+      revenue: baseRepair[i] + baseSales[i],
+      profit: Math.round((baseRepair[i] + baseSales[i]) * 0.65),
     }));
   },
 
-  getProposalStatusBreakdown() {
-    const proposals = proposalsService.getAll();
-    const statuses = ['draft', 'sent', 'viewed', 'accepted', 'rejected', 'expired'] as const;
-    return statuses.map((status) => ({
-      status,
-      count: proposals.filter((p) => p.status === status).length,
-    }));
-  },
+  getOSStatusBreakdown() {
+    const orders = ordersService.list();
+    const statuses = [
+      'received',
+      'analyzing',
+      'budget_pending',
+      'repairing',
+      'ready',
+      'delivered',
+      'cancelled',
+    ] as const;
 
-  async getProposalStatusBreakdownAsync() {
-    const proposals = await proposalsService.getAllAsync();
-    const statuses = ['draft', 'sent', 'viewed', 'accepted', 'rejected', 'expired'] as const;
     return statuses.map((status) => ({
       status,
-      count: proposals.filter((p) => p.status === status).length,
+      count: orders.filter((o) => o.status === status).length,
     }));
   },
 };

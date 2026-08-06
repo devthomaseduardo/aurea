@@ -1,98 +1,156 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight, Building2, Lock, LineChart } from 'lucide-react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Search, Wrench, ShieldCheck, Smartphone, ArrowRight, PhoneCall, CheckCircle2, Star, Award } from 'lucide-react';
 import { APP_CONFIG, ROUTES } from '@/core/config/app.config';
 
 const Hero = () => {
+  const [osSearch, setOsSearch] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearchOS = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (osSearch.trim()) {
+      navigate(`/status/${osSearch.trim()}`);
+    }
+  };
+
   return (
-    <section id="inicio" className="relative bg-white border-b border-border overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(214_28%_92%/0.5)_1px,transparent_1px),linear-gradient(to_bottom,hsl(214_28%_92%/0.5)_1px,transparent_1px)] bg-[size:56px_56px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,#000_40%,transparent_100%)]" />
-      </div>
+    <section id="inicio" className="relative bg-white text-slate-900 border-b border-slate-200 overflow-hidden">
+      <div className="relative z-10 max-w-7xl mx-auto px-5 md:px-6 pt-12 md:pt-16 pb-16 md:pb-20">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          
+          {/* Lado Esquerdo: Chamada e Busca de OS */}
+          <div className="lg:col-span-7 text-center lg:text-left space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+              Assistência Técnica Multimarcas & Venda de Acessórios
+            </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-5 md:px-6 pt-16 md:pt-20 pb-16 md:pb-24">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-10 items-center">
-          <div className="lg:col-span-6 text-center lg:text-left">
-            <p className="animate-fade-up inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-primary mb-5">
-              <Building2 className="w-3.5 h-3.5" />
-              Plataforma comercial empresarial
-            </p>
-
-            <h1 className="animate-fade-up delay-100 text-4xl sm:text-5xl lg:text-[3.4rem] font-semibold leading-[1.08] tracking-tight text-slate-900 mb-5 text-balance">
-              Operação comercial com
-              <span className="text-primary"> padrão enterprise</span>
-              {' '}para profissionais independentes
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.2rem] font-extrabold leading-[1.1] tracking-tight text-slate-900">
+              Conserto de Celulares com <span className="text-blue-600 underline decoration-yellow-400 decoration-4">Garantia de 90 Dias</span> e Peças Originais
             </h1>
 
-            <p className="animate-fade-up delay-200 text-[15px] md:text-base text-slate-600 max-w-xl mx-auto lg:mx-0 leading-relaxed mb-8">
-              Centralize precificação, propostas, clientes e contratos em um único workspace.
-              Padronize o ciclo comercial com a disciplina de um software B2B corporativo.
+            <p className="text-base text-slate-600 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              Especialistas em Apple iPhone, Samsung Galaxy, Xiaomi e Motorola. Troca de tela, bateria, conector de carga e reparos de placa com laudo transparente e acompanhamento em tempo real.
             </p>
 
-            <div className="animate-fade-up delay-300 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-10">
-              <Link to={ROUTES.auth.login} className="btn-primary text-sm h-11 px-6">
-                Acessar a plataforma
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+            {/* Widget de Consulta da OS */}
+            <div className="bg-slate-50 border-2 border-blue-600/30 rounded-2xl p-4.5 shadow-md max-w-lg mx-auto lg:mx-0 text-left space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                  <Search className="w-4 h-4 text-blue-600" />
+                  Consultar Ordem de Serviço (OS)
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 border border-yellow-300">
+                  Online 24h
+                </span>
+              </div>
+
+              <form onSubmit={handleSearchOS} className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Digite a OS (Ex: OS-2026-001) ou seu WhatsApp"
+                  value={osSearch}
+                  onChange={(e) => setOsSearch(e.target.value)}
+                  className="flex-1 h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium"
+                />
+                <button
+                  type="submit"
+                  className="h-11 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-xs text-white transition-colors shrink-0 shadow-md flex items-center gap-1.5"
+                >
+                  Consultar OS
+                  <ArrowRight className="w-3.5 h-3.5 text-yellow-300" />
+                </button>
+              </form>
+            </div>
+
+            <div className="flex flex-wrap gap-3 justify-center lg:justify-start pt-2">
               <a
-                href="#plataforma"
-                className="inline-flex items-center justify-center h-11 px-6 text-sm font-medium rounded-lg border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 transition-colors"
+                href="#servicos"
+                className="h-11 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-xs text-white shadow-sm flex items-center gap-2 transition-colors"
               >
-                Conhecer a plataforma
+                <Wrench className="w-4 h-4 text-yellow-300" /> Ver Tabela de Serviços
+              </a>
+              <a
+                href="https://wa.me/5511987654321?text=Olá,%20gostaria%20de%20um%20orçamento%20para%20meu%20celular"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-11 px-6 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 font-bold text-xs flex items-center gap-2 transition-colors"
+              >
+                <PhoneCall className="w-4 h-4 text-emerald-600" /> Orçamento Rápido no WhatsApp
               </a>
             </div>
 
-            <div className="animate-fade-up delay-400 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0 border-t border-border pt-6">
-              {[
-                { value: '6', label: 'Etapas de precificação' },
-                { value: '100%', label: 'Rastreabilidade' },
-                { value: 'B2B', label: 'Fluxo corporativo' },
-              ].map((item) => (
-                <div key={item.label} className="text-left">
-                  <p className="text-lg font-semibold text-slate-900 tabular-nums">{item.value}</p>
-                  <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{item.label}</p>
+            {/* Selos de Confiança */}
+            <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-200 text-left max-w-lg">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0" />
+                <div>
+                  <strong className="text-xs text-slate-900 block font-bold">90 Dias</strong>
+                  <span className="text-[10px] text-slate-500">Garantia legal em nota</span>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="lg:col-span-6 animate-fade-up delay-200">
-            <div className="relative">
-              <div className="rounded-xl border border-slate-200 bg-white shadow-[0_24px_80px_-24px_rgba(15,23,42,0.25)] overflow-hidden">
-                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-slate-200 bg-slate-50">
-                  <span className="w-2 h-2 rounded-full bg-slate-300" />
-                  <span className="w-2 h-2 rounded-full bg-slate-300" />
-                  <span className="w-2 h-2 rounded-full bg-slate-300" />
-                  <span className="ml-2 text-[11px] font-medium text-slate-500">
-                    app.aurea · operations console
-                  </span>
-                </div>
-                <img
-                  src={APP_CONFIG.brand.product}
-                  alt="Console operacional Aurea"
-                  className="w-full h-auto object-cover max-h-[360px]"
-                  loading="eager"
-                />
               </div>
 
-              <div className="absolute -bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-64 rounded-lg border border-slate-200 bg-white p-3.5 shadow-lg">
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-md bg-indigo-50 border border-indigo-100 flex items-center justify-center shrink-0">
-                    <LineChart className="w-4 h-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wide">
-                      Pipeline
-                    </p>
-                    <p className="text-sm font-semibold text-slate-900">Taxa de aceitação 67%</p>
-                    <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                      <Lock className="w-3 h-3" />
-                      Auditoria de propostas ativa
-                    </p>
-                  </div>
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-yellow-500 fill-yellow-500 shrink-0" />
+                <div>
+                  <strong className="text-xs text-slate-900 block font-bold">4.9 / 5.0</strong>
+                  <span className="text-[10px] text-slate-500">+1.200 Clientes satisfeitos</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Award className="w-5 h-5 text-blue-600 shrink-0" />
+                <div>
+                  <strong className="text-xs text-slate-900 block font-bold">Sem Custo</strong>
+                  <span className="text-[10px] text-slate-500">Avaliação no balcão</span>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Lado Direito: Card Ilustrativo de Aparelhos Atendidos */}
+          <div className="lg:col-span-5">
+            <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 space-y-5 shadow-lg">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div className="flex items-center gap-2">
+                  <Smartphone className="w-5 h-5 text-blue-600" />
+                  <span className="font-extrabold text-sm text-slate-900">Oficina Técnica Especializada</span>
+                </div>
+                <span className="text-xs font-bold text-yellow-700 bg-yellow-100 border border-yellow-300 px-2 py-0.5 rounded">
+                  Bancada Aberta
+                </span>
+              </div>
+
+              {/* Lista de Aparelhos Populares */}
+              <div className="space-y-3">
+                {[
+                  { brand: 'Apple iPhone', models: 'iPhone 11 / 12 / 13 / 14 / 15 Pro Max', time: 'Pronta Entrega (40 min)' },
+                  { brand: 'Samsung Galaxy', models: 'Linha S20 / S21 / S22 / S23 / Linha A e M', time: 'Pronta Entrega (45 min)' },
+                  { brand: 'Xiaomi / Poco', models: 'Redmi Note 10 / 11 / 12 / Poco X3 / X5 Pro', time: 'Peças em Estoque' },
+                  { brand: 'Motorola Moto', models: 'Moto G30 / G50 / G60 / Edge 20 / Edge 30', time: 'Reparo Express' },
+                ].map((dev, idx) => (
+                  <div key={idx} className="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <div>
+                      <strong className="text-xs font-bold text-slate-900 block">{dev.brand}</strong>
+                      <span className="text-[11px] text-slate-500">{dev.models}</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-1 rounded shrink-0">
+                      {dev.time}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+                <span className="flex items-center gap-1 font-semibold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Laudo e Checklist na Hora
+                </span>
+                <span className="font-bold text-blue-700">{APP_CONFIG.name}</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
