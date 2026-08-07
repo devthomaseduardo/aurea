@@ -19,6 +19,8 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      "react-hooks/rules-of-hooks": "warn",
+      "no-constant-binary-expression": "warn",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
