@@ -1,7 +1,7 @@
 import { localStore } from '@/core/storage/local-storage';
 import { generateId } from '@/shared/utils/utils';
 import type { Contract, ContractStatus } from '@/types/domain';
-import { useCloudData } from '@/core/db/mode';
+import { isCloudDataEnabled } from '@/core/db/mode';
 import {
   listCollection,
   getDocument,
@@ -44,7 +44,7 @@ const seed: Contract[] = [
 function ensureSeed(): Contract[] {
   const existing = localStore.get<Contract[] | null>(KEY, null);
   if (existing && existing.length > 0) return existing;
-  if (!useCloudData()) {
+  if (!isCloudDataEnabled()) {
     localStore.set(KEY, seed);
     return seed;
   }
@@ -88,7 +88,7 @@ function paginate(
 }
 
 async function loadAll(): Promise<Contract[]> {
-  if (useCloudData()) {
+  if (isCloudDataEnabled()) {
     const items = await listCollection<Contract>('contracts');
     localStore.set(KEY, items);
     return items;
@@ -132,7 +132,7 @@ export const contractsService = {
   },
 
   async getByIdAsync(id: string): Promise<Contract | undefined> {
-    if (useCloudData()) {
+    if (isCloudDataEnabled()) {
       return getDocument<Contract>('contracts', id);
     }
     return this.getById(id);
@@ -154,7 +154,7 @@ export const contractsService = {
     input: Omit<Contract, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<Contract> {
     const contract = this.create(input);
-    if (useCloudData()) {
+    if (isCloudDataEnabled()) {
       await setDocument('contracts', contract.id, contract);
     }
     return contract;
@@ -171,7 +171,7 @@ export const contractsService = {
 
   async updateAsync(id: string, patch: Partial<Contract>): Promise<Contract | undefined> {
     const updated = this.update(id, patch);
-    if (updated && useCloudData()) {
+    if (updated && isCloudDataEnabled()) {
       await setDocument('contracts', id, updated);
     }
     return updated;
@@ -187,7 +187,7 @@ export const contractsService = {
 
   async removeAsync(id: string): Promise<boolean> {
     const ok = this.remove(id);
-    if (ok && useCloudData()) {
+    if (ok && isCloudDataEnabled()) {
       await removeDocument('contracts', id);
     }
     return ok;
