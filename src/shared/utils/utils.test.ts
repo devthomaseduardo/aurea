@@ -55,7 +55,9 @@ describe('slugify', () => {
 
 describe('truncate', () => {
   it('corta com ellipsis', () => {
-    expect(truncate('abcdefghij', 5)).toBe('ab…');
+    // max=5 → slice(0, 4) + '…' = 'abcd…'
+    expect(truncate('abcdefghij', 5)).toBe('abcd…');
+    expect(truncate('abc', 5)).toBe('abc');
   });
 });
 
