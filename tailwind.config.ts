@@ -1,23 +1,11 @@
-
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
-	darkMode: ["class"],
-	content: [
-		"./pages/**/*.{ts,tsx}",
-		"./components/**/*.{ts,tsx}",
-		"./app/**/*.{ts,tsx}",
-		"./src/**/*.{ts,tsx}",
-	],
-	prefix: "",
+	darkMode: ['class'],
+	content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
+	prefix: '',
 	theme: {
-		container: {
-			center: true,
-			padding: '2rem',
-			screens: {
-				'2xl': '1400px'
-			}
-		},
 		extend: {
 			colors: {
 				border: 'hsl(var(--border))',
@@ -63,46 +51,24 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				success: {
-					DEFAULT: 'hsl(var(--success))',
-					foreground: 'hsl(var(--success-foreground))'
-				},
-				warning: {
-					DEFAULT: 'hsl(var(--warning))',
-					foreground: 'hsl(var(--warning-foreground))'
-				},
-				info: {
-					DEFAULT: 'hsl(var(--info))',
-					foreground: 'hsl(var(--info-foreground))'
-				},
 				brand: {
-					violet: 'hsl(var(--brand-violet))',
-					blue: 'hsl(var(--brand-blue))',
-					gold: 'hsl(var(--brand-gold))',
-					glow: 'hsl(var(--brand-glow))'
+					50: '#eef4ff',
+					100: '#d9e6ff',
+					200: '#bcd4ff',
+					300: '#8ebbff',
+					400: '#5995ff',
+					500: '#0055FF',
+					600: '#0044cc',
+					700: '#0039a3',
+					800: '#002e7a',
+					900: '#0A1833',
+					950: '#050d1a'
 				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
-			},
-			boxShadow: {
-				sm: 'var(--elevation-sm)',
-				md: 'var(--elevation-md)',
-				lg: 'var(--elevation-lg)',
-				xl: 'var(--elevation-xl)',
-				glow: 'var(--elevation-glow)',
-				glass: 'var(--elevation-glass)'
-			},
-			zIndex: {
-				dropdown: '50',
-				sticky: '100',
-				overlay: '200',
-				modal: '300',
-				popover: '400',
-				toast: '500',
-				tooltip: '600'
 			},
 			keyframes: {
 				'accordion-down': {
@@ -118,7 +84,7 @@ export default {
 					to: { opacity: '1' }
 				},
 				'fade-up': {
-					from: { opacity: '0', transform: 'translateY(20px)' },
+					from: { opacity: '0', transform: 'translateY(12px)' },
 					to: { opacity: '1', transform: 'translateY(0)' }
 				},
 				'slide-in': {
@@ -138,5 +104,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [tailwindcssAnimate],
 } satisfies Config;
