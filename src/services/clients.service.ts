@@ -1,7 +1,7 @@
 import { localStore } from '@/core/storage/local-storage';
 import { generateId } from '@/shared/utils/utils';
 import type { Client, ClientStatus } from '@/types/domain';
-import { useCloudData } from '@/core/db/mode';
+import { isCloudDataEnabled } from '@/core/db/mode';
 import {
   listCollection,
   getDocument,
@@ -42,7 +42,7 @@ function ensureSeed(): Client[] {
   const existing = localStore.get<Client[] | null>(KEY, null);
   if (existing && existing.length > 0) return existing;
   // Only seed local demo mode — cloud starts empty (real data)
-  if (!useCloudData()) {
+  if (!isCloudDataEnabled()) {
     localStore.set(KEY, seedClients);
     return seedClients;
   }
@@ -112,7 +112,7 @@ export interface PaginatedResult<T> {
 }
 
 async function loadAll(): Promise<Client[]> {
-  if (useCloudData()) {
+  if (isCloudDataEnabled()) {
     const items = await listCollection<Client>('clients');
     localStore.set(KEY, items);
     return items;
@@ -143,7 +143,7 @@ export const clientsService = {
   },
 
   async getByIdAsync(id: string): Promise<Client | undefined> {
-    if (useCloudData()) {
+    if (isCloudDataEnabled()) {
       return getDocument<Client>('clients', id);
     }
     return this.getById(id);
@@ -165,7 +165,7 @@ export const clientsService = {
     input: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<Client> {
     const client = this.create(input);
-    if (useCloudData()) {
+    if (isCloudDataEnabled()) {
       await setDocument('clients', client.id, client);
     }
     return client;
@@ -188,7 +188,7 @@ export const clientsService = {
 
   async updateAsync(id: string, patch: Partial<Client>): Promise<Client | undefined> {
     const updated = this.update(id, patch);
-    if (updated && useCloudData()) {
+    if (updated && isCloudDataEnabled()) {
       await setDocument('clients', id, updated);
     }
     return updated;
@@ -204,7 +204,7 @@ export const clientsService = {
 
   async removeAsync(id: string): Promise<boolean> {
     const ok = this.remove(id);
-    if (ok && useCloudData()) {
+    if (ok && isCloudDataEnabled()) {
       await removeDocument('clients', id);
     }
     return ok;
