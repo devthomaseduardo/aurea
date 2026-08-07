@@ -31,13 +31,9 @@ jobs:
       - name: Typecheck
         run: npx tsc --noEmit
 
+      # Sem VITE_FIREBASE_* → isFirebaseConfigured() = false → auth/services locais + seed
       - name: Tests
         run: npm run test
-        env:
-          VITE_FIREBASE_API_KEY: ci-test
-          VITE_FIREBASE_AUTH_DOMAIN: aurea-projeto.firebaseapp.com
-          VITE_FIREBASE_PROJECT_ID: aurea-projeto
-          VITE_FIREBASE_APP_ID: 1:0:web:ci
 
       - name: Build (smoke)
         run: npm run build
