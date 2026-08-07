@@ -1,57 +1,61 @@
-import { localStore } from '@/core/storage/local-storage';
+import { Activity } from '@/types/domain';
 import { generateId } from '@/shared/utils/utils';
-import type { Activity } from '@/types/domain';
-import { useCloudData } from '@/core/db/mode';
+import { storage } from '@/core/storage/local-storage';
+import { isCloudDataEnabled } from '@/core/db/mode';
+import { getDb } from '@/core/firebase/app';
 import {
-  listCollection,
-  setDocument,
-} from '@/core/firebase/user-repo';
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  serverTimestamp,
+} from 'firebase/firestore';
+import { getFirebaseAuth } from '@/core/firebase/app';
 
-const KEY = 'activities';
+const KEY = 'aurea_activities';
 
-function localList(): Activity[] {
-  return localStore.get<Activity[]>(KEY, []);
+function uid(): string {
+  return getFirebaseAuth()?.currentUser?.uid ?? 'anon';
 }
 
 export const activitiesService = {
-  list(limit = 10): Activity[] {
-    return [...localList()]
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-      .slice(0, limit);
+  list(max = 20): Activity[] {
+    const all = storage.getJSON<Activity[]>(KEY, []);
+    return all.slice(0, max);
   },
 
-  add(input: Omit<Activity, 'id' | 'createdAt'>): Activity {
-    const activity: Activity = {
-      ...input,
-      id: generateId('act'),
+  async listAsync(max = 20): Promise<Activity[]> {
+    if (isCloudDataEnabled()) {
+      const db = getDb()!;
+      const q = query(
+        collection(db, 'users', uid(), 'activities'),
+        orderBy('createdAt', 'desc'),
+        limit(max)
+      );
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Activity));
+    }
+    return this.list(max);
+  },
+
+  async addAsync(activity: Omit<Activity, 'id' | 'createdAt'>): Promise<Activity> {
+    if (isCloudDataEnabled()) {
+      const db = getDb()!;
+      const ref = await addDoc(collection(db, 'users', uid(), 'activities'), {
+        ...activity,
+        createdAt: serverTimestamp(),
+      });
+      return { id: ref.id, ...activity, createdAt: new Date().toISOString() };
+    }
+    const item: Activity = {
+      ...activity,
+      id: generateId(),
       createdAt: new Date().toISOString(),
     };
-    localStore.set(KEY, [activity, ...localList()]);
-    return activity;
-  },
-
-  async listAsync(limit = 10): Promise<Activity[]> {
-    if (useCloudData()) {
-      const items = await listCollection<Activity>('activities', 'createdAt');
-      localStore.set(KEY, items);
-      return items.slice(0, limit);
-    }
-    return this.list(limit);
-  },
-
-  async addAsync(input: Omit<Activity, 'id' | 'createdAt'>): Promise<Activity> {
-    const activity: Activity = {
-      ...input,
-      id: generateId('act'),
-      createdAt: new Date().toISOString(),
-    };
-    if (useCloudData()) {
-      await setDocument('activities', activity.id, activity);
-    }
-    localStore.set(KEY, [activity, ...localList()]);
-    return activity;
-  },
-  log(input: Omit<Activity, 'id' | 'createdAt'>): Activity {
-    return this.add(input);
+    const all = storage.getJSON<Activity[]>(KEY, []);
+    storage.setJSON(KEY, [item, ...all].slice(0, 100));
+    return item;
   },
 };

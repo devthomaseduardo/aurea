@@ -1,56 +1,39 @@
-import { localStore } from '@/core/storage/local-storage';
-import type { UserProfile } from '@/types/domain';
-import { useCloudData } from '@/core/db/mode';
-import {
-  getUserProfileData,
-  setUserProfileData,
-} from '@/core/firebase/user-repo';
+import { storage } from '@/core/storage/local-storage';
+import { UserProfile } from '@/types/auth';
+import { isCloudDataEnabled } from '@/core/db/mode';
+import { getDb, getFirebaseAuth } from '@/core/firebase/app';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-const KEY = 'profile';
-
-const defaultProfile: UserProfile = {
-  name: '',
-  email: '',
-  document: '',
-  address: '',
-  phone: '',
-  hourlyRate: 120,
-  currency: 'BRL',
-  taxRegime: 'mei',
-  companyName: '',
-  bio: '',
-};
+const KEY = 'aurea_profile';
 
 export const profileService = {
-  get(): UserProfile {
-    return localStore.get<UserProfile>(KEY, defaultProfile);
+  get(): UserProfile | null {
+    return storage.getJSON<UserProfile | null>(KEY, null);
   },
 
-  update(patch: Partial<UserProfile>): UserProfile {
-    const next = { ...this.get(), ...patch };
-    localStore.set(KEY, next);
-    return next;
+  save(profile: UserProfile): void {
+    storage.setJSON(KEY, profile);
   },
 
-  async getAsync(): Promise<UserProfile> {
-    if (useCloudData()) {
-      const cloud = await getUserProfileData<UserProfile>();
-      if (cloud) {
-        localStore.set(KEY, cloud);
-        return cloud;
-      }
-      return defaultProfile;
+  async getAsync(): Promise<UserProfile | null> {
+    if (isCloudDataEnabled()) {
+      const auth = getFirebaseAuth()!;
+      const u = auth.currentUser;
+      if (!u) return null;
+      const snap = await getDoc(doc(getDb()!, 'users', u.uid));
+      if (!snap.exists()) return null;
+      return snap.data() as UserProfile;
     }
     return this.get();
   },
 
-  async updateAsync(patch: Partial<UserProfile>): Promise<UserProfile> {
-    const current = await this.getAsync();
-    const next = { ...current, ...patch };
-    if (useCloudData()) {
-      await setUserProfileData(next);
+  async saveAsync(profile: UserProfile): Promise<void> {
+    if (isCloudDataEnabled()) {
+      const auth = getFirebaseAuth()!;
+      const u = auth.currentUser;
+      if (!u) return;
+      await setDoc(doc(getDb()!, 'users', u.uid), profile, { merge: true });
     }
-    localStore.set(KEY, next);
-    return next;
+    this.save(profile);
   },
 };
