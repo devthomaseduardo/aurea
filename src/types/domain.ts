@@ -3,14 +3,14 @@ export type Currency = 'BRL' | 'USD';
 export type ClientStatus = 'active' | 'inactive' | 'lead';
 
 export type OSStatus =
-  | 'received'         // Recebido no balcão
-  | 'analyzing'        // Em diagnóstico
-  | 'budget_pending'   // Aguardando aprovação de orçamento
-  | 'repairing'        // Em reparo
-  | 'testing'          // Em testes de qualidade
-  | 'ready'            // Pronto para retirada
-  | 'delivered'        // Entregue ao cliente
-  | 'cancelled';       // Recusado ou Cancelado
+  | 'received'
+  | 'analyzing'
+  | 'budget_pending'
+  | 'repairing'
+  | 'testing'
+  | 'ready'
+  | 'delivered'
+  | 'cancelled';
 
 export type OSPaymentStatus = 'pending' | 'paid' | 'refunded';
 export type DeviceType = 'phone' | 'tablet' | 'smartwatch' | 'computer' | 'other';
@@ -24,7 +24,7 @@ export interface PhysicalChecklist {
   wifiOk: boolean;
   audioOk: boolean;
   biometricsOk: boolean;
-  housingOk: boolean; // carcaça/vidro traseiro
+  housingOk: boolean;
   waterDamage: boolean;
 }
 
@@ -38,30 +38,30 @@ export interface OSPartItem {
 
 export interface ServiceOrder {
   id: string;
-  companyId?: string; // Multi-tenant company ID
+  companyId?: string;
   clientId: string;
   clientName: string;
   clientPhone?: string;
   deviceType: DeviceType;
-  deviceBrand: string; // Ex: Apple, Samsung, Xiaomi, Motorola
-  deviceModel: string; // Ex: iPhone 13 Pro, Galaxy S22
-  deviceImageUrl?: string; // Miniatura real do aparelho
+  deviceBrand: string;
+  deviceModel: string;
+  deviceImageUrl?: string;
   deviceColor?: string;
-  serialNumber?: string; // IMEI ou Número de Série
-  passcode?: string; // Senha de desbloqueio para testes
-  accessoriesLeft?: string; // Capa, Carregador, Chip, Cartão de Memória
-  reportedIssue: string; // Defeito relatado pelo cliente
-  technicalReport?: string; // Laudo técnico / diagnóstico
+  serialNumber?: string;
+  passcode?: string;
+  accessoriesLeft?: string;
+  reportedIssue: string;
+  technicalReport?: string;
   checklist?: PhysicalChecklist;
   partsUsed?: OSPartItem[];
   status: OSStatus;
   technicianId?: string;
   technicianName?: string;
-  laborPrice: number; // Mão de obra
-  partsPrice: number; // Valor das peças
+  laborPrice: number;
+  partsPrice: number;
   totalValue: number;
   paymentStatus: OSPaymentStatus;
-  warrantyDays: number; // Garantia padrão 90 dias
+  warrantyDays: number;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -77,12 +77,12 @@ export interface InventoryItem {
   category: ItemCategory;
   sku?: string;
   brand?: string;
-  compatibleModels?: string[]; // Ex: ["iPhone 11", "iPhone 12"]
+  compatibleModels?: string[];
   quantity: number;
   minQuantity: number;
   costPrice: number;
   salePrice: number;
-  location?: string; // Prateleira/Gaveta
+  location?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -171,7 +171,7 @@ export interface Client {
   email: string;
   phone?: string;
   company?: string;
-  document?: string; // CPF ou CNPJ
+  document?: string;
   address?: string;
   notes?: string;
   status: ClientStatus;
@@ -179,9 +179,60 @@ export interface Client {
   updatedAt: string;
 }
 
+export type ProposalStatus =
+  | 'draft'
+  | 'sent'
+  | 'viewed'
+  | 'accepted'
+  | 'rejected'
+  | 'expired';
+
+export interface Proposal {
+  id: string;
+  title: string;
+  clientId: string;
+  clientName: string;
+  status: ProposalStatus;
+  currency: Currency;
+  totalValue: number;
+  totalHours: number;
+  totalDays: number;
+  technologies: string[];
+  model: string;
+  notes?: string;
+  projectSnapshot?: unknown | null;
+  resultSnapshot?: unknown | null;
+  createdAt: string;
+  updatedAt: string;
+  sentAt?: string;
+}
+
+export type ContractStatus =
+  | 'draft'
+  | 'pending_signature'
+  | 'active'
+  | 'completed'
+  | 'cancelled';
+
+export interface Contract {
+  id: string;
+  proposalId?: string;
+  title: string;
+  clientId: string;
+  clientName: string;
+  status: ContractStatus;
+  currency: Currency;
+  totalValue: number;
+  startDate?: string;
+  endDate?: string;
+  content?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Activity {
   id: string;
-  type: 'client' | 'system' | 'os' | 'inventory' | 'sale' | 'device' | 'team';
+  type: 'client' | 'system' | 'os' | 'inventory' | 'sale' | 'device' | 'team' | 'proposal' | 'contract';
   title: string;
   description?: string;
   entityId?: string;
@@ -214,4 +265,8 @@ export interface DashboardMetrics {
   readyOS: number;
   lowStockItemsCount: number;
   averageTicket: number;
+  hours?: number;
+  profit?: number;
+  acceptanceRate?: number;
+  pendingProposals?: number;
 }
