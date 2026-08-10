@@ -1,17 +1,13 @@
 /**
  * Brand images: Unsplash License (https://unsplash.com/license)
- * - Hero workspace: photo-1497366216548-37526070297c
- * - Product/desk:   photo-1460925895917-afdab827c52f
- * - Team:           photo-1553877522-43269d4ea984
- * - Analytics:      photo-1551288049-bebda4e38f71
  */
 export const APP_CONFIG = {
   name: 'Áurea',
   legalName: 'Áurea',
-  tagline: 'Precifique projetos, gere propostas e feche contratos com clareza',
-  version: '4.1.0',
+  tagline: 'Do escopo ao contrato, com preço e processo claros',
+  version: '4.2.0',
   description:
-    'Áurea é a plataforma comercial B2B para freelancers, consultores e agências: precificação de projetos, propostas profissionais, gestão de clientes, contratos e analytics.',
+    'Áurea é o workspace comercial para freelancers, consultores e pequenas agências que precisam precificar projetos, organizar clientes, enviar propostas e acompanhar contratos sem depender de planilhas.',
   supportEmail: 'contato@thomaseduardo.com.br',
   defaultCurrency: 'BRL' as const,
   defaultHourlyRate: 120,
@@ -21,7 +17,6 @@ export const APP_CONFIG = {
     gold: '#D4A017',
     ink: '#0F172A',
     paper: '#F8FAFC',
-    // Mark is CSS/text-based in BrandLogo - no local bitmap required
     logo: '',
     logoMark: '',
     hero:
@@ -43,8 +38,6 @@ export const APP_CONFIG = {
 export const ROUTES = {
   home: '/',
   about: '/sobre',
-  services: '/servicos',
-  catalog: '/catalogo',
   auth: {
     login: '/login',
     register: '/register',
@@ -57,17 +50,11 @@ export const ROUTES = {
     clientsNew: '/app/clients/new',
     clientDetail: (id: string) => `/app/clients/${id}`,
     calculator: '/app/calculator',
-    orders: '/app/orders',
-    ordersNew: '/app/orders/new',
-    orderDetail: (id: string) => `/app/orders/${id}`,
-    pos: '/app/pos',
-    inventory: '/app/inventory',
     proposals: '/app/proposals',
     proposalDetail: (id: string) => `/app/proposals/${id}`,
     contracts: '/app/contracts',
     analytics: '/app/analytics',
     integrations: '/app/integrations',
-    team: '/app/team',
     settings: '/app/settings',
     profile: '/app/profile',
   },
