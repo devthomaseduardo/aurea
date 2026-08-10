@@ -52,23 +52,31 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				brand: {
-					50: '#eef4ff',
-					100: '#d9e6ff',
-					200: '#bcd4ff',
-					300: '#8ebbff',
-					400: '#5995ff',
-					500: '#0055FF',
-					600: '#0044cc',
-					700: '#0039a3',
-					800: '#002e7a',
-					900: '#0A1833',
-					950: '#050d1a'
+					50: '#eef2ff',
+					100: '#e0e7ff',
+					200: '#c7d2fe',
+					300: '#a5b4fc',
+					400: '#818cf8',
+					500: '#6366f1',
+					600: '#4F46E5',
+					700: '#4338ca',
+					800: '#3730a3',
+					900: '#312e81',
+					950: '#1e1b4b',
+					gold: '#D4A017',
 				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				xl: 'calc(var(--radius) + 4px)',
+				'2xl': '1rem',
+			},
+			boxShadow: {
+				'aurea-sm': 'var(--elevation-sm)',
+				'aurea-md': 'var(--elevation-md)',
+				'aurea-lg': 'var(--elevation-lg)',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -100,7 +108,7 @@ export default {
 				'slide-in': 'slide-in 0.3s ease-out'
 			},
 			fontFamily: {
-				sans: ['Inter', 'sans-serif']
+				sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
 			}
 		}
 	},
