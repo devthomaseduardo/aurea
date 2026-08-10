@@ -1,48 +1,51 @@
 import { clientsService } from './clients.service';
-import { ordersService } from './orders.service';
-import { salesService } from './sales.service';
-import { inventoryService } from './inventory.service';
+import { proposalsService } from './proposals.service';
+import { contractsService } from './contracts.service';
 import type { DashboardMetrics } from '@/types/domain';
 
 function computeMetrics(): DashboardMetrics {
   const clients = clientsService.getAll();
-  const orders = ordersService.list();
-  const sales = salesService.list();
-  const lowStockItems = inventoryService.getLowStockItems();
+  const proposals = proposalsService.getAll();
+  const contracts = contractsService.getAll();
 
-  const repairRevenue = orders
-    .filter((o) => o.status === 'delivered' || o.paymentStatus === 'paid')
-    .reduce((acc, o) => acc + o.totalValue, 0);
+  const acceptedProposals = proposals.filter((proposal) => proposal.status === 'accepted');
+  const decidedProposals = proposals.filter((proposal) =>
+    ['accepted', 'rejected'].includes(proposal.status)
+  );
+  const openProposals = proposals.filter((proposal) =>
+    ['draft', 'sent', 'viewed'].includes(proposal.status)
+  );
+  const activeContracts = contracts.filter((contract) =>
+    ['active', 'completed'].includes(contract.status)
+  );
 
-  const salesRevenue = sales.reduce((acc, s) => acc + s.totalValue, 0);
-  const totalRevenue = repairRevenue + salesRevenue;
-
-  const activeOS = orders.filter(
-    (o) => o.status !== 'delivered' && o.status !== 'cancelled'
-  ).length;
-
-  const completedOS = orders.filter((o) => o.status === 'delivered').length;
-  const readyOS = orders.filter((o) => o.status === 'ready').length;
-  const pendingBudgets = orders.filter((o) => o.status === 'budget_pending').length;
-
-  const totalTransactions = completedOS + sales.length;
-  const averageTicket = totalTransactions > 0 ? Math.round(totalRevenue / totalTransactions) : 0;
+  const revenue = activeContracts.reduce((total, contract) => total + contract.totalValue, 0);
+  const proposalPipeline = openProposals.reduce(
+    (total, proposal) => total + proposal.totalValue,
+    0
+  );
+  const acceptanceRate =
+    decidedProposals.length > 0
+      ? Math.round((acceptedProposals.length / decidedProposals.length) * 100)
+      : 0;
 
   return {
-    revenue: totalRevenue,
-    repairRevenue,
-    salesRevenue,
-    clients: clients.filter((c) => c.status !== 'inactive').length,
-    activeOS,
-    completedOS,
-    readyOS,
-    pendingBudgets,
-    lowStockItemsCount: lowStockItems.length,
-    averageTicket,
-    hours: 42,
-    projects: activeOS,
-    profit: Math.round(totalRevenue * 0.65),
-    acceptanceRate: 92,
+    revenue,
+    repairRevenue: 0,
+    salesRevenue: proposalPipeline,
+    clients: clients.filter((client) => client.status !== 'inactive').length,
+    activeOS: activeContracts.length,
+    completedOS: contracts.filter((contract) => contract.status === 'completed').length,
+    readyOS: 0,
+    pendingBudgets: openProposals.length,
+    lowStockItemsCount: 0,
+    averageTicket:
+      activeContracts.length > 0 ? Math.round(revenue / activeContracts.length) : 0,
+    hours: acceptedProposals.reduce((total, proposal) => total + proposal.totalHours, 0),
+    projects: activeContracts.length,
+    profit: Math.round(revenue * 0.7),
+    acceptanceRate,
+    pendingProposals: openProposals.length,
   };
 }
 
@@ -57,34 +60,12 @@ export const dashboardService = {
 
   getRevenueSeries() {
     const months = ['Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago'];
-    const baseRepair = [4200, 6800, 5900, 8400, 7800, 10500];
-    const baseSales = [1800, 3200, 2900, 4500, 3900, 5600];
+    const revenue = [12800, 16400, 19200, 23800, 27100, 31900];
 
-    return months.map((month, i) => ({
+    return months.map((month, index) => ({
       month,
-      repair: baseRepair[i],
-      sales: baseSales[i],
-      revenue: baseRepair[i] + baseSales[i],
-      profit: Math.round((baseRepair[i] + baseSales[i]) * 0.65),
-    }));
-  },
-
-  getOSStatusBreakdown() {
-    const orders = ordersService.list();
-    const statuses = [
-      'received',
-      'analyzing',
-      'budget_pending',
-      'repairing',
-      'testing',
-      'ready',
-      'delivered',
-      'cancelled',
-    ] as const;
-
-    return statuses.map((status) => ({
-      status,
-      count: orders.filter((o) => o.status === status).length,
+      revenue: revenue[index],
+      profit: Math.round(revenue[index] * 0.7),
     }));
   },
 };
