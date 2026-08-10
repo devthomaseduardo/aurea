@@ -21,7 +21,7 @@ export const APP_CONFIG = {
     gold: '#D4A017',
     ink: '#0F172A',
     paper: '#F8FAFC',
-    // Mark is CSS/text-based in BrandLogo — no local bitmap required
+    // Mark is CSS/text-based in BrandLogo - no local bitmap required
     logo: '',
     logoMark: '',
     hero:
@@ -57,6 +57,11 @@ export const ROUTES = {
     clientsNew: '/app/clients/new',
     clientDetail: (id: string) => `/app/clients/${id}`,
     calculator: '/app/calculator',
+    orders: '/app/orders',
+    ordersNew: '/app/orders/new',
+    orderDetail: (id: string) => `/app/orders/${id}`,
+    pos: '/app/pos',
+    inventory: '/app/inventory',
     proposals: '/app/proposals',
     proposalDetail: (id: string) => `/app/proposals/${id}`,
     contracts: '/app/contracts',
