@@ -1,102 +1,90 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Calculator, FileText, Users } from 'lucide-react';
+import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
 
 const Hero = () => {
-  const [osSearch, setOsSearch] = useState('');
-  const navigate = useNavigate();
-
-  const handleSearchOS = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (osSearch.trim()) {
-      navigate(`/status/${osSearch.trim()}`);
-    }
-  };
-
   return (
-    <section id="inicio" className="bg-[#F4F6F8] border-b border-[#E5E7EB] pt-8 pb-12">
+    <section id="inicio" className="bg-slate-50 border-b border-slate-200 pt-10 pb-14">
       <div className="max-w-7xl mx-auto px-5 md:px-6">
-        
-        {/* Composição Dividida */}
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
-          {/* Lado Esquerdo - Alinhado à Esquerda */}
-          <div className="lg:col-span-7 text-left space-y-5">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-[#0055FF] bg-blue-50 px-3 py-1 rounded border border-blue-200 inline-block">
-              Assistência Técnica Multimarcas
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          <div className="lg:col-span-7 text-left space-y-6">
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100 inline-block">
+              Plataforma comercial B2B
             </span>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0A1833] tracking-tight leading-[1.15]">
-              Conserto de celulares com diagnóstico, orçamento aprovado antes do reparo e garantia de 90 dias.
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.15]">
+              Precifique projetos, gere propostas e feche contratos com clareza.
             </h1>
 
-            <p className="text-sm sm:text-base text-[#667085] leading-relaxed max-w-xl font-medium">
-              Atendimento presencial no balcão no Cambuci em São Paulo. Manutenção de telas, baterias, conectores de carga e placa mãe com peças testadas.
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
+              {APP_CONFIG.name} é o SaaS para freelancers, consultores e agências saírem da planilha:
+              orçamento estruturado, proposta profissional e pipeline comercial em um só lugar.
             </p>
 
-            {/* Ações / Botões */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <a
-                href="#status"
-                className="h-11 px-6 rounded-lg bg-[#0055FF] hover:bg-[#0044CC] text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm"
+            <div className="flex flex-col sm:flex-row gap-3 pt-1">
+              <Link
+                to={ROUTES.auth.register}
+                className="h-11 px-6 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm"
               >
-                <Search className="w-4 h-4 text-[#FFD100]" /> Consultar minha OS
-              </a>
+                Começar grátis
+                <ArrowRight className="w-4 h-4" />
+              </Link>
 
-              <a
-                href="https://wa.me/5511987654321?text=Olá,%20gostaria%20de%20um%20orçamento"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="h-11 px-6 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm"
+              <Link
+                to={ROUTES.auth.login}
+                className="h-11 px-6 rounded-lg bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm flex items-center justify-center gap-2 transition-colors border border-slate-200 shadow-sm"
               >
-                <img src="/brands/whatsapp.svg" alt="WhatsApp" className="w-4 h-4 filter brightness-0 invert" />
-                Solicitar orçamento no WhatsApp
-              </a>
+                Entrar na conta
+              </Link>
             </div>
           </div>
 
-          {/* Lado Direito - Fotografia Real de Bancada Técnica */}
           <div className="lg:col-span-5">
-            <div className="relative rounded-xl overflow-hidden border border-[#E5E7EB] bg-white shadow-sm">
+            <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-md">
               <img
-                src="/brand/hero.jpg"
-                alt="Técnico trabalhando em bancada de manutenção com microscópio e ferramentas de precisão"
+                src={APP_CONFIG.brand.hero}
+                alt="Áurea — plataforma de precificação e propostas comerciais"
                 className="w-full h-72 sm:h-80 lg:h-[340px] object-cover"
               />
-              <div className="p-3 bg-white border-t border-[#E5E7EB] flex items-center justify-between text-xs text-[#0A1833]">
-                <span className="font-bold flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Bancada Técnica Cambuci Mobile
-                </span>
-                <span className="text-[#667085] text-[11px]">São Paulo - SP</span>
+              <div className="p-4 bg-white border-t border-slate-200 space-y-2">
+                <p className="text-sm font-bold text-slate-900">Do escopo ao contrato</p>
+                <p className="text-xs text-slate-500">
+                  Calculadora multi-etapas · PDF de proposta · status e histórico por cliente
+                </p>
               </div>
             </div>
           </div>
-
         </div>
 
-        {/* Logo Abaixo: Apenas 4 Informações Objetivas em uma Linha (SEM CARDS GRANDES) */}
-        <div className="mt-10 pt-6 border-t border-[#E5E7EB] flex flex-wrap items-center justify-between gap-4 text-xs font-bold text-[#0A1833]">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#0055FF]" />
-            <span>90 dias de garantia</span>
+        <div className="mt-12 pt-8 border-t border-slate-200 grid sm:grid-cols-3 gap-6">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+              <Calculator className="w-5 h-5 text-indigo-600" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Precificação</p>
+              <p className="text-xs text-slate-500 mt-0.5">Wizard com escopo, horas, custos e margem</p>
+            </div>
           </div>
-
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#0055FF]" />
-            <span>Avaliação no balcão</span>
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+              <FileText className="w-5 h-5 text-indigo-600" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Propostas</p>
+              <p className="text-xs text-slate-500 mt-0.5">PDF profissional, status e assinatura</p>
+            </div>
           </div>
-
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#0055FF]" />
-            <span>Acompanhamento online</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#0055FF]" />
-            <span>Atendimento multimarcas</span>
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+              <Users className="w-5 h-5 text-indigo-600" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Clientes & pipeline</p>
+              <p className="text-xs text-slate-500 mt-0.5">CRM leve, contratos e analytics</p>
+            </div>
           </div>
         </div>
-
       </div>
     </section>
   );
