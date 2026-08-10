@@ -20,6 +20,11 @@ const DashboardPage = lazy(() => import('@/modules/dashboard/pages/DashboardPage
 const ClientsPage = lazy(() => import('@/modules/clients/pages/ClientsPage'));
 const ClientFormPage = lazy(() => import('@/modules/clients/pages/ClientFormPage'));
 const CalculatorPage = lazy(() => import('@/modules/calculator/pages/CalculatorPage'));
+const OrdersPage = lazy(() => import('@/modules/orders/pages/OrdersPage'));
+const OrderDetailPage = lazy(() => import('@/modules/orders/pages/OrderDetailPage'));
+const OrderFormPage = lazy(() => import('@/modules/orders/pages/OrderFormPage'));
+const POSPage = lazy(() => import('@/modules/pos/pages/POSPage'));
+const InventoryPage = lazy(() => import('@/modules/inventory/pages/InventoryPage'));
 const ProposalsPage = lazy(() => import('@/modules/proposals/pages/ProposalsPage'));
 const ProposalDetailPage = lazy(() => import('@/modules/proposals/pages/ProposalDetailPage'));
 const ContractsPage = lazy(() => import('@/modules/contracts/pages/ContractsPage'));
@@ -31,7 +36,7 @@ const ProfilePage = lazy(() => import('@/modules/profile/pages/ProfilePage'));
 
 function Lazy({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense fallback={<LoadingState fullPage label="Carregando módulo…" />}>
+    <Suspense fallback={<LoadingState fullPage label="Carregando modulo..." />}>
       {children}
     </Suspense>
   );
@@ -154,6 +159,46 @@ export function AppRoutes() {
             element={
               <Lazy>
                 <CalculatorPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="orders"
+            element={
+              <Lazy>
+                <OrdersPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="orders/new"
+            element={
+              <Lazy>
+                <OrderFormPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="orders/:id"
+            element={
+              <Lazy>
+                <OrderDetailPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="pos"
+            element={
+              <Lazy>
+                <POSPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="inventory"
+            element={
+              <Lazy>
+                <InventoryPage />
               </Lazy>
             }
           />
