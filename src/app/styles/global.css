@@ -1,133 +1,107 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ═══════════════════════════════════════════════════════════
-   Áurea Design System
-   Primary (índigo): #4F46E5
-   Accent (ouro):    #D4A017
-   Ink:              #0F172A
-   Paper:            #F8FAFC
-   ═══════════════════════════════════════════════════════════ */
+/* Áurea — Notion-inspired minimal UI + Koboyo icons */
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
-
+    --background: 0 0% 100%;
+    --foreground: 30 6% 21%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-
+    --card-foreground: 30 6% 21%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-
-    --primary: 239 84% 67%;
+    --popover-foreground: 30 6% 21%;
+    --primary: 210 78% 51%;
     --primary-foreground: 0 0% 100%;
-
-    --secondary: 214 32% 91%;
-    --secondary-foreground: 222 47% 11%;
-
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
-
-    --destructive: 0 84% 60%;
+    --secondary: 40 10% 96%;
+    --secondary-foreground: 30 6% 21%;
+    --muted: 40 10% 96%;
+    --muted-foreground: 30 4% 46%;
+    --accent: 40 10% 96%;
+    --accent-foreground: 30 6% 21%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 239 84% 67%;
-
-    --radius: 0.75rem;
-
+    --border: 30 6% 90%;
+    --input: 30 6% 90%;
+    --ring: 210 78% 51%;
+    --radius: 0.375rem;
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 239 84% 67%;
+    --sidebar-foreground: 30 6% 21%;
+    --sidebar-primary: 210 78% 51%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 239 84% 67%;
-
-    --success: 152 69% 40%;
+    --sidebar-accent: 40 10% 96%;
+    --sidebar-accent-foreground: 30 6% 21%;
+    --sidebar-border: 30 6% 90%;
+    --sidebar-ring: 210 78% 51%;
+    --success: 152 45% 38%;
     --success-foreground: 0 0% 100%;
-    --warning: 43 74% 49%;
-    --warning-foreground: 222 47% 11%;
-    --info: 239 84% 67%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 30 6% 21%;
+    --info: 210 78% 51%;
     --info-foreground: 0 0% 100%;
-
-    --brand-violet: 239 84% 67%;
-    --brand-blue: 239 84% 67%;
-    --brand-glow: 43 74% 49%;
-
-    --elevation-sm: 0 1px 2px 0 rgb(15 23 42 / 0.05);
-    --elevation-md: 0 4px 12px -2px rgb(15 23 42 / 0.08);
-    --elevation-lg: 0 12px 24px -4px rgb(15 23 42 / 0.12);
-    --elevation-xl: 0 24px 48px -12px rgb(15 23 42 / 0.16);
-    --elevation-glow: 0 0 0 3px rgb(79 70 229 / 0.15);
-    --elevation-glass: 0 8px 32px rgb(15 23 42 / 0.06);
+    --brand-violet: 210 78% 51%;
+    --brand-blue: 210 78% 51%;
+    --brand-glow: 38 92% 50%;
+    --elevation-sm: 0 1px 2px rgba(15, 15, 15, 0.04);
+    --elevation-md: 0 4px 12px rgba(15, 15, 15, 0.06);
+    --elevation-lg: 0 8px 24px rgba(15, 15, 15, 0.08);
+    --elevation-xl: 0 16px 40px rgba(15, 15, 15, 0.1);
+    --elevation-glow: 0 0 0 2px rgba(35, 131, 226, 0.2);
+    --elevation-glass: 0 4px 16px rgba(15, 15, 15, 0.04);
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
-  html {
-    scroll-behavior: smooth;
-    -webkit-tap-highlight-color: transparent;
-    text-rendering: optimizeLegibility;
-  }
-
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; text-rendering: optimizeLegibility; }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    letter-spacing: -0.011em;
+    font-family: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    letter-spacing: -0.003em;
     line-height: 1.5;
     min-height: 100vh;
+    color: #37352f;
   }
-
   h1, h2, h3, h4, h5, h6 {
-    @apply text-foreground font-bold tracking-tight;
-    line-height: 1.15;
+    color: #37352f;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
   }
-
-  ::selection {
-    background: hsl(239 84% 67% / 0.18);
-  }
+  ::selection { background: rgba(35, 131, 226, 0.18); }
 }
 
 @layer components {
   .btn-aurea-primary {
-    @apply inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl
-      bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold
-      shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2
-      focus-visible:ring-indigo-500 focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 h-9 px-3 rounded-md text-sm font-medium text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1;
+    background: #2383e2;
   }
-
+  .btn-aurea-primary:hover { background: #1a6fbf; }
   .btn-aurea-secondary {
-    @apply inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl
-      bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold
-      border border-slate-200 shadow-sm transition-colors
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 h-9 px-3 rounded-md text-sm font-medium transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1;
+    color: #37352f;
+    background: #ffffff;
+    border-color: rgba(55, 53, 47, 0.16);
   }
-
+  .btn-aurea-secondary:hover { background: #f7f6f3; }
   .card-aurea {
-    @apply rounded-2xl border border-slate-200/80 bg-white shadow-[var(--elevation-sm)]
-      transition-shadow hover:shadow-[var(--elevation-md)];
+    @apply rounded-md border bg-white transition-colors;
+    border-color: rgba(55, 53, 47, 0.09);
   }
-
+  .card-aurea:hover { background: #fafafa; }
   .surface-muted {
-    @apply bg-slate-50/80 border border-slate-200/60 rounded-2xl;
+    @apply rounded-md border;
+    background: #f7f6f3;
+    border-color: rgba(55, 53, 47, 0.09);
   }
-
   .badge-aurea {
-    @apply inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50
-      px-3 py-1 text-xs font-semibold uppercase tracking-wider text-indigo-700;
+    @apply inline-flex items-center rounded-sm px-2 py-0.5 text-xs font-medium;
+    color: #2383e2;
+    background: rgba(35, 131, 226, 0.1);
   }
+  .notion-hover:hover { background: rgba(55, 53, 47, 0.08); }
 }
