@@ -2,20 +2,20 @@ import type { TenantCompany } from '@/types/domain';
 
 const DEFAULT_TENANTS: TenantCompany[] = [
   {
-    id: 'cambuci-mobile',
-    name: 'Cambuci Mobile',
-    legalName: 'Cambuci Mobile LTDA',
-    slug: 'cambuci-mobile',
+    id: 'aurea',
+    name: 'Áurea',
+    legalName: 'Áurea',
+    slug: 'aurea',
     logoUrl: '/brand/logo.png',
-    primaryColor: '#1D4ED8',
-    accentColor: '#EAB308',
+    primaryColor: '#4F46E5',
+    accentColor: '#D4A017',
     phone: '(11) 3208-4500',
     whatsapp: '5511987654321',
-    address: 'Av. Lins de Vasconcelos, 1200 - Cambuci, São Paulo - SP',
+    address: 'São Paulo - SP',
     cnpj: '42.189.902/0001-88',
     warrantyDays: 90,
     warrantyTerms:
-      'Garantia legal de 90 dias referente às peças trocadas e serviços executados. Não cobre danos líquidos ou quedas após a entrega.',
+      'Termos de serviço e garantia conforme contrato de cada proposta comercial.',
   },
   {
     id: 'techfix-sp',
@@ -34,8 +34,8 @@ const DEFAULT_TENANTS: TenantCompany[] = [
   },
 ];
 
-const STORAGE_ACTIVE_TENANT = 'cambuci_active_tenant_v1';
-const STORAGE_TENANTS = 'cambuci_tenants_list_v1';
+const STORAGE_ACTIVE_TENANT = 'aurea_active_tenant_v1';
+const STORAGE_TENANTS = 'aurea_tenants_list_v1';
 
 class SettingsService {
   getTenants(): TenantCompany[] {
@@ -53,7 +53,7 @@ class SettingsService {
 
   getActiveTenant(): TenantCompany {
     try {
-      const activeId = localStorage.getItem(STORAGE_ACTIVE_TENANT) || 'cambuci-mobile';
+      const activeId = localStorage.getItem(STORAGE_ACTIVE_TENANT) || 'aurea';
       const tenants = this.getTenants();
       return tenants.find((t) => t.id === activeId) || tenants[0];
     } catch {
