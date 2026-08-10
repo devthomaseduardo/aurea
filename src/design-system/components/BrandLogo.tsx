@@ -11,9 +11,9 @@ interface BrandLogoProps {
 }
 
 const sizes = {
-  sm: { box: 'w-8 h-8', img: 'w-8 h-8', text: 'text-sm' },
-  md: { box: 'w-9 h-9', img: 'w-9 h-9', text: 'text-[16px]' },
-  lg: { box: 'w-11 h-11', img: 'w-11 h-11', text: 'text-xl' },
+  sm: { mark: 'w-7 h-7 text-[11px]', text: 'text-sm' },
+  md: { mark: 'w-9 h-9 text-sm', text: 'text-base' },
+  lg: { mark: 'w-11 h-11 text-base', text: 'text-xl' },
 };
 
 export function BrandLogo({
@@ -33,22 +33,25 @@ export function BrandLogo({
     >
       <span
         className={cn(
-          'relative shrink-0 rounded-xl overflow-hidden border border-[#E5E7EB] bg-white shadow-sm flex items-center justify-center p-0.5',
-          s.box
+          'relative shrink-0 rounded-xl flex items-center justify-center font-black text-white',
+          'bg-gradient-to-br from-indigo-600 to-indigo-800 shadow-sm',
+          'ring-1 ring-indigo-500/20',
+          s.mark
         )}
+        aria-hidden
       >
-        <img
-          src={APP_CONFIG.brand.logo}
-          alt={`${APP_CONFIG.name} logo`}
-          className={cn('object-contain rounded-lg', s.img)}
-          width={44}
-          height={44}
-        />
+        A
+        <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-white" />
       </span>
       {showWordmark && (
-        <span className={cn('font-black tracking-tight truncate leading-none text-[#0B1633]', s.text)}>
-          Cambuci <span className="text-[#0055FF]">Mobile</span>
-          <span className="text-[#FFD100] font-extrabold ml-0.5">.</span>
+        <span
+          className={cn(
+            'font-bold tracking-tight truncate leading-none text-slate-900',
+            s.text
+          )}
+        >
+          {APP_CONFIG.name}
+          <span className="text-amber-500 font-extrabold">.</span>
         </span>
       )}
     </Link>
