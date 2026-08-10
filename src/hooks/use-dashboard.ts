@@ -35,7 +35,7 @@ export function useRecentProposals(limit = 5) {
         sortBy: 'updatedAt',
         sortDir: 'desc',
       });
-      return page.data;
+      return page.items;
     },
   });
 }
