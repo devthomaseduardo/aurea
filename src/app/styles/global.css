@@ -5,72 +5,71 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════
-   Cambuci Mobile - Identidade Visual Comercial Brasileira
-   Azul Principal: #0055FF
-   Azul Escuro:    #0A1833
-   Amarelo:        #FFD100
-   Branco:         #FFFFFF
-   Cinza Claro:    #F4F6F8
-   Cinza de Texto: #667085
+   Áurea Design System
+   Primary (índigo): #4F46E5
+   Accent (ouro):    #D4A017
+   Ink:              #0F172A
+   Paper:            #F8FAFC
    ═══════════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    --background: 220 16% 96%; /* #F4F6F8 */
-    --foreground: 220 67% 12%; /* #0A1833 */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 67% 12%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 67% 12%;
+    --popover-foreground: 222 47% 11%;
 
-    /* Azul Principal Cambuci Mobile #0055FF */
-    --primary: 220 100% 50%;
+    --primary: 239 84% 67%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 16% 94%;
-    --secondary-foreground: 220 67% 12%;
+    --secondary: 214 32% 91%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 220 16% 94%;
-    --muted-foreground: 217 13% 46%; /* #667085 */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 220 16% 94%;
-    --accent-foreground: 220 67% 12%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%; /* #E5E7EB */
-    --input: 220 13% 91%;
-    --ring: 220 100% 50%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 239 84% 67%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 67% 12%;
-    --sidebar-primary: 220 100% 50%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 239 84% 67%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 16% 96%;
-    --sidebar-accent-foreground: 220 67% 12%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 220 100% 50%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 239 84% 67%;
 
-    /* Semantic */
-    --success: 152 70% 38%;
+    --success: 152 69% 40%;
     --success-foreground: 0 0% 100%;
-    --warning: 49 100% 50%; /* #FFD100 */
-    --warning-foreground: 220 67% 12%;
-    --info: 220 100% 50%;
+    --warning: 43 74% 49%;
+    --warning-foreground: 222 47% 11%;
+    --info: 239 84% 67%;
+    --info-foreground: 0 0% 100%;
 
-    /* Exact Brand Hex Tokens */
-    --brand-blue: #0055FF;
-    --brand-dark: #0A1833;
-    --brand-yellow: #FFD100;
-    --brand-white: #FFFFFF;
-    --brand-gray-light: #F4F6F8;
-    --brand-gray-text: #667085;
+    --brand-violet: 239 84% 67%;
+    --brand-blue: 239 84% 67%;
+    --brand-glow: 43 74% 49%;
+
+    --elevation-sm: 0 1px 2px 0 rgb(15 23 42 / 0.05);
+    --elevation-md: 0 4px 12px -2px rgb(15 23 42 / 0.08);
+    --elevation-lg: 0 12px 24px -4px rgb(15 23 42 / 0.12);
+    --elevation-xl: 0 24px 48px -12px rgb(15 23 42 / 0.16);
+    --elevation-glow: 0 0 0 3px rgb(79 70 229 / 0.15);
+    --elevation-glass: 0 8px 32px rgb(15 23 42 / 0.06);
   }
 }
 
@@ -86,27 +85,49 @@
   }
 
   body {
-    @apply bg-[#F4F6F8] text-[#0A1833] antialiased;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.011em;
     line-height: 1.5;
     min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    color: #0A1833;
-    font-weight: 800;
-    letter-spacing: -0.025em;
+    @apply text-foreground font-bold tracking-tight;
     line-height: 1.15;
+  }
+
+  ::selection {
+    background: hsl(239 84% 67% / 0.18);
   }
 }
 
 @layer components {
-  .btn-cambuci-primary {
-    @apply bg-[#0055FF] hover:bg-[#0044CC] text-white font-bold px-5 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm;
+  .btn-aurea-primary {
+    @apply inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl
+      bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold
+      shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2
+      focus-visible:ring-indigo-500 focus-visible:ring-offset-2;
   }
 
-  .btn-cambuci-whatsapp {
-    @apply bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold px-5 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm;
+  .btn-aurea-secondary {
+    @apply inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl
+      bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold
+      border border-slate-200 shadow-sm transition-colors
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2;
+  }
+
+  .card-aurea {
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-[var(--elevation-sm)]
+      transition-shadow hover:shadow-[var(--elevation-md)];
+  }
+
+  .surface-muted {
+    @apply bg-slate-50/80 border border-slate-200/60 rounded-2xl;
+  }
+
+  .badge-aurea {
+    @apply inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50
+      px-3 py-1 text-xs font-semibold uppercase tracking-wider text-indigo-700;
   }
 }
