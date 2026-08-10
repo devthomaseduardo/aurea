@@ -58,30 +58,26 @@ export default function Landing() {
     <LandingLayout>
       <Hero />
 
-      {/* Recursos */}
-      <section id="recursos" className="py-16 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-5 md:px-6 space-y-10">
-          <div className="text-left space-y-2 max-w-2xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">Recursos</span>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+      <section id="recursos" className="py-20 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-5 md:px-6 space-y-12">
+          <div className="max-w-2xl space-y-3">
+            <span className="badge-aurea">Recursos</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
               Tudo para operar o comercial sem planilha
             </h2>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               Da precificação ao fechamento: {APP_CONFIG.name} centraliza o fluxo que freelancers e
               consultores precisam no dia a dia.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((f) => (
-              <div
-                key={f.title}
-                className="p-5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-sm transition-all space-y-3"
-              >
-                <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center">
+              <div key={f.title} className="card-aurea p-6 space-y-4">
+                <div className="w-11 h-11 rounded-xl bg-indigo-50 ring-1 ring-indigo-100 flex items-center justify-center">
                   <f.icon className="w-5 h-5 text-indigo-600" />
                 </div>
-                <h3 className="font-bold text-slate-900 text-sm">{f.title}</h3>
+                <h3 className="font-semibold text-slate-900 text-sm">{f.title}</h3>
                 <p className="text-xs text-slate-600 leading-relaxed">{f.desc}</p>
               </div>
             ))}
@@ -89,93 +85,105 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Como funciona */}
-      <section id="como-funciona" className="py-16 bg-slate-50 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-5 md:px-6 space-y-10">
-          <div className="text-left space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">Fluxo</span>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Como funciona
-            </h2>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((s) => (
-              <div key={s.num} className="space-y-3">
-                <span className="w-9 h-9 rounded-full bg-indigo-600 text-amber-300 font-black text-sm flex items-center justify-center">
-                  {s.num}
-                </span>
-                <h3 className="font-bold text-slate-900 text-sm">{s.title}</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">{s.desc}</p>
+      <section id="como-funciona" className="py-20 bg-slate-50 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-5 md:px-6">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-5 space-y-8">
+              <div className="space-y-3">
+                <span className="badge-aurea">Fluxo</span>
+                <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Como funciona</h2>
               </div>
-            ))}
+              <div className="space-y-6">
+                {steps.map((s) => (
+                  <div key={s.num} className="flex gap-4">
+                    <span className="w-9 h-9 rounded-full bg-indigo-600 text-amber-300 font-bold text-sm flex items-center justify-center shrink-0 shadow-sm">
+                      {s.num}
+                    </span>
+                    <div>
+                      <h3 className="font-semibold text-slate-900 text-sm">{s.title}</h3>
+                      <p className="text-xs text-slate-600 leading-relaxed mt-1">{s.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="lg:col-span-7">
+              <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-[var(--elevation-md)]">
+                <img
+                  src={APP_CONFIG.brand.product}
+                  alt="Workspace com laptop e analytics — Unsplash"
+                  className="w-full h-72 sm:h-96 object-cover"
+                  loading="lazy"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Para quem */}
-      <section className="py-16 bg-white border-b border-slate-200">
+      <section className="py-20 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-5 md:px-6">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-            <div className="space-y-4 text-left">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">Para quem</span>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="order-2 lg:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-[var(--elevation-md)]">
+              <img
+                src={APP_CONFIG.brand.team}
+                alt="Equipe em colaboração — Unsplash"
+                className="w-full h-72 sm:h-80 object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="order-1 lg:order-2 space-y-5 text-left">
+              <span className="badge-aurea">Para quem</span>
+              <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
                 Feito para quem vende serviço e precisa de clareza no preço
               </h2>
-              <ul className="space-y-2 text-sm text-slate-700">
+              <ul className="space-y-3 text-sm text-slate-700">
                 {[
                   'Freelancers de desenvolvimento, design e consultoria',
                   'Agências e estúdios com pipeline de propostas',
                   'Consultores que precificam por projeto ou hora',
                   'Times pequenos que querem sair do Excel',
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-2">
+                  <li key={item} className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 space-y-4">
-              <p className="text-sm font-bold text-slate-900">Modo demo sem Firebase</p>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Rode localmente com dados em localStorage. Quando estiver pronto, configure
-                Firebase Auth + Firestore e use o mesmo app em produção.
-              </p>
-              <Link
-                to={ROUTES.auth.register}
-                className="inline-flex h-10 items-center gap-2 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold transition-colors"
-              >
-                Criar conta
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA final */}
-      <section className="py-16 bg-slate-900 text-white">
-        <div className="max-w-3xl mx-auto px-5 md:px-6 text-center space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
+      <section className="py-20 relative overflow-hidden bg-slate-900 text-white">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            backgroundImage:
+              'radial-gradient(ellipse 60% 80% at 80% 50%, rgb(79 70 229 / 0.35), transparent)',
+          }}
+        />
+        <div className="relative max-w-3xl mx-auto px-5 md:px-6 text-center space-y-7">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
             Pare de precificar no improviso
           </h2>
-          <p className="text-sm text-slate-300 max-w-lg mx-auto">
+          <p className="text-sm sm:text-base text-slate-300 max-w-lg mx-auto leading-relaxed">
             Use {APP_CONFIG.name} para orçar com método, enviar propostas profissionais e manter o
             histórico de cada cliente organizado.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to={ROUTES.auth.register}
-              className="h-11 px-6 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-sm inline-flex items-center justify-center gap-2"
+              className="h-11 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors"
             >
               Começar grátis
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               to={ROUTES.auth.login}
-              className="h-11 px-6 rounded-lg bg-white/10 hover:bg-white/15 text-white font-bold text-sm inline-flex items-center justify-center border border-white/20"
+              className="h-11 px-6 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-sm inline-flex items-center justify-center border border-white/20 transition-colors"
             >
               Já tenho conta
             </Link>
