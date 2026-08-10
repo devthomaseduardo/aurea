@@ -15,8 +15,6 @@ import {
   FileSignature,
   BarChart3,
   Plug,
-  UserCheck,
-  Wrench,
 } from 'lucide-react';
 import { cn } from '@/shared/utils/utils';
 import { useUiStore } from '@/stores/ui.store';
@@ -33,22 +31,23 @@ import {
 
 const navGroups = [
   {
-    label: 'Comercial',
+    label: 'Workspace',
+    items: [{ to: ROUTES.app.dashboard, label: 'Visao geral', icon: LayoutDashboard }],
+  },
+  {
+    label: 'Fluxo comercial',
     items: [
-      { to: ROUTES.app.dashboard, label: 'Dashboard', icon: LayoutDashboard },
-      { to: ROUTES.app.orders, label: 'Ordens de Servico', icon: Wrench },
-      { to: ROUTES.app.calculator, label: 'Calculadora', icon: Calculator },
+      { to: ROUTES.app.clients, label: 'Clientes', icon: Users },
+      { to: ROUTES.app.calculator, label: 'Precificacao', icon: Calculator },
       { to: ROUTES.app.proposals, label: 'Propostas', icon: FileText },
       { to: ROUTES.app.contracts, label: 'Contratos', icon: FileSignature },
-      { to: ROUTES.app.clients, label: 'Clientes', icon: Users },
     ],
   },
   {
     label: 'Gestao',
     items: [
-      { to: ROUTES.app.analytics, label: 'Analytics', icon: BarChart3 },
+      { to: ROUTES.app.analytics, label: 'Resultados', icon: BarChart3 },
       { to: ROUTES.app.integrations, label: 'Integracoes', icon: Plug },
-      { to: ROUTES.app.team, label: 'Equipe', icon: UserCheck },
       { to: ROUTES.app.settings, label: 'Configuracoes', icon: Settings },
     ],
   },
@@ -73,7 +72,7 @@ function NavItem({
         cn(
           'group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
           isActive
-            ? 'bg-indigo-50 text-indigo-900 border border-indigo-200 font-bold'
+            ? 'bg-indigo-50 text-indigo-900 border border-indigo-200 font-semibold'
             : 'text-muted-foreground hover:text-foreground hover:bg-muted'
         )
       }
@@ -112,26 +111,21 @@ function NavItem({
 
 function pageTitle(pathname: string) {
   const map: Record<string, string> = {
-    [ROUTES.app.dashboard]: 'Dashboard',
+    [ROUTES.app.dashboard]: 'Visao geral',
     [ROUTES.app.clients]: 'Clientes',
     [ROUTES.app.clientsNew]: 'Novo cliente',
-    [ROUTES.app.calculator]: 'Calculadora de orcamento',
-    [ROUTES.app.orders]: 'Ordens de Servico',
-    [ROUTES.app.ordersNew]: 'Nova Ordem de Servico',
-    [ROUTES.app.pos]: 'PDV',
-    [ROUTES.app.inventory]: 'Estoque',
+    [ROUTES.app.calculator]: 'Precificacao de projeto',
     [ROUTES.app.proposals]: 'Propostas',
     [ROUTES.app.contracts]: 'Contratos',
-    [ROUTES.app.analytics]: 'Analytics',
+    [ROUTES.app.analytics]: 'Resultados',
     [ROUTES.app.integrations]: 'Integracoes',
-    [ROUTES.app.team]: 'Equipe',
     [ROUTES.app.settings]: 'Configuracoes',
     [ROUTES.app.profile]: 'Perfil',
   };
+
   if (map[pathname]) return map[pathname];
-  if (pathname.startsWith('/app/orders')) return 'Ordem de Servico';
   if (pathname.startsWith('/app/proposals')) return 'Proposta';
-  if (pathname.startsWith('/app/clients')) return 'Clientes';
+  if (pathname.startsWith('/app/clients')) return 'Cliente';
   return APP_CONFIG.name;
 }
 
@@ -164,7 +158,7 @@ export function DashboardLayout() {
       <aside
         className={cn(
           'fixed lg:sticky top-0 left-0 z-50 h-svh flex flex-col border-r border-sidebar-border bg-white transition-[width,transform] duration-200 ease-out',
-          sidebarCollapsed ? 'w-[68px]' : 'w-[260px]',
+          sidebarCollapsed ? 'w-[68px]' : 'w-[248px]',
           sidebarMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
@@ -194,7 +188,7 @@ export function DashboardLayout() {
           {navGroups.map((group) => (
             <div key={group.label}>
               {!sidebarCollapsed && (
-                <p className="px-2.5 mb-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">
+                <p className="px-2.5 mb-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
                   {group.label}
                 </p>
               )}
@@ -209,11 +203,11 @@ export function DashboardLayout() {
 
         <div className="p-2.5 border-t border-sidebar-border space-y-2 shrink-0">
           {!sidebarCollapsed && (
-            <div className="px-2.5 py-2 rounded-lg bg-indigo-50/60 border border-indigo-100">
-              <p className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-700 mb-0.5">
+            <div className="px-2.5 py-2 rounded-lg bg-slate-50 border border-slate-200">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-0.5">
                 {activeTenant.name}
               </p>
-              <p className="text-xs font-bold truncate text-slate-900">{displayName}</p>
+              <p className="text-xs font-semibold truncate text-slate-900">{displayName}</p>
               <p className="text-[11px] text-slate-500 truncate">{displayEmail}</p>
             </div>
           )}
@@ -225,11 +219,7 @@ export function DashboardLayout() {
               onClick={toggleSidebar}
               aria-label={sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'}
             >
-              {sidebarCollapsed ? (
-                <PanelLeft className="w-4 h-4" />
-              ) : (
-                <PanelLeftClose className="w-4 h-4" />
-              )}
+              {sidebarCollapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
             </Button>
             <Button
               variant="ghost"
@@ -258,10 +248,10 @@ export function DashboardLayout() {
             <Menu className="w-4 h-4" />
           </button>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground hidden sm:block font-bold text-indigo-700">
-              {activeTenant.name} · {APP_CONFIG.tagline}
+            <p className="text-[11px] text-slate-500 hidden sm:block">
+              {activeTenant.name}
             </p>
-            <p className="text-sm font-bold truncate text-slate-900">
+            <p className="text-sm font-semibold truncate text-slate-900">
               {pageTitle(location.pathname)}
             </p>
           </div>
@@ -269,26 +259,26 @@ export function DashboardLayout() {
             asChild
             size="sm"
             variant="outline"
-            className="hidden md:inline-flex gap-1.5 border-slate-300 font-bold text-xs"
+            className="hidden md:inline-flex gap-1.5 border-slate-300 font-semibold text-xs"
           >
-            <Link to={ROUTES.app.proposals}>
-              <FileText className="w-3.5 h-3.5 text-indigo-600" />
-              Propostas
+            <Link to={ROUTES.app.clients}>
+              <Users className="w-3.5 h-3.5 text-indigo-600" />
+              Clientes
             </Link>
           </Button>
           <Button
             asChild
             size="sm"
-            className="hidden sm:inline-flex gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm"
+            className="hidden sm:inline-flex gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm"
           >
             <Link to={ROUTES.app.calculator}>
-              <Plus className="w-3.5 h-3.5 text-amber-300" />
-              Novo orcamento
+              <Plus className="w-3.5 h-3.5" />
+              Nova precificacao
             </Link>
           </Button>
         </header>
 
-        <main className="flex-1 overflow-x-hidden bg-slate-50/50">
+        <main className="flex-1 overflow-x-hidden bg-slate-50/60">
           <Outlet />
         </main>
       </div>

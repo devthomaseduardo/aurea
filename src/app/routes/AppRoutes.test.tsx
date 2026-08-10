@@ -6,8 +6,8 @@ import { ROUTES } from '@/core/config/app.config';
 
 const waitPage = { timeout: 5000 };
 
-describe('AppRoutes (frontend)', () => {
-  it('renderiza landing da oficina em /', async () => {
+describe('AppRoutes', () => {
+  it('renderiza a proposta de valor do Aurea em /', async () => {
     renderWithProviders(<AppRoutes />, {
       routerProps: { initialEntries: [ROUTES.home] },
     });
@@ -16,20 +16,20 @@ describe('AppRoutes (frontend)', () => {
       expect(
         screen.getByRole('heading', {
           name: (_content, element) =>
-            (element?.textContent ?? '').toLowerCase().includes('conserto de celulares') &&
-            (element?.textContent ?? '').toLowerCase().includes('garantia de 90 dias'),
+            (element?.textContent ?? '').toLowerCase().includes('precifique projetos') &&
+            (element?.textContent ?? '').toLowerCase().includes('feche contratos'),
         })
       ).toBeInTheDocument();
     }, waitPage);
   });
 
-  it('protege /app e redireciona para login quando não autenticado', async () => {
+  it('protege /app e redireciona para login quando nao autenticado', async () => {
     renderWithProviders(<AppRoutes />, {
       routerProps: { initialEntries: [ROUTES.app.dashboard] },
     });
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Acessar o Sistema da Oficina/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Acesse seu workspace/i })).toBeInTheDocument();
     }, waitPage);
   });
 
@@ -39,10 +39,10 @@ describe('AppRoutes (frontend)', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Acessar o Sistema da Oficina/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Acesse seu workspace/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Continuar com Google/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Continuar com GitHub/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Entrar com Conta Demo da Oficina/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Explorar workspace demo/i })).toBeInTheDocument();
     }, waitPage);
   });
 
