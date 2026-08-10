@@ -17,30 +17,40 @@ const NavBar = () => {
   }, []);
 
   const navLinks = [
-    { to: ROUTES.home, label: 'Início' },
-    { to: ROUTES.services, label: 'Recursos' },
+    { to: ROUTES.home, label: 'Inicio' },
+    { to: `${ROUTES.home}#recursos`, label: 'Recursos' },
+    { to: `${ROUTES.home}#como-funciona`, label: 'Como funciona' },
     { to: ROUTES.about, label: 'Sobre' },
-    { to: ROUTES.catalog, label: 'Como funciona' },
   ];
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md">
-      <nav className={cn('w-full border-b border-[rgba(55,53,47,0.09)]', scrolled && 'shadow-[var(--elevation-sm)]')}>
-        <div className="max-w-5xl mx-auto px-5 md:px-8 h-12 flex items-center justify-between">
+      <nav
+        className={cn(
+          'w-full border-b border-gray-200 transition-shadow',
+          scrolled && 'shadow-sm'
+        )}
+      >
+        <div className="max-w-6xl mx-auto px-5 md:px-8 h-14 flex items-center justify-between">
           <BrandLogo to={ROUTES.home} size="sm" />
-          <div className="hidden lg:flex items-center gap-0.5">
+
+          <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => {
-              const isActive = location.pathname === link.to;
+              const isActive =
+                link.to === ROUTES.home
+                  ? location.pathname === ROUTES.home && !location.hash
+                  : location.pathname + location.hash === link.to ||
+                    (link.to.includes('#') && location.hash === link.to.split('#')[1]);
               return (
                 <Link
                   key={link.to}
                   to={link.to}
                   aria-current={isActive ? 'page' : undefined}
                   className={cn(
-                    'px-2.5 py-1 text-[13px] rounded-md transition-colors',
+                    'px-3 py-1.5 text-[13px] rounded-lg transition-colors',
                     isActive
-                      ? 'bg-[rgba(55,53,47,0.08)] text-[#37352f] font-medium'
-                      : 'text-[#787774] hover:bg-[rgba(55,53,47,0.08)] hover:text-[#37352f]'
+                      ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   )}
                 >
                   {link.label}
@@ -48,17 +58,24 @@ const NavBar = () => {
               );
             })}
           </div>
-          <div className="flex items-center gap-1.5">
-            <Link to={ROUTES.auth.login} className="hidden sm:inline-flex h-8 items-center px-2.5 text-[13px] text-[#787774] hover:text-[#37352f] rounded-md notion-hover">
+
+          <div className="flex items-center gap-2">
+            <Link
+              to={ROUTES.auth.login}
+              className="hidden sm:inline-flex h-9 items-center px-3 text-[13px] font-medium text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition-colors"
+            >
               Entrar
             </Link>
-            <Link to={ROUTES.auth.register} className="hidden sm:inline-flex btn-aurea-primary h-8 text-[13px]">
-              Começar
+            <Link
+              to={ROUTES.auth.register}
+              className="hidden sm:inline-flex h-9 items-center px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[13px] font-semibold transition-colors"
+            >
+              Comecar
             </Link>
             <button
               type="button"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden w-8 h-8 flex items-center justify-center rounded-md text-[#37352f] notion-hover"
+              className="lg:hidden size-9 flex items-center justify-center rounded-lg text-slate-800 hover:bg-slate-50 transition-colors"
               aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
               aria-expanded={isMenuOpen}
             >
@@ -66,16 +83,34 @@ const NavBar = () => {
             </button>
           </div>
         </div>
+
         {isMenuOpen && (
-          <div className="lg:hidden border-t border-[rgba(55,53,47,0.09)] bg-white px-5 py-3 space-y-0.5">
+          <div className="lg:hidden border-t border-gray-200 bg-white px-5 py-3 space-y-1">
             {navLinks.map((link) => (
-              <Link key={link.to} to={link.to} onClick={() => setIsMenuOpen(false)} className="block py-2 px-2 text-[13px] text-[#37352f] rounded-md notion-hover">
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setIsMenuOpen(false)}
+                className="block py-2.5 px-3 text-[13px] text-slate-800 rounded-lg hover:bg-slate-50"
+              >
                 {link.label}
               </Link>
             ))}
-            <div className="pt-2 flex flex-col gap-1.5">
-              <Link to={ROUTES.auth.login} onClick={() => setIsMenuOpen(false)} className="btn-aurea-secondary h-9">Entrar</Link>
-              <Link to={ROUTES.auth.register} onClick={() => setIsMenuOpen(false)} className="btn-aurea-primary h-9">Começar grátis</Link>
+            <div className="pt-2 flex flex-col gap-2">
+              <Link
+                to={ROUTES.auth.login}
+                onClick={() => setIsMenuOpen(false)}
+                className="h-10 inline-flex items-center justify-center rounded-xl border border-gray-200 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+              >
+                Entrar
+              </Link>
+              <Link
+                to={ROUTES.auth.register}
+                onClick={() => setIsMenuOpen(false)}
+                className="h-10 inline-flex items-center justify-center rounded-xl bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500"
+              >
+                Comecar gratis
+              </Link>
             </div>
           </div>
         )}
