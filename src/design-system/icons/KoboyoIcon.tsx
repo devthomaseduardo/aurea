@@ -1,51 +1,9 @@
 import { cn } from '@/shared/utils/utils';
 
 /** Koboyo hand-drawn icons — https://koboyo.com/icons (commercial use OK) */
-export type KoboyoName =
-  | 'arrow-right'
-  | 'menu'
-  | 'x'
-  | 'users'
-  | 'calculator'
-  | 'file-text'
-  | 'check'
-  | 'circle-check'
-  | 'search'
-  | 'plus'
-  | 'trash'
-  | 'trash-2'
-  | 'settings'
-  | 'house'
-  | 'layout-dashboard'
-  | 'dashboard'
-  | 'activity'
-  | 'shield'
-  | 'plug'
-  | 'chart'
-  | 'bar-chart'
-  | 'trending-up'
-  | 'trending-down'
-  | 'mail'
-  | 'phone'
-  | 'save'
-  | 'copy'
-  | 'send'
-  | 'clock'
-  | 'code'
-  | 'loader'
-  | 'refresh-cw'
-  | 'rotate-ccw'
-  | 'warning'
-  | 'triangle-alert'
-  | 'inbox'
-  | 'store'
-  | 'star'
-  | 'award'
-  | 'calendar'
-  | 'filter'
-  | 'pencil';
+export type KoboyoName = string;
 
-const ALIAS: Record<string, KoboyoName> = {
+const ALIAS: Record<string, string> = {
   home: 'house',
   'check-circle': 'circle-check',
   'check-circle-2': 'circle-check',
@@ -59,14 +17,14 @@ const ALIAS: Record<string, KoboyoName> = {
 };
 
 export interface KoboyoIconProps {
-  name: KoboyoName | string;
+  name: KoboyoName;
   size?: number;
   className?: string;
   title?: string;
   'aria-hidden'?: boolean | 'true' | 'false';
 }
 
-/** Renders Koboyo SVG via CSS mask so currentColor works. */
+/** CSS-mask icon from Koboyo CDN (currentColor). */
 export function KoboyoIcon({
   name,
   size = 18,
@@ -74,8 +32,8 @@ export function KoboyoIcon({
   title,
   'aria-hidden': ariaHidden = true,
 }: KoboyoIconProps) {
-  const resolved = (ALIAS[name] ?? name) as string;
-  const src = `/icons/koboyo/${resolved}.svg`;
+  const resolved = ALIAS[name] ?? name;
+  const src = `https://koboyo.com/icons/svg/${resolved}.svg`;
 
   return (
     <span
@@ -96,6 +54,7 @@ export function KoboyoIcon({
         WebkitMaskPosition: 'center',
         maskPosition: 'center',
       }}
+      data-icon={resolved}
     />
   );
 }
