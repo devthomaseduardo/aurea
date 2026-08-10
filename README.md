@@ -1,91 +1,101 @@
 # Áurea
 
-[![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Firebase](https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com/)
-[![Tailwind](https://img.shields.io/badge/Tailwind-3.4-38B2AC?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+Plataforma comercial B2B para freelancers, consultores e pequenas agências que precisam transformar escopo em preço, preço em proposta e proposta em contrato sem depender de planilhas espalhadas.
 
-Plataforma comercial B2B para **precificar projetos**, gerar **propostas**, gerir **clientes/contratos** e operar o pipeline de freelancers e consultores. Identidade light enterprise (índigo + dourado).
+Autor: Thomas Eduardo
 
-Autor: [Thomas Eduardo](https://thomaseduardo.com.br) · [Portfólio](https://thomaseduardo.com.br/projetos/aurea) · [GitHub](https://github.com/devthomaseduardo/aurea)
+## Ideia do produto
 
-## Propósito
+O Áurea não é ERP, PDV, estoque ou sistema de ordem de serviço. O produto acompanha um fluxo comercial de serviços profissionais:
 
-- **Operação comercial:** sair de planilhas para um SaaS com orçamento, proposta e histórico por cliente.
-- **Demo e produção:** modo **local** (localStorage) sem Firebase; modo **nuvem** com Auth + Firestore.
-- **Integrações:** Google, GitHub, Stripe, Slack, Notion, WhatsApp (conectores com teste na UI).
+`Cliente → Precificação → Proposta → Contrato → Resultado`
 
-## Funcionalidades
+A interface e os módulos principais devem reforçar esse caminho.
 
-| Módulo | Descrição |
-|--------|-----------|
-| **Dashboard** | Receita, clientes, horas, lucro, atividades |
-| **Clientes** | CRUD, busca, filtros, paginação |
-| **Calculadora** | Wizard multi-etapas (Zod + RHF) |
-| **Propostas** | Status, PDF, duplicar, editar |
-| **Contratos** | Pipeline vinculado a propostas |
-| **Analytics** | Séries e breakdown de status |
-| **Integrações** | OAuth / token + botão Testar |
-| **Design System** | Catálogo em `/design-system` |
+## Fluxo principal
 
-## Autenticação e dados
+1. Cadastre ou selecione um cliente.
+2. Estruture o escopo e faça a precificação do projeto.
+3. Gere uma proposta a partir do orçamento.
+4. Acompanhe envio, visualização e aceite.
+5. Formalize o fechamento em contrato.
+6. Acompanhe receita, pipeline e taxa de aceite no dashboard.
 
-| Provedor | Uso |
-|----------|-----|
-| **Firebase Auth** | E-mail/senha, Google, GitHub |
-| **Cloud Firestore** | `users/{uid}/…` multi-usuário |
-| **Local** | Sem `VITE_FIREBASE_*` — demo e testes |
+## Módulos
 
-Rotas principais: `/`, `/login`, `/register`, `/app/dashboard`, `/app/clients`, `/app/calculator`, `/app/proposals`, `/app/contracts`, `/app/analytics`, `/app/integrations`, `/app/settings`, `/app/profile`.
+| Módulo | Responsabilidade |
+| --- | --- |
+| Visão geral | Receita contratada, clientes, propostas em aberto e taxa de aceite |
+| Clientes | Cadastro e histórico do relacionamento comercial |
+| Precificação | Escopo, horas, custos, margem e valor recomendado |
+| Propostas | Geração, acompanhamento de status e PDF |
+| Contratos | Formalização dos projetos fechados |
+| Resultados | Evolução comercial e indicadores do funil |
+| Integrações | Conexões complementares do workspace |
+| Configurações | Preferências do profissional ou empresa |
+
+## Rotas principais
+
+```text
+/
+/login
+/register
+/app/dashboard
+/app/clients
+/app/calculator
+/app/proposals
+/app/contracts
+/app/analytics
+/app/integrations
+/app/settings
+/app/profile
+```
 
 ## Stack
 
-| Camada | Tecnologia |
-|--------|------------|
-| Linguagem | **TypeScript** |
-| UI | **React 18**, **React Router 6** |
-| Build | **Vite 5** + SWC |
-| Estilo | **Tailwind**, shadcn/Radix |
-| Estado | **Zustand**, **TanStack Query** |
-| Forms | **react-hook-form**, **Zod** |
-| Auth / DB | **Firebase Auth + Firestore** |
-| PDF | **html2pdf.js** |
-| Testes | **Vitest** + Testing Library |
-| Deploy | **Vercel** / Docker + Nginx |
+- React 18
+- TypeScript
+- Vite
+- React Router
+- Tailwind CSS
+- shadcn/Radix
+- Zustand
+- TanStack Query
+- react-hook-form + Zod
+- Firebase Auth + Firestore
+- Vitest + Testing Library
 
-## Requisitos
+## Dados
 
-- **Node.js** 18+
-- Firebase opcional (ver [DEPLOY.md](./DEPLOY.md) e `.env.example`)
+O projeto pode trabalhar em dois modos:
 
-## Instalação
+- Local: dados de demonstração persistidos no navegador.
+- Nuvem: Firebase Auth e Firestore por usuário.
+
+## Desenvolvimento
 
 ```bash
-git clone https://github.com/devthomaseduardo/aurea.git
-cd aurea
 npm install
 cp .env.example .env.local
 npm run dev
 ```
 
-## Scripts
+Validações disponíveis:
 
-| Comando | Efeito |
-|---------|--------|
-| `npm run dev` | Desenvolvimento |
-| `npm run build` | Produção (`dist/`) |
-| `npm run preview` | Preview |
-| `npm run lint` | ESLint |
-| `npm test` | Vitest |
-| `npm run test:coverage` | Cobertura |
+```bash
+npm run lint
+npm test
+npm run build
+```
 
-## Deploy
+## Direção de produto
 
-Vercel: framework Vite, output `dist`, env `VITE_FIREBASE_*` + `VITE_APP_URL`. `vercel.json` com rewrite SPA.
+Novas funcionalidades devem responder a pelo menos uma destas perguntas:
 
-Firestore rules: [`firestore.rules`](./firestore.rules).
+- Ajuda a precificar melhor?
+- Ajuda a organizar o relacionamento com o cliente?
+- Ajuda a transformar orçamento em proposta?
+- Ajuda a fechar ou acompanhar um contrato?
+- Ajuda a entender o desempenho comercial?
 
-## Licença
-
-MIT © Thomas Eduardo
+Se não reforçar esse fluxo, a funcionalidade provavelmente não pertence ao núcleo do Áurea.
