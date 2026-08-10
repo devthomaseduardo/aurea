@@ -10,7 +10,6 @@ const LandingPage = lazy(() => import('@/modules/landing/pages/Landing'));
 const CatalogPage = lazy(() => import('@/modules/landing/pages/CatalogPage'));
 const ServicesPage = lazy(() => import('@/modules/landing/pages/ServicesPage'));
 const AboutPage = lazy(() => import('@/modules/landing/pages/AboutPage'));
-const StatusPortalPage = lazy(() => import('@/modules/status/pages/StatusPortalPage'));
 const NotFound = lazy(() => import('@/shared/components/NotFound'));
 const DesignSystemPage = lazy(() => import('@/modules/design-system/pages/DesignSystemPage'));
 const LoginPage = lazy(() => import('@/modules/auth/pages/LoginPage'));
@@ -18,18 +17,15 @@ const RegisterPage = lazy(() => import('@/modules/auth/pages/RegisterPage'));
 const AuthCallbackPage = lazy(() => import('@/modules/auth/pages/AuthCallbackPage'));
 
 const DashboardPage = lazy(() => import('@/modules/dashboard/pages/DashboardPage'));
-const OrdersPage = lazy(() => import('@/modules/orders/pages/OrdersPage'));
-const OrderFormPage = lazy(() => import('@/modules/orders/pages/OrderFormPage'));
-const OrderDetailPage = lazy(() => import('@/modules/orders/pages/OrderDetailPage'));
-const DevicesPage = lazy(() => import('@/modules/devices/pages/DevicesPage'));
-const InventoryPage = lazy(() => import('@/modules/inventory/pages/InventoryPage'));
-const POSPage = lazy(() => import('@/modules/pos/pages/POSPage'));
-
 const ClientsPage = lazy(() => import('@/modules/clients/pages/ClientsPage'));
 const ClientFormPage = lazy(() => import('@/modules/clients/pages/ClientFormPage'));
 const CalculatorPage = lazy(() => import('@/modules/calculator/pages/CalculatorPage'));
+const ProposalsPage = lazy(() => import('@/modules/proposals/pages/ProposalsPage'));
+const ProposalDetailPage = lazy(() => import('@/modules/proposals/pages/ProposalDetailPage'));
+const ContractsPage = lazy(() => import('@/modules/contracts/pages/ContractsPage'));
+const AnalyticsPage = lazy(() => import('@/modules/analytics/pages/AnalyticsPage'));
+const IntegrationsPage = lazy(() => import('@/modules/integrations/pages/IntegrationsPage'));
 const TeamPage = lazy(() => import('@/modules/team/pages/TeamPage'));
-const WarrantiesPage = lazy(() => import('@/modules/warranties/pages/WarrantiesPage'));
 const SettingsPage = lazy(() => import('@/modules/settings/pages/SettingsPage'));
 const ProfilePage = lazy(() => import('@/modules/profile/pages/ProfilePage'));
 
@@ -54,7 +50,7 @@ export function AppRoutes() {
           }
         />
         <Route
-          path={ROUTES.aparelhos}
+          path={ROUTES.catalog}
           element={
             <Lazy>
               <CatalogPage />
@@ -62,7 +58,7 @@ export function AppRoutes() {
           }
         />
         <Route
-          path={ROUTES.servicos}
+          path={ROUTES.services}
           element={
             <Lazy>
               <ServicesPage />
@@ -70,27 +66,10 @@ export function AppRoutes() {
           }
         />
         <Route
-          path={ROUTES.sobre}
+          path={ROUTES.about}
           element={
             <Lazy>
               <AboutPage />
-            </Lazy>
-          }
-        />
-
-        <Route
-          path={ROUTES.statusPortal}
-          element={
-            <Lazy>
-              <StatusPortalPage />
-            </Lazy>
-          }
-        />
-        <Route
-          path="/status/:id"
-          element={
-            <Lazy>
-              <StatusPortalPage />
             </Lazy>
           }
         />
@@ -147,62 +126,6 @@ export function AppRoutes() {
             }
           />
           <Route
-            path="orders"
-            element={
-              <Lazy>
-                <OrdersPage />
-              </Lazy>
-            }
-          />
-          <Route
-            path="orders/new"
-            element={
-              <Lazy>
-                <OrderFormPage />
-              </Lazy>
-            }
-          />
-          <Route
-            path="orders/:id"
-            element={
-              <Lazy>
-                <OrderDetailPage />
-              </Lazy>
-            }
-          />
-          <Route
-            path="orders/:id/edit"
-            element={
-              <Lazy>
-                <OrderFormPage />
-              </Lazy>
-            }
-          />
-          <Route
-            path="devices"
-            element={
-              <Lazy>
-                <DevicesPage />
-              </Lazy>
-            }
-          />
-          <Route
-            path="inventory"
-            element={
-              <Lazy>
-                <InventoryPage />
-              </Lazy>
-            }
-          />
-          <Route
-            path="pos"
-            element={
-              <Lazy>
-                <POSPage />
-              </Lazy>
-            }
-          />
-          <Route
             path="clients"
             element={
               <Lazy>
@@ -235,18 +158,50 @@ export function AppRoutes() {
             }
           />
           <Route
-            path="team"
+            path="proposals"
             element={
               <Lazy>
-                <TeamPage />
+                <ProposalsPage />
               </Lazy>
             }
           />
           <Route
-            path="warranties"
+            path="proposals/:id"
             element={
               <Lazy>
-                <WarrantiesPage />
+                <ProposalDetailPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="contracts"
+            element={
+              <Lazy>
+                <ContractsPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="analytics"
+            element={
+              <Lazy>
+                <AnalyticsPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="integrations"
+            element={
+              <Lazy>
+                <IntegrationsPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="team"
+            element={
+              <Lazy>
+                <TeamPage />
               </Lazy>
             }
           />
