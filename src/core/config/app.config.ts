@@ -1,3 +1,10 @@
+/**
+ * Brand images: Unsplash License (https://unsplash.com/license)
+ * - Hero workspace: photo-1497366216548-37526070297c
+ * - Product/desk:   photo-1460925895917-afdab827c52f
+ * - Team:           photo-1553877522-43269d4ea984
+ * - Analytics:      photo-1551288049-bebda4e38f71
+ */
 export const APP_CONFIG = {
   name: 'Áurea',
   legalName: 'Áurea',
@@ -10,15 +17,22 @@ export const APP_CONFIG = {
   defaultHourlyRate: 120,
   storagePrefix: 'aurea_v1',
   brand: {
-    primary: '#4F46E5', // índigo
+    primary: '#4F46E5',
     gold: '#D4A017',
     ink: '#0F172A',
     paper: '#F8FAFC',
-    logo: '/brand/logo.png',
-    logoMark: '/brand/logo-mark.jpg',
-    hero: '/brand/hero.jpg',
-    pattern: '/brand/pattern.jpg',
-    product: '/brand/product.jpg',
+    // Mark is CSS/text-based in BrandLogo — no local bitmap required
+    logo: '',
+    logoMark: '',
+    hero:
+      'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80',
+    product:
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+    team:
+      'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80',
+    analytics:
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+    pattern: '',
   },
   pagination: {
     defaultPageSize: 10,
