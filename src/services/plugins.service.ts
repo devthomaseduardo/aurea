@@ -2,7 +2,6 @@ import { localStore } from '@/core/storage/local-storage';
 import type {
   PluginConnection,
   PluginDefinition,
-  PluginRuntime,
 } from '@/types/plugins';
 import { isCloudDataEnabled } from '@/core/db/mode';
 import {
@@ -10,14 +9,6 @@ import {
   setDocument,
   removeDocument,
 } from '@/core/firebase/user-repo';
-import {
-  GoogleAuthProvider,
-  GithubAuthProvider,
-  linkWithPopup,
-  reauthenticateWithPopup,
-  type User,
-} from 'firebase/auth';
-import { getFirebaseAuth, requireAuth } from '@/core/firebase/app';
 
 const KEY = 'plugins';
 
@@ -96,14 +87,31 @@ export const pluginsService = {
 
   async loadFromCloud(): Promise<PluginConnection[]> {
     if (isCloudDataEnabled()) {
-      const doc = await listCollection<{ list: PluginConnection[] }>('plugins');
-      // simplified
+      await listCollection<{ list: PluginConnection[] }>('plugins');
     }
     return loadConnections();
   },
 
+  connectWithToken(
+    pluginId: string,
+    data: { accessToken?: string; accountLabel?: string; provider?: string } = {}
+  ): Promise<PluginConnection> {
+    const conn = this.connect(pluginId, data.accessToken);
+    if (data.accountLabel) {
+      const list = loadConnections();
+      const next = list.map((c) =>
+        c.pluginId === pluginId ? { ...c, accountLabel: data.accountLabel } : c
+      );
+      saveConnections(next);
+      return Promise.resolve(next.find((c) => c.pluginId === pluginId)!);
+    }
+    return Promise.resolve(conn);
+  },
+
   isConnected(pluginId: string): boolean {
-    return loadConnections().some((c) => c.pluginId === pluginId && c.connected);
+    return loadConnections().some(
+      (c) => c.pluginId === pluginId && (c.connected || c.status === 'connected')
+    );
   },
 
   getAccessToken(pluginId: string): string | null {
@@ -116,6 +124,7 @@ export const pluginsService = {
     const existing = list.find((c) => c.pluginId === pluginId);
     const conn: PluginConnection = {
       pluginId,
+      status: 'connected',
       connected: true,
       accessToken: accessToken || existing?.accessToken || 'local-token',
       connectedAt: new Date().toISOString(),
