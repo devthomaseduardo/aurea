@@ -37,7 +37,7 @@ export default function LoginPage() {
     clearError();
     try {
       await login(values);
-      toast({ title: 'Login realizado', description: 'Bem-vindo de volta à Aurea.' });
+      toast({ title: 'Login realizado', description: 'Bem-vindo de volta ao Áurea.' });
       navigate(from, { replace: true });
     } catch {
       // store error
@@ -50,11 +50,11 @@ export default function LoginPage() {
     try {
       const creds = await authService.ensureDemoAccount();
       await login(creds);
-      toast({ title: 'Conta demo', description: 'Você entrou com demo@aurea.app' });
+      toast({ title: 'Workspace demo', description: 'Dados de demonstração carregados.' });
       navigate(ROUTES.app.dashboard, { replace: true });
     } catch (e) {
       toast({
-        title: 'Erro na conta demo',
+        title: 'Erro ao abrir demo',
         description: e instanceof Error ? e.message : 'Tente novamente',
         variant: 'destructive',
       });
@@ -65,25 +65,25 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      title="Acessar o Sistema da Oficina"
-      subtitle="Entre com suas credenciais de operador ou técnico."
+      title="Acesse seu workspace"
+      subtitle="Continue de onde parou no seu fluxo comercial."
     >
       <SocialAuthButtons redirectTo={from} />
 
       <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
         <div className="h-px flex-1 bg-border" />
-        <span className="select-none">ou e-mail</span>
+        <span className="select-none">ou continue com e-mail</span>
         <div className="h-px flex-1 bg-border" />
       </div>
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">E-mail do Técnico / Operador</Label>
+          <Label htmlFor="email">E-mail</Label>
           <Input
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="tecnico@teronfix.com.br"
+            placeholder="voce@empresa.com.br"
             {...form.register('email')}
           />
           {form.formState.errors.email && (
@@ -92,7 +92,7 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Senha de Acesso</Label>
+          <Label htmlFor="password">Senha</Label>
           <Input
             id="password"
             type="password"
@@ -111,7 +111,7 @@ export default function LoginPage() {
         )}
 
         <Button type="submit" className="w-full" variant="brand" disabled={isLoading}>
-          {isLoading ? 'Entrando…' : 'Entrar no Sistema'}
+          {isLoading ? 'Entrando…' : 'Entrar no Áurea'}
         </Button>
       </form>
 
@@ -122,16 +122,13 @@ export default function LoginPage() {
         onClick={loginDemo}
         disabled={demoLoading || isLoading}
       >
-        {demoLoading ? 'Preparando conta demo…' : 'Entrar com Conta Demo da Oficina'}
+        {demoLoading ? 'Preparando demonstração…' : 'Explorar workspace demo'}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground mt-6">
-        Precisa de acesso?{' '}
-        <Link
-          to={ROUTES.auth.register}
-          className="text-primary font-medium link-hover"
-        >
-          Cadastrar nova loja
+        Ainda não tem um workspace?{' '}
+        <Link to={ROUTES.auth.register} className="text-primary font-medium link-hover">
+          Criar conta
         </Link>
       </p>
     </AuthLayout>
