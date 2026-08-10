@@ -16,6 +16,7 @@ import {
   BarChart3,
   Plug,
   UserCheck,
+  Wrench,
 } from 'lucide-react';
 import { cn } from '@/shared/utils/utils';
 import { useUiStore } from '@/stores/ui.store';
@@ -35,6 +36,7 @@ const navGroups = [
     label: 'Comercial',
     items: [
       { to: ROUTES.app.dashboard, label: 'Dashboard', icon: LayoutDashboard },
+      { to: ROUTES.app.orders, label: 'Ordens de Servico', icon: Wrench },
       { to: ROUTES.app.calculator, label: 'Calculadora', icon: Calculator },
       { to: ROUTES.app.proposals, label: 'Propostas', icon: FileText },
       { to: ROUTES.app.contracts, label: 'Contratos', icon: FileSignature },
@@ -42,12 +44,12 @@ const navGroups = [
     ],
   },
   {
-    label: 'Gestão',
+    label: 'Gestao',
     items: [
       { to: ROUTES.app.analytics, label: 'Analytics', icon: BarChart3 },
-      { to: ROUTES.app.integrations, label: 'Integrações', icon: Plug },
+      { to: ROUTES.app.integrations, label: 'Integracoes', icon: Plug },
       { to: ROUTES.app.team, label: 'Equipe', icon: UserCheck },
-      { to: ROUTES.app.settings, label: 'Configurações', icon: Settings },
+      { to: ROUTES.app.settings, label: 'Configuracoes', icon: Settings },
     ],
   },
 ];
@@ -113,16 +115,21 @@ function pageTitle(pathname: string) {
     [ROUTES.app.dashboard]: 'Dashboard',
     [ROUTES.app.clients]: 'Clientes',
     [ROUTES.app.clientsNew]: 'Novo cliente',
-    [ROUTES.app.calculator]: 'Calculadora de orçamento',
+    [ROUTES.app.calculator]: 'Calculadora de orcamento',
+    [ROUTES.app.orders]: 'Ordens de Servico',
+    [ROUTES.app.ordersNew]: 'Nova Ordem de Servico',
+    [ROUTES.app.pos]: 'PDV',
+    [ROUTES.app.inventory]: 'Estoque',
     [ROUTES.app.proposals]: 'Propostas',
     [ROUTES.app.contracts]: 'Contratos',
     [ROUTES.app.analytics]: 'Analytics',
-    [ROUTES.app.integrations]: 'Integrações',
+    [ROUTES.app.integrations]: 'Integracoes',
     [ROUTES.app.team]: 'Equipe',
-    [ROUTES.app.settings]: 'Configurações',
+    [ROUTES.app.settings]: 'Configuracoes',
     [ROUTES.app.profile]: 'Perfil',
   };
   if (map[pathname]) return map[pathname];
+  if (pathname.startsWith('/app/orders')) return 'Ordem de Servico';
   if (pathname.startsWith('/app/proposals')) return 'Proposta';
   if (pathname.startsWith('/app/clients')) return 'Clientes';
   return APP_CONFIG.name;
@@ -276,7 +283,7 @@ export function DashboardLayout() {
           >
             <Link to={ROUTES.app.calculator}>
               <Plus className="w-3.5 h-3.5 text-amber-300" />
-              Novo orçamento
+              Novo orcamento
             </Link>
           </Button>
         </header>
