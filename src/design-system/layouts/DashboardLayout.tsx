@@ -15,6 +15,7 @@ import {
   BarChart3,
   Plug,
   ArrowUpRight,
+  MoreHorizontal,
 } from 'lucide-react';
 import { cn } from '@/shared/utils/utils';
 import { useUiStore } from '@/stores/ui.store';
@@ -28,25 +29,31 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/
 const navGroups = [
   {
     label: 'Workspace',
-    items: [{ to: ROUTES.app.dashboard, label: 'Visao geral', icon: LayoutDashboard }],
+    items: [{ to: ROUTES.app.dashboard, label: 'Visão geral', icon: LayoutDashboard }],
   },
   {
     label: 'Comercial',
     items: [
       { to: ROUTES.app.clients, label: 'Clientes', icon: Users },
-      { to: ROUTES.app.calculator, label: 'Precificacao', icon: Calculator },
+      { to: ROUTES.app.calculator, label: 'Precificação', icon: Calculator },
       { to: ROUTES.app.proposals, label: 'Propostas', icon: FileText },
       { to: ROUTES.app.contracts, label: 'Contratos', icon: FileSignature },
     ],
   },
   {
-    label: 'Operacao',
+    label: 'Operação',
     items: [
       { to: ROUTES.app.analytics, label: 'Resultados', icon: BarChart3 },
-      { to: ROUTES.app.integrations, label: 'Integracoes', icon: Plug },
-      { to: ROUTES.app.settings, label: 'Configuracoes', icon: Settings },
+      { to: ROUTES.app.integrations, label: 'Integrações', icon: Plug },
+      { to: ROUTES.app.settings, label: 'Configurações', icon: Settings },
     ],
   },
+];
+
+const mobileNav = [
+  { to: ROUTES.app.dashboard, label: 'Início', icon: LayoutDashboard },
+  { to: ROUTES.app.clients, label: 'Clientes', icon: Users },
+  { to: ROUTES.app.proposals, label: 'Propostas', icon: FileText },
 ];
 
 function NavItem({ to, label, icon: Icon, collapsed }: {
@@ -70,7 +77,7 @@ function NavItem({ to, label, icon: Icon, collapsed }: {
       {({ isActive }) => (
         <>
           <Icon className={cn('size-4 shrink-0 transition-colors', isActive ? 'text-[#f26522]' : 'text-white/40 group-hover:text-white/80')} />
-          {!collapsed && <span className="truncate flex-1">{label}</span>}
+          {!collapsed && <span className="min-w-0 flex-1 truncate">{label}</span>}
           {!collapsed && isActive && <span className="size-1.5 rounded-full bg-[#f26522]" />}
         </>
       )}
@@ -88,15 +95,15 @@ function NavItem({ to, label, icon: Icon, collapsed }: {
 
 function pageTitle(pathname: string) {
   const map: Record<string, string> = {
-    [ROUTES.app.dashboard]: 'Visao geral',
+    [ROUTES.app.dashboard]: 'Visão geral',
     [ROUTES.app.clients]: 'Clientes',
     [ROUTES.app.clientsNew]: 'Novo cliente',
-    [ROUTES.app.calculator]: 'Precificacao',
+    [ROUTES.app.calculator]: 'Precificação',
     [ROUTES.app.proposals]: 'Propostas',
     [ROUTES.app.contracts]: 'Contratos',
     [ROUTES.app.analytics]: 'Resultados',
-    [ROUTES.app.integrations]: 'Integracoes',
-    [ROUTES.app.settings]: 'Configuracoes',
+    [ROUTES.app.integrations]: 'Integrações',
+    [ROUTES.app.settings]: 'Configurações',
     [ROUTES.app.profile]: 'Perfil',
   };
   if (map[pathname]) return map[pathname];
@@ -186,24 +193,24 @@ export function DashboardLayout() {
 
         <div className="flex min-h-svh min-w-0 flex-1 flex-col bg-[#f4f1eb] lg:min-h-0">
           <header className="sticky top-0 z-30 px-3 pt-3 sm:px-5 sm:pt-4 lg:px-6">
-            <div className="flex min-h-[58px] items-center gap-3 rounded-full border border-black/[0.06] bg-white/80 px-3 shadow-sm backdrop-blur-xl sm:px-4">
+            <div className="mx-auto flex min-h-[58px] w-full max-w-[1500px] items-center gap-2 rounded-full border border-black/[0.06] bg-white/85 px-2.5 shadow-sm backdrop-blur-xl sm:gap-3 sm:px-4">
               <button type="button" onClick={() => setSidebarMobileOpen(true)} className="rounded-full p-2 hover:bg-black/[0.05] lg:hidden" aria-label="Abrir menu">
                 <Menu className="size-4" />
               </button>
 
-              <div className="min-w-0 flex-1 pl-1">
+              <div className="min-w-0 flex-1 pl-0.5 sm:pl-1">
                 <p className="hidden text-[9px] font-semibold uppercase tracking-[0.14em] text-black/35 sm:block">{activeTenant.name}</p>
-                <p className="truncate text-[13px] font-semibold text-[#171614]">{pageTitle(location.pathname)}</p>
+                <p className="truncate text-[12px] font-semibold text-[#171614] sm:text-[13px]">{pageTitle(location.pathname)}</p>
               </div>
 
               <Button asChild size="sm" variant="ghost" className="hidden rounded-full px-4 text-xs font-medium text-black/55 hover:bg-black/[0.04] hover:text-black md:inline-flex">
                 <Link to={ROUTES.app.clients}>Clientes</Link>
               </Button>
 
-              <Button asChild size="sm" className="rounded-full bg-[#171614] px-4 text-xs font-semibold text-white shadow-none hover:bg-[#f26522]">
+              <Button asChild size="sm" className="rounded-full bg-[#171614] px-3 text-[11px] font-semibold text-white shadow-none hover:bg-[#f26522] sm:px-4 sm:text-xs">
                 <Link to={ROUTES.app.calculator}>
-                  <Plus className="mr-1.5 size-3.5" />
-                  <span className="hidden sm:inline">Nova precificacao</span>
+                  <Plus className="mr-1 size-3.5 sm:mr-1.5" />
+                  <span className="hidden sm:inline">Nova precificação</span>
                   <span className="sm:hidden">Novo</span>
                   <ArrowUpRight className="ml-1 size-3.5" />
                 </Link>
@@ -211,9 +218,38 @@ export function DashboardLayout() {
             </div>
           </header>
 
-          <main className="flex-1 overflow-x-hidden">
+          <main className="flex-1 overflow-x-hidden pb-20 lg:pb-0">
             <Outlet />
           </main>
+
+          <nav className="fixed inset-x-3 bottom-3 z-30 grid grid-cols-4 rounded-[22px] border border-white/15 bg-[#171614]/95 p-1.5 shadow-[0_20px_50px_rgba(20,18,16,.24)] backdrop-blur-xl lg:hidden">
+            {mobileNav.map(({ to, label, icon: Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={to === ROUTES.app.dashboard}
+                className={({ isActive }) => cn(
+                  'flex min-h-12 flex-col items-center justify-center gap-1 rounded-[17px] text-[9px] font-medium transition',
+                  isActive ? 'bg-white text-[#171614]' : 'text-white/45'
+                )}
+              >
+                {({ isActive }) => (
+                  <>
+                    <Icon className={cn('size-4', isActive ? 'text-[#f26522]' : 'text-white/45')} />
+                    <span>{label}</span>
+                  </>
+                )}
+              </NavLink>
+            ))}
+            <button
+              type="button"
+              onClick={() => setSidebarMobileOpen(true)}
+              className="flex min-h-12 flex-col items-center justify-center gap-1 rounded-[17px] text-[9px] font-medium text-white/45 transition hover:bg-white/[0.06] hover:text-white"
+            >
+              <MoreHorizontal className="size-4" />
+              <span>Mais</span>
+            </button>
+          </nav>
         </div>
       </div>
     </div>
