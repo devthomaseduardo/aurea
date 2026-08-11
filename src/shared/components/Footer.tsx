@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
 import { BrandLogo } from '@/design-system/components/BrandLogo';
 
@@ -6,38 +7,24 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-slate-200 bg-white py-10">
-      <div className="max-w-7xl mx-auto px-5 md:px-6">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-slate-200">
-          <BrandLogo />
-
-          <div className="flex flex-wrap items-center gap-6 text-xs font-semibold text-slate-500">
-            <Link to={ROUTES.services} className="hover:text-indigo-600">
-              Recursos
-            </Link>
-            <Link to={ROUTES.about} className="hover:text-indigo-600">
-              Sobre
-            </Link>
-            <Link to={ROUTES.catalog} className="hover:text-indigo-600">
-              Como funciona
-            </Link>
-            <Link to={ROUTES.auth.login} className="hover:text-indigo-600">
-              Entrar
-            </Link>
+    <footer className="bg-[#171614] px-5 py-10 text-white sm:px-8 sm:py-12 lg:px-12">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <BrandLogo className="[&_span]:text-white" />
+            <p className="mt-5 max-w-md text-sm leading-7 text-white/38">Precificação, proposta e contrato conectados ao mesmo contexto comercial.</p>
           </div>
 
-          <Link
-            to={ROUTES.auth.login}
-            className="text-xs text-slate-500 hover:text-indigo-600 font-semibold shrink-0"
-          >
-            Área do profissional
-          </Link>
+          <div className="flex flex-wrap gap-x-6 gap-y-3 text-xs font-medium text-white/48">
+            <Link to={`${ROUTES.home}#recursos`} className="transition hover:text-white">Produto</Link>
+            <Link to={`${ROUTES.home}#como-funciona`} className="transition hover:text-white">Fluxo</Link>
+            <Link to={ROUTES.about} className="transition hover:text-white">Sobre</Link>
+            <Link to={ROUTES.auth.login} className="inline-flex items-center gap-1.5 text-[#f6a576] transition hover:text-white">Entrar <ArrowUpRight className="size-3" /></Link>
+          </div>
         </div>
 
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500 font-medium">
-          <p>
-            © {year} {APP_CONFIG.legalName}. Todos os direitos reservados.
-          </p>
+        <div className="mt-12 flex flex-col gap-2 text-[10px] uppercase tracking-[0.11em] text-white/20 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {year} {APP_CONFIG.legalName}</p>
           <p>{APP_CONFIG.tagline}</p>
         </div>
       </div>
