@@ -13,12 +13,13 @@ export const APP_CONFIG = {
   defaultHourlyRate: 120,
   storagePrefix: 'aurea_v1',
   brand: {
-    primary: '#4F46E5',
-    gold: '#D4A017',
-    ink: '#0F172A',
-    paper: '#F8FAFC',
-    logo: '',
-    logoMark: '',
+    primary: '#F26522',
+    gold: '#F26522',
+    ink: '#171614',
+    paper: '#F4F1EB',
+    logo: '/logo.png',
+    logoMark: '/logo.png',
+    favicon: '/favicon.png',
     hero:
       'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80',
     product:
