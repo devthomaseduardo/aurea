@@ -13,13 +13,7 @@ describe('AppRoutes', () => {
     });
 
     await waitFor(() => {
-      expect(
-        screen.getByRole('heading', {
-          name: (_content, element) =>
-            (element?.textContent ?? '').toLowerCase().includes('precifique projetos') &&
-            (element?.textContent ?? '').toLowerCase().includes('feche contratos'),
-        })
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Venda projetos com clareza/i)).toBeInTheDocument();
     }, waitPage);
   });
 

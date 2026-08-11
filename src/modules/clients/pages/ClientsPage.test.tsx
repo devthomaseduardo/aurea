@@ -16,9 +16,9 @@ describe('ClientsPage (frontend)', () => {
       expect(screen.getByText('Ana Souza')).toBeInTheDocument();
     });
 
-    expect(screen.getByRole('heading', { name: 'Clientes' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Relacionamentos, não cadastros/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Novo cliente/i })).toBeInTheDocument();
-    const search = screen.getByPlaceholderText(/Buscar por nome/i);
+    const search = screen.getByPlaceholderText(/Buscar nome, e-mail ou empresa/i);
     await user.type(search, 'Bruno');
     await waitFor(() => {
       expect(screen.getByText('Bruno Lima')).toBeInTheDocument();

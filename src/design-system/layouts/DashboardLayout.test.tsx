@@ -17,9 +17,9 @@ describe('DashboardLayout (frontend)', () => {
     );
 
     expect(screen.getByText('Conteúdo dashboard')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Visão Geral/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Ordens de Serviço/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Financeiro/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Estoque/i })).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /Visão Geral/i })[0]).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /Clientes/i })[0]).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /Precificação/i })[0]).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /Propostas/i })[0]).toBeInTheDocument();
   });
 });

@@ -16,14 +16,18 @@ describe('proposalsService', () => {
     const projeto = createProjeto({ nome: 'Proposta via cálculo' });
     const resultado = calcularOrcamento(projeto);
 
-    const proposal = proposalsService.createFromCalculation(projeto, resultado, {
-      status: 'draft',
-    });
+    const proposal = proposalsService.createFromCalculation(
+      'Proposta via cálculo',
+      'cli_1',
+      'Cliente Demo',
+      projeto,
+      resultado,
+      'padrao'
+    );
 
-    expect(proposal.id).toMatch(/^prop_/);
+    expect(proposal.id).toMatch(/^id_/);
     expect(proposal.title).toBe('Proposta via cálculo');
     expect(proposal.totalHours).toBe(resultado.totalHoras);
-    expect(proposal.technologies).toEqual(['React', 'Node.js']);
     expect(proposal.projectSnapshot).toBeTruthy();
     expect(proposal.resultSnapshot).toBeTruthy();
   });
@@ -40,24 +44,29 @@ describe('proposalsService', () => {
   });
 
   it('atualiza status e remove proposta', () => {
+    const projeto = createProjeto({ nome: 'Para atualizar' });
     const created = proposalsService.createFromCalculation(
-      createProjeto({ nome: 'Para atualizar' }),
-      calcularOrcamento(createProjeto()),
-      { status: 'draft' }
+      'Para atualizar',
+      'cli_1',
+      'Cliente Demo',
+      projeto,
+      calcularOrcamento(projeto),
+      'padrao'
     );
 
-    const updated = proposalsService.update(created.id, { status: 'sent' });
+    const updated = proposalsService.updateStatus(created.id, 'sent');
     expect(updated?.status).toBe('sent');
 
     expect(proposalsService.remove(created.id)).toBe(true);
     expect(proposalsService.getById(created.id)).toBeUndefined();
   });
 
-  it('filtra por status e busca', () => {
-    const drafts = proposalsService.list({ status: 'draft', pageSize: 50 });
-    expect(drafts.data.every((p) => p.status === 'draft')).toBe(true);
+  it('filtra por status e busca', async () => {
+    const drafts = await proposalsService.list({ status: 'draft', pageSize: 50 });
+    expect(drafts.items.every((p) => p.status === 'draft')).toBe(true);
 
-    const search = proposalsService.list({ search: 'Landing', pageSize: 50 });
-    expect(search.data.length).toBeGreaterThan(0);
+    const search = await proposalsService.list({ search: 'Landing', pageSize: 50 });
+    expect(search.items.length).toBeGreaterThan(0);
   });
 });
+

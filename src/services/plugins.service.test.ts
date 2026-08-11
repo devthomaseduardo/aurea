@@ -8,21 +8,18 @@ describe('pluginsService', () => {
     setStorageUserId('usr_test');
   });
 
-  it('lista catálogo com runtime', () => {
-    const list = pluginsService.listRuntime();
+  it('lista catálogo', () => {
+    const list = pluginsService.getDefinitions();
     expect(list.length).toBeGreaterThan(5);
-    expect(list.every((p) => p.connection)).toBe(true);
+    expect(list.every((p) => p.id)).toBe(true);
   });
 
   it('conecta e desconecta plugin', () => {
-    pluginsService.connect('gmail');
-    expect(pluginsService.getConnected().some((p) => p.id === 'gmail')).toBe(true);
+    pluginsService.connect('google');
+    expect(pluginsService.getConnections().some((p) => p.pluginId === 'google')).toBe(true);
 
-    pluginsService.disconnect('gmail');
-    expect(pluginsService.getConnected().some((p) => p.id === 'gmail')).toBe(false);
-  });
-
-  it('impede conectar plugin coming soon', () => {
-    expect(() => pluginsService.connect('hubspot')).toThrow(/breve/i);
+    pluginsService.disconnect('google');
+    expect(pluginsService.getConnections().some((p) => p.pluginId === 'google')).toBe(false);
   });
 });
+

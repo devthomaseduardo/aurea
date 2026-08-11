@@ -4,18 +4,15 @@ import { renderWithProviders } from '@/test/test-utils';
 import Hero from './Hero';
 
 describe('Hero (frontend)', () => {
-  it('renderiza headline de assistência técnica e CTAs principais', () => {
+  it('renderiza headline e CTA', () => {
     renderWithProviders(<Hero />);
 
     expect(
       screen.getByRole('heading', {
-        name: (_c, el) =>
-          (el?.textContent ?? '').toLowerCase().includes('conserto de celulares') &&
-          (el?.textContent ?? '').toLowerCase().includes('garantia de 90 dias'),
+        name: /Venda projetos com clareza/i,
       })
     ).toBeInTheDocument();
 
-    expect(screen.getAllByText(/Consultar minha OS/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Solicitar orçamento no WhatsApp/i)).toBeInTheDocument();
+    expect(screen.getByText(/Criar workspace/i)).toBeInTheDocument();
   });
 });

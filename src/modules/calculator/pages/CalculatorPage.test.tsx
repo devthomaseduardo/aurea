@@ -4,12 +4,12 @@ import { renderWithProviders } from '@/test/test-utils';
 import CalculatorPage from './CalculatorPage';
 
 describe('CalculatorPage (frontend)', () => {
-  it('renderiza calculadora de orçamento de conserto', () => {
+  it('renderiza calculadora de projeto', () => {
     renderWithProviders(<CalculatorPage />);
     expect(
-      screen.getByRole('heading', { name: /Calculadora de Orçamento de Conserto/i })
+      screen.getByRole('heading', { name: /Transforme escopo em preço defendível/i })
     ).toBeInTheDocument();
-    expect(screen.getByText(/Parâmetros do Manutenção/i)).toBeInTheDocument();
-    expect(screen.getByText(/ORÇAMENTO RECOMENDADO/i)).toBeInTheDocument();
+    expect(screen.getByText(/Precificacao de projeto/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Carregar exemplo/i })).toBeInTheDocument();
   });
 });

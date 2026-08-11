@@ -68,7 +68,7 @@ export default function Landing() {
             </div>
 
             <div className="relative overflow-hidden rounded-[30px] bg-[#171614] p-4 shadow-[0_35px_90px_rgba(35,29,22,.16)] sm:p-5 lg:p-6">
-              <img src={APP_CONFIG.brand.product} alt="Workspace comercial do Áurea" className="aspect-[16/10] w-full rounded-[22px] object-cover object-top opacity-90" loading="lazy" />
+              <img src="/img/Person in Orange Beanie Working on Laptop.png" alt="Workspace comercial do Áurea" className="aspect-[16/10] w-full rounded-[22px] object-cover object-top opacity-90" loading="lazy" />
               <div className="mt-5 flex flex-col gap-3 px-1 pb-1 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#f6a576]">Workspace comercial</p>
