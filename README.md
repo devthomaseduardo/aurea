@@ -7,7 +7,7 @@ Cliente → Precificação → Proposta → Contrato → Resultado
 ```
 
 **Autor:** [Thomas Eduardo](https://thomaseduardo.com.br)  
-**Portfólio:** [thomaseduardo.com.br/projetos/aurea](https://thomaseduardo.com.br)  
+**Portfólio:** [thomaseduardo.com.br](https://thomaseduardo.com.br)  
 **Repositório:** [github.com/devthomaseduardo/aurea](https://github.com/devthomaseduardo/aurea)
 
 ---
@@ -114,8 +114,12 @@ Novas funcionalidades devem responder a pelo menos uma destas perguntas:
 ## Requisitos
 
 - Node.js 18+
-- Firebase opcional (ver `.env.example` e documentação de deploy)
+- Firebase opcional (ver `.env.example`)
 
 ## Licença
 
-MIT © Thomas Eduardo
+**Software proprietário.** Todos os direitos reservados.
+
+Ver [LICENSE](LICENSE). Uso, cópia, modificação ou distribuição sem autorização escrita prévia é proibido.
+
+Contato: [thomaseduardo.com.br](https://thomaseduardo.com.br)
