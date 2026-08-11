@@ -4,104 +4,139 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Áurea — Notion-inspired minimal UI + Koboyo icons */
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 30 6% 21%;
-    --card: 0 0% 100%;
-    --card-foreground: 30 6% 21%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 30 6% 21%;
-    --primary: 210 78% 51%;
+    --background: 42 19% 95%;
+    --foreground: 30 5% 10%;
+    --card: 40 22% 98%;
+    --card-foreground: 30 5% 10%;
+    --popover: 40 22% 98%;
+    --popover-foreground: 30 5% 10%;
+    --primary: 22 91% 54%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 40 10% 96%;
-    --secondary-foreground: 30 6% 21%;
-    --muted: 40 10% 96%;
-    --muted-foreground: 30 4% 46%;
-    --accent: 40 10% 96%;
-    --accent-foreground: 30 6% 21%;
+    --secondary: 38 12% 91%;
+    --secondary-foreground: 30 5% 12%;
+    --muted: 38 12% 91%;
+    --muted-foreground: 30 5% 42%;
+    --accent: 38 12% 91%;
+    --accent-foreground: 30 5% 12%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 30 6% 90%;
-    --input: 30 6% 90%;
-    --ring: 210 78% 51%;
-    --radius: 0.375rem;
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 30 6% 21%;
-    --sidebar-primary: 210 78% 51%;
+    --border: 30 8% 84%;
+    --input: 30 8% 84%;
+    --ring: 22 91% 54%;
+    --radius: 0.9rem;
+    --sidebar-background: 30 5% 8%;
+    --sidebar-foreground: 40 20% 94%;
+    --sidebar-primary: 22 91% 54%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 40 10% 96%;
-    --sidebar-accent-foreground: 30 6% 21%;
-    --sidebar-border: 30 6% 90%;
-    --sidebar-ring: 210 78% 51%;
-    --success: 152 45% 38%;
+    --sidebar-accent: 30 5% 14%;
+    --sidebar-accent-foreground: 40 20% 96%;
+    --sidebar-border: 30 4% 18%;
+    --sidebar-ring: 22 91% 54%;
+    --success: 150 45% 36%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 30 6% 21%;
-    --info: 210 78% 51%;
+    --warning: 38 88% 50%;
+    --warning-foreground: 30 5% 12%;
+    --info: 22 91% 54%;
     --info-foreground: 0 0% 100%;
-    --brand-violet: 210 78% 51%;
-    --brand-blue: 210 78% 51%;
-    --brand-glow: 38 92% 50%;
-    --elevation-sm: 0 1px 2px rgba(15, 15, 15, 0.04);
-    --elevation-md: 0 4px 12px rgba(15, 15, 15, 0.06);
-    --elevation-lg: 0 8px 24px rgba(15, 15, 15, 0.08);
-    --elevation-xl: 0 16px 40px rgba(15, 15, 15, 0.1);
-    --elevation-glow: 0 0 0 2px rgba(35, 131, 226, 0.2);
-    --elevation-glass: 0 4px 16px rgba(15, 15, 15, 0.04);
+    --brand-violet: 22 91% 54%;
+    --brand-blue: 22 91% 54%;
+    --brand-glow: 22 91% 54%;
+    --elevation-sm: 0 1px 2px rgba(24, 22, 19, 0.04);
+    --elevation-md: 0 10px 30px rgba(24, 22, 19, 0.06);
+    --elevation-lg: 0 20px 50px rgba(24, 22, 19, 0.08);
+    --elevation-xl: 0 35px 80px rgba(24, 22, 19, 0.12);
+    --elevation-glow: 0 0 0 3px rgba(242, 101, 34, 0.14);
+    --elevation-glass: 0 14px 40px rgba(24, 22, 19, 0.06);
   }
 }
 
 @layer base {
   * { @apply border-border; }
-  html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; text-rendering: optimizeLegibility; }
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+    background: #f4f1eb;
+  }
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
     font-size: 14px;
-    letter-spacing: -0.003em;
-    line-height: 1.5;
+    letter-spacing: -0.01em;
+    line-height: 1.55;
     min-height: 100vh;
-    color: #37352f;
+    color: #1b1a18;
+    background: #f4f1eb;
   }
   h1, h2, h3, h4, h5, h6 {
-    color: #37352f;
+    color: #171614;
     font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
+    letter-spacing: -0.035em;
+    line-height: 1.08;
   }
-  ::selection { background: rgba(35, 131, 226, 0.18); }
+  ::selection { background: rgba(242, 101, 34, 0.22); }
 }
 
 @layer components {
   .btn-aurea-primary {
-    @apply inline-flex items-center justify-center gap-2 h-9 px-3 rounded-md text-sm font-medium text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1;
-    background: #2383e2;
+    @apply inline-flex items-center justify-center gap-2 h-10 px-4 rounded-full text-sm font-medium text-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    background: #171614;
+    box-shadow: var(--elevation-sm);
   }
-  .btn-aurea-primary:hover { background: #1a6fbf; }
+  .btn-aurea-primary:hover {
+    background: #f26522;
+    transform: translateY(-1px);
+  }
   .btn-aurea-secondary {
-    @apply inline-flex items-center justify-center gap-2 h-9 px-3 rounded-md text-sm font-medium transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1;
-    color: #37352f;
-    background: #ffffff;
-    border-color: rgba(55, 53, 47, 0.16);
+    @apply inline-flex items-center justify-center gap-2 h-10 px-4 rounded-full text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    color: #1b1a18;
+    background: rgba(255,255,255,.62);
+    border: 1px solid rgba(27,26,24,.10);
   }
-  .btn-aurea-secondary:hover { background: #f7f6f3; }
+  .btn-aurea-secondary:hover {
+    background: #fff;
+    transform: translateY(-1px);
+  }
+  .card-aurea,
+  .app-panel {
+    border: 1px solid rgba(27,26,24,.08);
+    background: rgba(255,255,255,.72);
+    border-radius: 1.15rem;
+    box-shadow: 0 18px 50px rgba(27,26,24,.045);
+  }
   .card-aurea {
-    @apply rounded-md border bg-white transition-colors;
-    border-color: rgba(55, 53, 47, 0.09);
+    @apply transition-all duration-300;
   }
-  .card-aurea:hover { background: #fafafa; }
+  .card-aurea:hover {
+    background: rgba(255,255,255,.94);
+    transform: translateY(-2px);
+    box-shadow: 0 22px 60px rgba(27,26,24,.07);
+  }
   .surface-muted {
-    @apply rounded-md border;
-    background: #f7f6f3;
-    border-color: rgba(55, 53, 47, 0.09);
+    border-radius: 1rem;
+    background: #ece8e0;
+    border: 1px solid rgba(27,26,24,.06);
   }
   .badge-aurea {
-    @apply inline-flex items-center rounded-sm px-2 py-0.5 text-xs font-medium;
-    color: #2383e2;
-    background: rgba(35, 131, 226, 0.1);
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold;
+    color: #a74717;
+    background: rgba(242,101,34,.10);
   }
-  .notion-hover:hover { background: rgba(55, 53, 47, 0.08); }
+  .notion-hover:hover { background: rgba(27,26,24,.055); }
+
+  .aurea-page {
+    @apply mx-auto w-full max-w-[1500px] px-4 py-5 sm:px-6 sm:py-7 lg:px-8 lg:py-8;
+  }
+  .aurea-eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground;
+  }
+  .aurea-display {
+    @apply text-[clamp(2rem,4vw,3.75rem)] font-semibold leading-[0.98] tracking-[-0.055em];
+  }
+  .aurea-soft-grid {
+    background-image: radial-gradient(rgba(27,26,24,.10) .65px, transparent .65px);
+    background-size: 18px 18px;
+  }
 }

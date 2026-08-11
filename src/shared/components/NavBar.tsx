@@ -1,120 +1,65 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { KoboyoIcon } from '@/design-system/icons';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { ROUTES } from '@/core/config/app.config';
 import { BrandLogo } from '@/design-system/components/BrandLogo';
-import { cn } from '@/shared/utils/utils';
+
+const navLinks = [
+  { to: `${ROUTES.home}#recursos`, label: 'Produto' },
+  { to: `${ROUTES.home}#como-funciona`, label: 'Fluxo' },
+  { to: ROUTES.about, label: 'Sobre' },
+];
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navLinks = [
-    { to: ROUTES.home, label: 'Inicio' },
-    { to: `${ROUTES.home}#recursos`, label: 'Recursos' },
-    { to: `${ROUTES.home}#como-funciona`, label: 'Como funciona' },
-    { to: ROUTES.about, label: 'Sobre' },
-  ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md">
-      <nav
-        className={cn(
-          'w-full border-b border-gray-200 transition-shadow',
-          scrolled && 'shadow-sm'
-        )}
-      >
-        <div className="max-w-6xl mx-auto px-5 md:px-8 h-14 flex items-center justify-between">
-          <BrandLogo to={ROUTES.home} size="sm" />
-
-          <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => {
-              const isActive =
-                link.to === ROUTES.home
-                  ? location.pathname === ROUTES.home && !location.hash
-                  : location.pathname + location.hash === link.to ||
-                    (link.to.includes('#') && location.hash === link.to.split('#')[1]);
-              return (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={cn(
-                    'px-3 py-1.5 text-[13px] rounded-lg transition-colors',
-                    isActive
-                      ? 'bg-indigo-50 text-indigo-700 font-semibold'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4">
+      <nav className="mx-auto flex max-w-[1440px] items-center justify-between gap-3 rounded-full border border-black/[0.06] bg-white/88 p-1.5 shadow-[0_10px_35px_rgba(24,22,19,.07)] backdrop-blur-xl">
+        <div className="flex min-w-0 items-center gap-6">
+          <div className="flex h-10 items-center rounded-full px-3">
+            <BrandLogo to={ROUTES.home} size="sm" />
           </div>
-
-          <div className="flex items-center gap-2">
-            <Link
-              to={ROUTES.auth.login}
-              className="hidden sm:inline-flex h-9 items-center px-3 text-[13px] font-medium text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition-colors"
-            >
-              Entrar
-            </Link>
-            <Link
-              to={ROUTES.auth.register}
-              className="hidden sm:inline-flex h-9 items-center px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[13px] font-semibold transition-colors"
-            >
-              Comecar
-            </Link>
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden size-9 flex items-center justify-center rounded-lg text-slate-800 hover:bg-slate-50 transition-colors"
-              aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
-              aria-expanded={isMenuOpen}
-            >
-              <KoboyoIcon name={isMenuOpen ? 'x' : 'menu'} size={18} />
-            </button>
-          </div>
-        </div>
-
-        {isMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 bg-white px-5 py-3 space-y-1">
+          <div className="hidden items-center gap-6 md:flex">
             {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setIsMenuOpen(false)}
-                className="block py-2.5 px-3 text-[13px] text-slate-800 rounded-lg hover:bg-slate-50"
-              >
+              <Link key={link.to} to={link.to} className="text-[13px] font-medium text-black/58 transition-colors duration-300 hover:text-black">
                 {link.label}
               </Link>
             ))}
-            <div className="pt-2 flex flex-col gap-2">
-              <Link
-                to={ROUTES.auth.login}
-                onClick={() => setIsMenuOpen(false)}
-                className="h-10 inline-flex items-center justify-center rounded-xl border border-gray-200 text-sm font-semibold text-slate-800 hover:bg-slate-50"
-              >
-                Entrar
-              </Link>
-              <Link
-                to={ROUTES.auth.register}
-                onClick={() => setIsMenuOpen(false)}
-                className="h-10 inline-flex items-center justify-center rounded-xl bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500"
-              >
-                Comecar gratis
-              </Link>
+          </div>
+        </div>
+
+        <div className="hidden items-center gap-3 md:flex">
+          <Link to={ROUTES.auth.login} className="px-3 text-[13px] font-medium text-black/48 transition hover:text-black">Entrar</Link>
+          <Link to={ROUTES.auth.register} className="group inline-flex h-10 items-center gap-3 rounded-full bg-[#171614] pl-5 pr-1.5 text-[13px] font-medium text-white transition hover:bg-[#f26522]">
+            Comecar agora
+            <span className="flex size-7 items-center justify-center rounded-full bg-white text-black">
+              <ArrowUpRight className="size-3.5 transition-transform duration-300 group-hover:rotate-45" />
+            </span>
+          </Link>
+        </div>
+
+        <button type="button" onClick={() => setIsMenuOpen((open) => !open)} className="flex size-10 items-center justify-center rounded-full bg-[#171614] text-white md:hidden" aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}>
+          {isMenuOpen ? <X className="size-4" /> : <Menu className="size-4" />}
+        </button>
+      </nav>
+
+      {isMenuOpen && (
+        <div className="fixed inset-0 top-[72px] z-40 bg-black/35 p-3 backdrop-blur-sm md:hidden" onClick={() => setIsMenuOpen(false)}>
+          <div className="mt-auto rounded-[28px] bg-[#f8f6f1] p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+            <p className="mb-6 text-[10px] font-semibold uppercase tracking-[0.16em] text-black/35">Navegacao</p>
+            <div className="space-y-1">
+              {navLinks.map((link) => (
+                <Link key={link.to} to={link.to} onClick={() => setIsMenuOpen(false)} className="block py-2 font-medium text-[28px] leading-tight tracking-[-0.04em] text-[#171614]">{link.label}</Link>
+              ))}
+            </div>
+            <div className="mt-7 grid grid-cols-2 gap-2">
+              <Link to={ROUTES.auth.login} onClick={() => setIsMenuOpen(false)} className="inline-flex h-11 items-center justify-center rounded-full bg-black/[0.05] text-sm font-semibold text-black">Entrar</Link>
+              <Link to={ROUTES.auth.register} onClick={() => setIsMenuOpen(false)} className="inline-flex h-11 items-center justify-center rounded-full bg-[#f26522] text-sm font-semibold text-white">Criar conta</Link>
             </div>
           </div>
-        )}
-      </nav>
+        </div>
+      )}
     </header>
   );
 };

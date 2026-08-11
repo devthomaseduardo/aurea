@@ -1,42 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Pencil, Trash2, Users, ArrowUpDown } from 'lucide-react';
-import {
-  PageContainer,
-  PageHeader,
-  SearchBar,
-  FilterPanel,
-  EmptyState,
-  LoadingState,
-  StatusBadge,
-} from '@/design-system/patterns';
+import { Plus, Trash2, Users, ArrowUpRight, Building2, Mail } from 'lucide-react';
+import { PageContainer, PageHeader, SearchBar, EmptyState, LoadingState, StatusBadge } from '@/design-system/patterns';
 import { useClients, useDeleteClient } from '@/hooks/use-clients';
 import { Button } from '@/shared/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/shared/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/shared/components/ui/table';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/shared/components/ui/alert-dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/shared/components/ui/alert-dialog';
 import { ROUTES } from '@/core/config/app.config';
 import { formatDate } from '@/shared/utils/utils';
 import { toast } from '@/shared/components/ui/use-toast';
@@ -45,24 +14,11 @@ import type { ClientStatus } from '@/types/domain';
 export default function ClientsPage() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<ClientStatus | 'all'>('all');
-  const [sortBy, setSortBy] = useState<'name' | 'createdAt' | 'updatedAt'>('updatedAt');
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const filters = useMemo(
-    () => ({ search, status, sortBy, sortDir, page, pageSize: 10 }),
-    [search, status, sortBy, sortDir, page]
-  );
-
+  const filters = useMemo(() => ({ search, status, sortBy: 'updatedAt' as const, sortDir: 'desc' as const, page, pageSize: 12 }), [search, status, page]);
   const { data, isLoading } = useClients(filters);
   const remove = useDeleteClient();
-  const toggleSort = (field: typeof sortBy) => {
-    if (sortBy === field) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
-    else {
-      setSortBy(field);
-      setSortDir('asc');
-    }
-  };
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -74,174 +30,65 @@ export default function ClientsPage() {
   return (
     <PageContainer>
       <PageHeader
-        title="Clientes"
-        description="Gerencie sua base de clientes e leads."
+        title="Relacionamentos, não cadastros."
+        description="Clientes e leads com contexto suficiente para você saber quem é, o que está sendo negociado e quando agir."
         actions={
-          <Button asChild variant="brand">
-            <Link to={ROUTES.app.clientsNew}>
-              <Plus className="w-4 h-4" />
-              Novo cliente
-            </Link>
+          <Button asChild className="rounded-full bg-[#171614] px-4 text-xs font-semibold text-white shadow-none hover:bg-[#f26522]">
+            <Link to={ROUTES.app.clientsNew}><Plus className="mr-1.5 size-3.5" />Novo cliente</Link>
           </Button>
         }
       />
 
-      <FilterPanel>
-        <SearchBar
-          value={search}
-          onChange={(v) => {
-            setSearch(v);
-            setPage(1);
-          }}
-          placeholder="Buscar por nome, e-mail, empresa…"
-          className="flex-1"
-        />
-        <Select
-          value={status}
-          onValueChange={(v) => {
-            setStatus(v as ClientStatus | 'all');
-            setPage(1);
-          }}
-        >
-          <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
+      <div className="mb-6 flex flex-col gap-3 rounded-[22px] border border-black/[0.06] bg-white/60 p-3 sm:flex-row sm:items-center">
+        <SearchBar value={search} onChange={(value) => { setSearch(value); setPage(1); }} placeholder="Buscar nome, e-mail ou empresa" className="flex-1" />
+        <Select value={status} onValueChange={(value) => { setStatus(value as ClientStatus | 'all'); setPage(1); }}>
+          <SelectTrigger className="w-full rounded-full bg-white/70 sm:w-44"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="active">Ativos</SelectItem>
-            <SelectItem value="lead">Leads</SelectItem>
-            <SelectItem value="inactive">Inativos</SelectItem>
+            <SelectItem value="all">Todos</SelectItem><SelectItem value="active">Ativos</SelectItem><SelectItem value="lead">Leads</SelectItem><SelectItem value="inactive">Inativos</SelectItem>
           </SelectContent>
         </Select>
-      </FilterPanel>
+      </div>
 
-      {isLoading ? (
-        <LoadingState />
-      ) : !data || data.data.length === 0 ? (
-        <EmptyState
-          icon={Users}
-          title="Nenhum cliente encontrado"
-          description="Ajuste os filtros ou cadastre seu primeiro cliente."
-          action={
-            <Button asChild variant="brand">
-              <Link to={ROUTES.app.clientsNew}>Cadastrar cliente</Link>
-            </Button>
-          }
-        />
+      {isLoading ? <LoadingState /> : !data || data.data.length === 0 ? (
+        <EmptyState icon={Users} title="Sua base começa aqui" description="Cadastre o primeiro contato para ligar cliente, precificação, proposta e contrato no mesmo histórico." action={<Button asChild className="rounded-full bg-[#171614] text-white hover:bg-[#f26522]"><Link to={ROUTES.app.clientsNew}>Cadastrar cliente</Link></Button>} />
       ) : (
         <>
-          <div className="app-panel overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-white/[0.06] hover:bg-transparent">
-                  <TableHead>
-                    <button
-                      className="inline-flex items-center gap-1 hover:text-foreground"
-                      onClick={() => toggleSort('name')}
-                    >
-                      Nome <ArrowUpDown className="w-3 h-3" />
-                    </button>
-                  </TableHead>
-                  <TableHead className="hidden md:table-cell">Empresa</TableHead>
-                  <TableHead className="hidden sm:table-cell">E-mail</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="hidden lg:table-cell">
-                    <button
-                      className="inline-flex items-center gap-1"
-                      onClick={() => toggleSort('updatedAt')}
-                    >
-                      Atualizado <ArrowUpDown className="w-3 h-3" />
-                    </button>
-                  </TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.data.map((client) => (
-                  <TableRow key={client.id} className="border-white/[0.04]">
-                    <TableCell className="font-medium">
-                      <Link
-                        to={ROUTES.app.clientDetail(client.id)}
-                        className="hover:text-violet-300 transition-colors"
-                      >
-                        {client.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-muted-foreground">
-                      {client.company || '-'}
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell text-muted-foreground">
-                      {client.email}
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge kind="client" status={client.status} />
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">
-                      {formatDate(client.updatedAt)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="inline-flex items-center gap-1">
-                        <Button asChild variant="ghost" size="icon">
-                          <Link to={ROUTES.app.clientDetail(client.id)}>
-                            <Pencil className="w-4 h-4" />
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setDeleteId(client.id)}
-                        >
-                          <Trash2 className="w-4 h-4 text-rose-400" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {data.data.map((client) => (
+              <article key={client.id} className="group rounded-[24px] border border-black/[0.06] bg-white/68 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_20px_55px_rgba(35,29,22,.07)]">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-black/30">Atualizado {formatDate(client.updatedAt)}</p>
+                    <Link to={ROUTES.app.clientDetail(client.id)} className="mt-2 block truncate text-xl font-semibold tracking-[-0.035em] text-[#171614] transition group-hover:text-[#f26522]">{client.name}</Link>
+                  </div>
+                  <StatusBadge kind="client" status={client.status} />
+                </div>
+
+                <div className="mt-6 space-y-2 text-xs text-black/45">
+                  <p className="flex items-center gap-2"><Building2 className="size-3.5 text-black/25" />{client.company || 'Sem empresa informada'}</p>
+                  <p className="flex items-center gap-2 truncate"><Mail className="size-3.5 text-black/25" />{client.email || 'Sem e-mail informado'}</p>
+                </div>
+
+                <div className="mt-7 flex items-center justify-between">
+                  <Link to={ROUTES.app.clientDetail(client.id)} className="inline-flex items-center gap-1.5 text-xs font-semibold text-black/60 transition hover:text-black">Abrir cliente <ArrowUpRight className="size-3.5" /></Link>
+                  <button type="button" onClick={() => setDeleteId(client.id)} className="flex size-8 items-center justify-center rounded-full text-black/25 transition hover:bg-rose-50 hover:text-rose-600" aria-label={`Excluir ${client.name}`}><Trash2 className="size-3.5" /></button>
+                </div>
+              </article>
+            ))}
           </div>
 
-          {/* Pagination */}
-          <div className="flex items-center justify-between mt-4 text-sm text-muted-foreground">
-            <span>
-              {data.total} cliente{data.total !== 1 ? 's' : ''} · página {data.page} de{' '}
-              {data.totalPages}
-            </span>
+          <div className="mt-5 flex flex-col gap-3 text-xs text-black/38 sm:flex-row sm:items-center sm:justify-between">
+            <span>{data.total} cliente{data.total !== 1 ? 's' : ''} · página {data.page} de {data.totalPages}</span>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-              >
-                Anterior
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page >= data.totalPages}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                Próxima
-              </Button>
+              <Button variant="ghost" size="sm" className="rounded-full bg-white/55" disabled={page <= 1} onClick={() => setPage((current) => current - 1)}>Anterior</Button>
+              <Button variant="ghost" size="sm" className="rounded-full bg-white/55" disabled={page >= data.totalPages} onClick={() => setPage((current) => current + 1)}>Próxima</Button>
             </div>
           </div>
         </>
       )}
 
       <AlertDialog open={Boolean(deleteId)} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Excluir cliente?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta ação não pode ser desfeita. O cliente será removido da sua base local.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Excluir</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
+        <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Excluir cliente?</AlertDialogTitle><AlertDialogDescription>Esta ação não pode ser desfeita. O cliente será removido da sua base.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancelar</AlertDialogCancel><AlertDialogAction onClick={handleDelete}>Excluir</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
       </AlertDialog>
     </PageContainer>
   );
