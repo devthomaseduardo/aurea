@@ -11,9 +11,9 @@ interface BrandLogoProps {
 }
 
 const sizes = {
-  sm: { mark: 'w-5 h-5 text-[10px]', text: 'text-[14px]' },
-  md: { mark: 'w-6 h-6 text-[11px]', text: 'text-[15px]' },
-  lg: { mark: 'w-8 h-8 text-sm', text: 'text-lg' },
+  sm: { mark: 'w-6 h-6', text: 'text-[14px]' },
+  md: { mark: 'w-7 h-7', text: 'text-[15px]' },
+  lg: { mark: 'w-9 h-9', text: 'text-lg' },
 };
 
 export function BrandLogo({
@@ -24,19 +24,23 @@ export function BrandLogo({
   onClick,
 }: BrandLogoProps) {
   const s = sizes[size];
+
   return (
-    <Link to={to} onClick={onClick} className={cn('flex items-center gap-2 min-w-0', className)}>
-      <span
-        className={cn(
-          'shrink-0 rounded-[3px] flex items-center justify-center font-semibold text-white bg-[#37352f]',
-          s.mark
-        )}
-        aria-hidden
-      >
-        A
-      </span>
+    <Link
+      to={to}
+      onClick={onClick}
+      className={cn('flex min-w-0 items-center gap-2.5', className)}
+      aria-label={APP_CONFIG.name}
+    >
+      <img
+        src={APP_CONFIG.brand.logoMark || '/logo.png'}
+        alt=""
+        aria-hidden="true"
+        className={cn('shrink-0 object-contain', s.mark)}
+      />
+
       {showWordmark && (
-        <span className={cn('font-semibold tracking-tight text-[#37352f] truncate', s.text)}>
+        <span className={cn('truncate font-semibold tracking-[-0.03em] text-current', s.text)}>
           {APP_CONFIG.name}
         </span>
       )}
