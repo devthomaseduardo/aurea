@@ -1,40 +1,43 @@
 # Áurea
 
-Plataforma comercial B2B para freelancers, consultores e pequenas agências que precisam transformar escopo em preço, preço em proposta e proposta em contrato sem depender de planilhas espalhadas.
+Plataforma comercial B2B para **precificar projetos**, gerar **propostas**, gerir **clientes/contratos** e operar o pipeline de freelancers e consultores.
 
-Autor: Thomas Eduardo
+```text
+Cliente → Precificação → Proposta → Contrato → Resultado
+```
 
-## Ideia do produto
+**Autor:** [Thomas Eduardo](https://thomaseduardo.com.br)  
+**Portfólio:** [thomaseduardo.com.br/projetos/aurea](https://thomaseduardo.com.br)  
+**Repositório:** [github.com/devthomaseduardo/aurea](https://github.com/devthomaseduardo/aurea)
 
-O Áurea não é ERP, PDV, estoque ou sistema de ordem de serviço. O produto acompanha um fluxo comercial de serviços profissionais:
+---
 
-`Cliente → Precificação → Proposta → Contrato → Resultado`
+## O que é (e o que não é)
 
-A interface e os módulos principais devem reforçar esse caminho.
+| É | Não é |
+|---|---|
+| SaaS comercial de serviços profissionais | ERP, PDV ou estoque |
+| Precificação + proposta + contrato | Sistema de ordem de serviço |
+| Workspace para freelancers e pequenas agências | CRM enterprise completo |
 
-## Fluxo principal
+Identidade visual: light enterprise (indigo + dourado).
 
-1. Cadastre ou selecione um cliente.
-2. Estruture o escopo e faça a precificação do projeto.
-3. Gere uma proposta a partir do orçamento.
-4. Acompanhe envio, visualização e aceite.
-5. Formalize o fechamento em contrato.
-6. Acompanhe receita, pipeline e taxa de aceite no dashboard.
+---
 
-## Módulos
+## Funcionalidades
 
 | Módulo | Responsabilidade |
-| --- | --- |
-| Visão geral | Receita contratada, clientes, propostas em aberto e taxa de aceite |
-| Clientes | Cadastro e histórico do relacionamento comercial |
-| Precificação | Escopo, horas, custos, margem e valor recomendado |
-| Propostas | Geração, acompanhamento de status e PDF |
-| Contratos | Formalização dos projetos fechados |
-| Resultados | Evolução comercial e indicadores do funil |
-| Integrações | Conexões complementares do workspace |
-| Configurações | Preferências do profissional ou empresa |
+|--------|------------------|
+| **Dashboard** | Receita, clientes, horas, lucro, atividades |
+| **Clientes** | CRUD, busca, filtros, paginação |
+| **Calculadora** | Wizard multi-etapas (Zod + RHF) |
+| **Propostas** | Status, PDF, duplicar, editar |
+| **Contratos** | Pipeline vinculado a propostas |
+| **Analytics** | Séries e breakdown de status |
+| **Integrações** | Google, GitHub, Stripe, Slack, Notion, WhatsApp |
+| **Design System** | Catálogo em `/design-system` |
 
-## Rotas principais
+### Rotas principais
 
 ```text
 /
@@ -51,42 +54,50 @@ A interface e os módulos principais devem reforçar esse caminho.
 /app/profile
 ```
 
-## Stack
+---
 
-- React 18
-- TypeScript
-- Vite
-- React Router
-- Tailwind CSS
-- shadcn/Radix
-- Zustand
-- TanStack Query
-- react-hook-form + Zod
-- Firebase Auth + Firestore
-- Vitest + Testing Library
-
-## Dados
-
-O projeto pode trabalhar em dois modos:
-
-- Local: dados de demonstração persistidos no navegador.
-- Nuvem: Firebase Auth e Firestore por usuário.
-
-## Desenvolvimento
+## Quick Start
 
 ```bash
+git clone https://github.com/devthomaseduardo/aurea.git
+cd aurea
 npm install
 cp .env.example .env.local
 npm run dev
 ```
 
-Validações disponíveis:
+Validações:
 
 ```bash
 npm run lint
 npm test
 npm run build
 ```
+
+### Modos de dados
+
+| Modo | Comportamento |
+|------|---------------|
+| **Local** | Dados de demonstração no `localStorage` (sem Firebase) |
+| **Nuvem** | Firebase Auth + Firestore por usuário |
+
+---
+
+## Stack
+
+| Camada | Tecnologia |
+|--------|------------|
+| Linguagem | TypeScript |
+| UI | React 18 · React Router 6 · Vite 5 |
+| Estilo | Tailwind · shadcn/Radix |
+| Estado | Zustand · TanStack Query |
+| Forms | react-hook-form · Zod |
+| Auth / DB | Firebase Auth + Firestore |
+| PDF | html2pdf.js |
+| Testes | Vitest + Testing Library |
+| Deploy | Vercel / Docker + Nginx |
+
+---
 
 ## Direção de produto
 
@@ -98,4 +109,13 @@ Novas funcionalidades devem responder a pelo menos uma destas perguntas:
 - Ajuda a fechar ou acompanhar um contrato?
 - Ajuda a entender o desempenho comercial?
 
-Se não reforçar esse fluxo, a funcionalidade provavelmente não pertence ao núcleo do Áurea.
+---
+
+## Requisitos
+
+- Node.js 18+
+- Firebase opcional (ver `.env.example` e documentação de deploy)
+
+## Licença
+
+MIT © Thomas Eduardo
