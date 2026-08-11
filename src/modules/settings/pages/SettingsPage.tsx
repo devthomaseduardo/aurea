@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Settings, Building2, Store, Phone, ShieldCheck, Check, Save } from 'lucide-react';
+import { Building2, Check, Save, ArrowUpRight } from 'lucide-react';
 import { settingsService } from '@/services/settings.service';
 import { Button } from '@/shared/components/ui/button';
+import { PageContainer, PageHeader } from '@/design-system/patterns';
 
 export default function SettingsPage() {
   const tenants = settingsService.getTenants();
@@ -26,160 +27,68 @@ export default function SettingsPage() {
     window.location.reload();
   };
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    const updated = settingsService.updateTenant(activeTenant.id, {
-      name,
-      phone,
-      whatsapp,
-      address,
-      cnpj,
-      warrantyTerms,
-    });
+  const handleSave = (event: React.FormEvent) => {
+    event.preventDefault();
+    const updated = settingsService.updateTenant(activeTenant.id, { name, phone, whatsapp, address, cnpj, warrantyTerms });
     setActiveTenant(updated);
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
 
+  const fieldClass = 'h-11 w-full rounded-[14px] border border-black/[0.08] bg-white/75 px-3.5 text-sm text-[#171614] outline-none transition focus:border-[#f26522]/50 focus:ring-4 focus:ring-[#f26522]/10';
+
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold uppercase">
-            <Settings className="w-3.5 h-3.5 text-blue-600" />
-            Configurações White-Label
+    <PageContainer size="lg">
+      <PageHeader title="Seu workspace, do seu jeito." description="Defina os dados comerciais que acompanham propostas, contratos e comunicações da sua empresa." />
+
+      {tenants.length > 1 && (
+        <section className="mb-5 rounded-[26px] bg-[#171614] p-5 text-white sm:p-6">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#f6a576]">Workspaces disponíveis</p>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-white/42">Alterne entre empresas sem misturar o contexto comercial de cada operação.</p>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+            {tenants.map((tenant) => {
+              const isCurrent = tenant.id === activeTenant.id;
+              return (
+                <button key={tenant.id} type="button" onClick={() => handleSwitchTenant(tenant.id)} className={isCurrent ? 'flex items-center justify-between rounded-[18px] bg-white p-4 text-left text-[#171614]' : 'flex items-center justify-between rounded-[18px] bg-white/[0.06] p-4 text-left text-white transition hover:bg-white/[0.1]'}>
+                  <div className="min-w-0">
+                    <strong className="block truncate text-sm font-semibold">{tenant.name}</strong>
+                    <span className={isCurrent ? 'mt-1 block text-[10px] text-black/38' : 'mt-1 block text-[10px] text-white/30'}>{tenant.cnpj || 'Documento não informado'}</span>
+                  </div>
+                  {isCurrent ? <span className="flex size-7 items-center justify-center rounded-full bg-[#f26522] text-white"><Check className="size-3.5" /></span> : <ArrowUpRight className="size-4 text-white/25" />}
+                </button>
+              );
+            })}
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            Minha Loja & Dados da Empresa
-          </h1>
-          <p className="text-xs text-slate-500">
-            Personalize o nome da empresa, logo, endereço e altere entre lojas cadastradas na plataforma.
-          </p>
-        </div>
-      </div>
+        </section>
+      )}
 
-      {/* Showcase Multi-Tenant Switcher */}
-      <div className="bg-blue-50/70 border-2 border-blue-200 p-6 rounded-2xl space-y-4">
-        <div className="flex items-center gap-2 text-blue-900">
-          <Store className="w-5 h-5 text-blue-600" />
-          <h3 className="font-extrabold text-sm">Seletor de Empresas (Multi-Tenant Showcase)</h3>
-        </div>
-        <p className="text-xs text-slate-600 leading-relaxed">
-          Esta plataforma foi desenhada como um **SaaS Multi-Tenant**. Cada assistência técnica cadastrada possui seus próprios dados, clientes, ordens de serviço e marca. Alterne abaixo para simular outra empresa:
-        </p>
-
-        <div className="grid sm:grid-cols-2 gap-3 pt-1">
-          {tenants.map((t) => {
-            const isCurrent = t.id === activeTenant.id;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => handleSwitchTenant(t.id)}
-                className={`p-4 rounded-xl border text-left transition-all flex items-center justify-between ${
-                  isCurrent
-                    ? 'border-blue-600 bg-white shadow-sm ring-2 ring-blue-600/20'
-                    : 'border-slate-200 bg-white/70 hover:bg-white'
-                }`}
-              >
-                <div>
-                  <strong className="text-sm font-bold text-slate-900 block">{t.name}</strong>
-                  <span className="text-[11px] text-slate-500">{t.cnpj}</span>
-                </div>
-                {isCurrent && (
-                  <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded flex items-center gap-1">
-                    <Check className="w-3 h-3 text-blue-600" /> Ativa
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Formulário de Configuração da Loja */}
-      <form onSubmit={handleSave} className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-6">
-        <h3 className="text-base font-extrabold text-slate-900 border-b border-slate-200 pb-3">
-          Dados da Assistência Técnica
-        </h3>
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700">Nome Fantasia da Loja</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700">CNPJ da Empresa</label>
-            <input
-              type="text"
-              value={cnpj}
-              onChange={(e) => setCnpj(e.target.value)}
-              className="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700">Telefone Fixo / Balcão</label>
-            <input
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700">WhatsApp da Assistência</label>
-            <input
-              type="text"
-              value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value)}
-              className="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium"
-            />
+      <form onSubmit={handleSave} className="rounded-[28px] border border-black/[0.06] bg-white/68 p-5 shadow-[0_24px_65px_rgba(35,29,22,.05)] sm:p-7">
+        <div className="flex items-start gap-3">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#ece7df] text-[#f26522]"><Building2 className="size-4" /></span>
+          <div>
+            <h2 className="text-xl font-semibold tracking-[-0.035em] text-[#171614]">Identidade comercial</h2>
+            <p className="mt-1 text-xs leading-6 text-black/40">Informações usadas como referência nos documentos e contatos gerados pelo Áurea.</p>
           </div>
         </div>
 
-        <div className="space-y-1">
-          <label className="text-xs font-bold text-slate-700">Endereço Completo</label>
-          <input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium"
-          />
+        <div className="mt-7 grid gap-5 sm:grid-cols-2">
+          <label className="space-y-2"><span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-black/38">Nome da empresa ou marca</span><input type="text" value={name} onChange={(event) => setName(event.target.value)} className={fieldClass} /></label>
+          <label className="space-y-2"><span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-black/38">CNPJ / documento</span><input type="text" value={cnpj} onChange={(event) => setCnpj(event.target.value)} className={fieldClass} /></label>
+          <label className="space-y-2"><span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-black/38">Telefone</span><input type="text" value={phone} onChange={(event) => setPhone(event.target.value)} className={fieldClass} /></label>
+          <label className="space-y-2"><span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-black/38">WhatsApp comercial</span><input type="text" value={whatsapp} onChange={(event) => setWhatsapp(event.target.value)} className={fieldClass} /></label>
         </div>
 
-        <div className="space-y-1">
-          <label className="text-xs font-bold text-slate-700">Termos e Condições da Garantia Legal (90 Dias)</label>
-          <textarea
-            rows={3}
-            value={warrantyTerms}
-            onChange={(e) => setWarrantyTerms(e.target.value)}
-            className="w-full p-3 rounded-xl border border-slate-300 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium"
-          />
-        </div>
+        <label className="mt-5 block space-y-2"><span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-black/38">Endereço comercial</span><input type="text" value={address} onChange={(event) => setAddress(event.target.value)} className={fieldClass} /></label>
 
-        <div className="flex items-center justify-between pt-4 border-t border-slate-200">
-          {savedSuccess ? (
-            <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
-              <Check className="w-4 h-4" /> Alterações salvas com sucesso!
-            </span>
-          ) : (
-            <span className="text-xs text-slate-500">As alterações serão refletidas em todos os comprovantes.</span>
-          )}
+        <label className="mt-5 block space-y-2"><span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-black/38">Condições padrão de garantia e suporte</span><textarea rows={4} value={warrantyTerms} onChange={(event) => setWarrantyTerms(event.target.value)} className="w-full resize-y rounded-[16px] border border-black/[0.08] bg-white/75 p-3.5 text-sm leading-6 text-[#171614] outline-none transition focus:border-[#f26522]/50 focus:ring-4 focus:ring-[#f26522]/10" /></label>
 
-          <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs gap-1.5 shadow-sm">
-            <Save className="w-4 h-4 text-yellow-300" /> Salvar Configurações
-          </Button>
+        <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <span className={savedSuccess ? 'inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700' : 'text-xs text-black/35'}>
+            {savedSuccess ? <><Check className="size-3.5" />Alterações salvas</> : 'Esses dados ajudam a manter propostas e contratos consistentes.'}
+          </span>
+          <Button type="submit" className="rounded-full bg-[#171614] px-5 text-xs font-semibold text-white shadow-none hover:bg-[#f26522]"><Save className="mr-1.5 size-3.5" />Salvar configurações</Button>
         </div>
       </form>
-    </div>
+    </PageContainer>
   );
 }
