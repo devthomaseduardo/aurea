@@ -18,6 +18,20 @@ export function useRevenueSeries() {
   });
 }
 
+export function useDashboardActions() {
+  return useQuery({
+    queryKey: ['dashboard', 'actions'],
+    queryFn: () => dashboardService.getNextActions(),
+  });
+}
+
+export function useCommercialPipeline() {
+  return useQuery({
+    queryKey: ['dashboard', 'pipeline'],
+    queryFn: () => dashboardService.getPipeline(),
+  });
+}
+
 export function useRecentActivities(limit = 8) {
   return useQuery({
     queryKey: ['activities', limit],
