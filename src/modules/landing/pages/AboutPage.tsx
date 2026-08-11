@@ -1,80 +1,66 @@
 import { Link } from 'react-router-dom';
+import { ArrowUpRight, Check } from 'lucide-react';
 import { LandingLayout } from '@/design-system/layouts/LandingLayout';
-import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { APP_CONFIG, ROUTES } from '@/core/config/app.config';
+
+const principles = [
+  ['01', 'Preço com contexto', 'O valor nasce de escopo, esforço, custo, prazo e margem. Não de um número solto no fim da conversa.'],
+  ['02', 'Proposta como decisão', 'O cliente precisa entender o que recebe, quanto investe e o que acontece depois do aceite.'],
+  ['03', 'Histórico contínuo', 'Cliente, proposta e contrato fazem mais sentido quando contam a mesma história comercial.'],
+] as const;
 
 export default function AboutPage() {
   return (
     <LandingLayout>
-      <section className="bg-slate-900 text-white py-14 border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-5 md:px-6 text-center space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-amber-300 bg-slate-800 px-3.5 py-1 rounded-full border border-slate-700 inline-block">
-            Sobre
-          </span>
-          <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-            Por que existe a {APP_CONFIG.name}
-          </h1>
-          <p className="text-slate-300 text-sm max-w-2xl mx-auto">
-            Um SaaS comercial pensado para quem vende serviço e ainda precifica no improviso ou na planilha.
-          </p>
+      <section className="relative overflow-hidden bg-[#171614] pb-16 pt-32 text-white sm:pb-20 sm:pt-36 lg:pb-28 lg:pt-40">
+        <div className="pointer-events-none absolute -right-24 top-12 size-[32rem] rounded-full bg-[#f26522] opacity-90" />
+        <div className="pointer-events-none absolute right-12 top-28 size-[24rem] rounded-[42%_58%_62%_38%/43%_42%_58%_57%] bg-[#efeae2] opacity-90 blur-[3px] [transform:rotate(17deg)]" />
+        <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#f6a576]">Sobre o produto</p>
+          <h1 className="mt-5 max-w-[11ch] text-[clamp(3rem,7vw,6.6rem)] font-medium leading-[0.92] tracking-[-0.06em] text-white">O Áurea existe para tirar a venda do improviso.</h1>
+          <p className="mt-7 max-w-xl text-sm leading-7 text-white/48 sm:text-base sm:leading-8">Um workspace comercial para profissionais e equipes que vendem projetos, precisam precificar com método e querem chegar ao contrato sem perder contexto.</p>
         </div>
       </section>
 
-      <section className="py-14 bg-slate-50">
-        <div className="max-w-6xl mx-auto px-5 md:px-6 space-y-12">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-            <div className="space-y-4 text-left">
-              <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">Missão</span>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                Clareza do orçamento ao contrato
-              </h2>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                {APP_CONFIG.name} nasceu para freelancers, consultores e pequenas equipes que precisam
-                precificar projetos com método, enviar propostas profissionais e manter o histórico de
-                cada cliente organizado — sem depender de planilhas soltas ou documentos perdidos.
-              </p>
-              <ul className="space-y-2 text-sm text-slate-700 pt-2">
-                {[
-                  'Orçamento estruturado (escopo, horas, custos e margem)',
-                  'Propostas em PDF com status e histórico',
-                  'Clientes e contratos no mesmo fluxo',
-                  'Modo local para demo e Firebase para produção',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+      <section className="bg-[#f8f6f1] py-16 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+          <div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-black/30">O problema</p>
+              <h2 className="mt-4 max-w-[10ch] text-[clamp(2.3rem,5vw,4.5rem)] font-medium leading-[0.98] tracking-[-0.055em] text-[#171614]">Planilha calcula. Ela não conduz uma negociação.</h2>
             </div>
-
-            <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm space-y-3">
-              <div className="h-72 rounded-xl overflow-hidden bg-slate-100">
-                <img
-                  src={APP_CONFIG.brand.hero}
-                  alt={`${APP_CONFIG.name} — plataforma comercial`}
-                  className="w-full h-full object-cover"
-                />
+            <div className="lg:pt-10">
+              <p className="max-w-2xl text-xl leading-[1.35] tracking-[-0.025em] text-black/68 sm:text-2xl">O Áurea organiza as decisões que existem entre o primeiro contato e o fechamento: quem é o cliente, o que precisa ser feito, quanto custa entregar, quanto cobrar e como apresentar isso com clareza.</p>
+              <div className="mt-9 grid gap-3 sm:grid-cols-2">
+                {['Precificação estruturada', 'Propostas ligadas ao cálculo', 'Histórico por cliente', 'Contratos no mesmo fluxo'].map((item) => <div key={item} className="flex items-center gap-2 rounded-full bg-[#ece7df] px-4 py-3 text-xs font-semibold text-black/55"><span className="flex size-6 items-center justify-center rounded-full bg-[#f26522] text-white"><Check className="size-3" /></span>{item}</div>)}
               </div>
-              <p className="text-xs text-slate-600 text-center font-medium">
-                {APP_CONFIG.tagline}
-              </p>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="bg-white border border-slate-200 p-6 rounded-2xl text-center space-y-4 shadow-sm">
-            <h3 className="text-lg font-black text-slate-900">Pronto para organizar o comercial?</h3>
-            <p className="text-xs text-slate-600 max-w-lg mx-auto">
-              Crie uma conta e teste a calculadora, as propostas e o pipeline de clientes.
-            </p>
-            <Link
-              to={ROUTES.auth.register}
-              className="inline-flex h-10 items-center gap-2 px-5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold"
-            >
-              Começar grátis
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+      <section className="bg-[#e9e5dd] py-16 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+          <div className="mb-12 max-w-3xl">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-black/30">Princípios</p>
+            <h2 className="mt-4 text-[clamp(2.3rem,5vw,4.3rem)] font-medium leading-[1] tracking-[-0.05em] text-[#171614]">Menos ferramenta. Mais clareza comercial.</h2>
           </div>
+          <div className="grid gap-3 lg:grid-cols-3">
+            {principles.map(([number, title, description]) => (
+              <article key={title} className="min-h-[260px] rounded-[28px] bg-[#171614] p-6 text-white">
+                <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#f6a576]">{number}</p>
+                <h3 className="mt-14 text-2xl font-semibold tracking-[-0.04em] text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-7 text-white/42">{description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#f26522] py-16 text-white sm:py-20">
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-5 sm:px-8 lg:flex-row lg:items-end lg:justify-between lg:px-12">
+          <div><p className="text-[10px] font-semibold uppercase tracking-[0.17em] text-white/60">Próximo projeto</p><h2 className="mt-3 max-w-[11ch] text-[clamp(2.3rem,5vw,4.4rem)] font-medium leading-[0.96] tracking-[-0.055em] text-white">Comece pela precificação, não pelo PDF.</h2></div>
+          <Link to={ROUTES.auth.register} className="group inline-flex h-12 items-center justify-between gap-6 self-start rounded-full bg-white pl-6 pr-2 text-[13px] font-semibold text-[#171614] lg:self-auto">Criar workspace<span className="flex size-8 items-center justify-center rounded-full bg-[#171614] text-white"><ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" /></span></Link>
         </div>
       </section>
     </LandingLayout>
