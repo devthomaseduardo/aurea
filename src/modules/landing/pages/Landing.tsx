@@ -1,77 +1,14 @@
 import { Link } from 'react-router-dom';
+import { ArrowUpRight, Calculator, FileText, Users, FileSignature } from 'lucide-react';
 import { LandingLayout } from '@/design-system/layouts/LandingLayout';
 import Hero from '@/shared/components/Hero';
-import { KoboyoIcon } from '@/design-system/icons';
 import { APP_CONFIG, ROUTES } from '@/core/config/app.config';
 
-const features = [
-  {
-    icon: 'calculator',
-    title: 'Calculadora de orcamento',
-    desc: 'Wizard multi-etapas: escopo, tecnologias, custos, horas e margem com validacao.',
-  },
-  {
-    icon: 'file-text',
-    title: 'Propostas profissionais',
-    desc: 'Gere PDF, acompanhe status, duplique e envie propostas com carta e assinatura.',
-  },
-  {
-    icon: 'users',
-    title: 'Clientes e contratos',
-    desc: 'CRM leve com historico por cliente e pipeline de contratos vinculados as propostas.',
-  },
-  {
-    icon: 'bar-chart',
-    title: 'Dashboard e analytics',
-    desc: 'Receita, horas, lucro e breakdown de status para enxergar o funil comercial.',
-  },
-  {
-    icon: 'plug',
-    title: 'Integracoes',
-    desc: 'Conectores para Google, GitHub, Stripe, Slack, Notion e WhatsApp com teste na UI.',
-  },
-  {
-    icon: 'shield',
-    title: 'Auth e dados seguros',
-    desc: 'Firebase Auth (e-mail, Google, GitHub) + Firestore multi-usuario, ou modo local para demo.',
-  },
-];
-
-const steps = [
-  {
-    num: '01',
-    title: 'Defina o escopo',
-    desc: 'Informacoes do projeto, tecnologias e complexidade.',
-  },
-  {
-    num: '02',
-    title: 'Calcule o orcamento',
-    desc: 'Horas, custos indiretos e margem de forma transparente.',
-  },
-  {
-    num: '03',
-    title: 'Gere a proposta',
-    desc: 'PDF profissional pronto para enviar ao cliente.',
-  },
-  {
-    num: '04',
-    title: 'Feche e acompanhe',
-    desc: 'Status, contratos e historico no mesmo painel.',
-  },
-];
-
-const audience = [
-  'Freelancers de desenvolvimento, design e consultoria',
-  'Agencias e estudios com pipeline de propostas',
-  'Consultores que precificam por projeto ou hora',
-  'Times pequenos que querem sair do Excel',
-];
-
-const stats = [
-  { value: '4+', label: 'Modulos comerciais' },
-  { value: 'PDF', label: 'Propostas prontas' },
-  { value: 'B2B', label: 'Foco em servicos' },
-  { value: 'Local', label: 'ou Firebase' },
+const productFlow = [
+  { n: '01', icon: Users, title: 'Cliente', desc: 'Contexto comercial reunido antes de falar de preço.' },
+  { n: '02', icon: Calculator, title: 'Precificação', desc: 'Escopo, esforço, custo e margem transformados em decisão.' },
+  { n: '03', icon: FileText, title: 'Proposta', desc: 'Uma apresentação comercial pronta para o cliente entender valor.' },
+  { n: '04', icon: FileSignature, title: 'Contrato', desc: 'Fechamento e continuidade no mesmo histórico.' },
 ];
 
 export default function Landing() {
@@ -79,180 +16,83 @@ export default function Landing() {
     <LandingLayout>
       <Hero />
 
-      {/* Stats strip */}
-      <section className="border-b border-gray-200 bg-slate-50/80">
-        <div className="max-w-6xl mx-auto px-5 md:px-8 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {stats.map((s) => (
-              <div key={s.label} className="text-center md:text-left">
-                <p className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{s.value}</p>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="recursos" className="py-20 sm:py-24 bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-5 md:px-8 space-y-12">
-          <div className="max-w-2xl space-y-3">
-            <span className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
-              Recursos
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              Tudo para operar o comercial sem planilha
-            </h2>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              Da precificacao ao fechamento: {APP_CONFIG.name} centraliza o fluxo que freelancers e
-              consultores precisam no dia a dia.
-            </p>
+      <section id="recursos" className="overflow-hidden bg-[#f8f6f1] py-16 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+          <div className="mb-10 flex items-center gap-3 sm:mb-14">
+            <span className="flex size-7 items-center justify-center rounded-full bg-[#171614] text-[10px] font-semibold text-white">1</span>
+            <span className="rounded-full border border-black/10 px-3 py-1 text-[11px] font-medium text-black/55">Por que Áurea</span>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all space-y-4"
-              >
-                <span className="inline-flex items-center justify-center size-11 rounded-xl bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100 group-hover:bg-indigo-600 group-hover:text-white group-hover:ring-indigo-600 transition-colors">
-                  <KoboyoIcon name={f.icon} size={20} />
-                </span>
-                <h3 className="font-semibold text-slate-900 text-sm">{f.title}</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+          <h2 className="max-w-[17ch] text-[clamp(2.1rem,5vw,4.3rem)] font-medium leading-[1.02] tracking-[-0.05em] text-[#171614]">
+            O comercial fica mais simples quando cada etapa sabe de onde veio e para onde vai.
+          </h2>
 
-      {/* How it works */}
-      <section id="como-funciona" className="py-20 sm:py-24 bg-slate-50 border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-5 md:px-8">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            <div className="lg:col-span-5 space-y-8">
-              <div className="space-y-3">
-                <span className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
-                  Fluxo
-                </span>
-                <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Como funciona</h2>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Quatro passos do escopo ao contrato, no mesmo workspace.
-                </p>
-              </div>
-              <div className="space-y-5">
-                {steps.map((s, i) => (
-                  <div key={s.num} className="flex gap-4">
-                    <div className="flex flex-col items-center">
-                      <span className="size-10 rounded-full bg-indigo-600 text-amber-200 font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
-                        {s.num}
-                      </span>
-                      {i < steps.length - 1 && (
-                        <span className="w-px flex-1 bg-indigo-200 mt-2 min-h-[1.25rem]" />
-                      )}
-                    </div>
-                    <div className="pb-2">
-                      <h3 className="font-semibold text-slate-900 text-sm">{s.title}</h3>
-                      <p className="text-xs text-slate-600 leading-relaxed mt-1">{s.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="lg:col-span-7">
-              <div className="relative">
-                <div className="absolute -inset-2 rounded-2xl bg-gradient-to-tr from-indigo-500/10 to-amber-400/10 blur-xl" />
-                <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-lg shadow-slate-900/5">
-                  <img
-                    src={APP_CONFIG.brand.product}
-                    alt="Workspace com laptop e analytics"
-                    className="w-full h-72 sm:h-96 object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Audience */}
-      <section className="py-20 sm:py-24 bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-5 md:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div className="order-2 lg:order-1 relative">
-              <div className="absolute -inset-2 rounded-2xl bg-gradient-to-bl from-indigo-500/10 to-transparent blur-xl" />
-              <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-lg shadow-slate-900/5">
-                <img
-                  src={APP_CONFIG.brand.team}
-                  alt="Equipe em colaboracao"
-                  className="w-full h-72 sm:h-80 object-cover"
-                  loading="lazy"
-                />
-              </div>
-            </div>
-
-            <div className="order-1 lg:order-2 space-y-6">
-              <span className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
-                Para quem
-              </span>
-              <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
-                Feito para quem vende servico e precisa de clareza no preco
-              </h2>
-              <ul className="space-y-3">
-                {audience.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-slate-700">
-                    <span className="mt-0.5 inline-flex items-center justify-center size-5 rounded-full bg-emerald-50 text-emerald-600 shrink-0">
-                      <KoboyoIcon name="check" size={12} />
-                    </span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to={ROUTES.auth.register}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition-colors"
-              >
-                Criar conta gratis
-                <KoboyoIcon name="arrow-right" size={14} />
+          <div className="mt-12 grid gap-8 lg:mt-20 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
+            <div className="max-w-md">
+              <p className="text-sm leading-7 text-black/48 sm:text-base sm:leading-8">
+                {APP_CONFIG.name} não é uma coleção de telas. É um fluxo para quem vende projetos e serviços profissionais sem querer depender de planilha, WhatsApp e documentos soltos.
+              </p>
+              <Link to={ROUTES.auth.register} className="group mt-7 inline-flex h-11 items-center gap-3 rounded-full bg-[#f26522] pl-5 pr-2 text-xs font-semibold text-white transition hover:bg-[#df5b1d]">
+                Criar workspace
+                <span className="flex size-7 items-center justify-center rounded-full bg-white text-[#f26522]"><ArrowUpRight className="size-3.5 transition-transform group-hover:rotate-45" /></span>
               </Link>
             </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {productFlow.map(({ n, icon: Icon, title, desc }) => (
+                <article key={title} className="min-h-[210px] rounded-[26px] bg-[#ece7df] p-5 sm:p-6">
+                  <div className="flex items-start justify-between">
+                    <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/28">{n}</span>
+                    <span className="flex size-10 items-center justify-center rounded-full bg-[#f8f6f1] text-[#f26522]"><Icon className="size-4" /></span>
+                  </div>
+                  <h3 className="mt-10 text-2xl font-semibold tracking-[-0.04em] text-[#171614]">{title}</h3>
+                  <p className="mt-3 max-w-xs text-sm leading-6 text-black/45">{desc}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 sm:py-24 relative overflow-hidden bg-slate-900 text-white">
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            backgroundImage:
-              'radial-gradient(ellipse 70% 80% at 80% 40%, rgb(79 70 229 / 0.4), transparent 55%), radial-gradient(ellipse 40% 50% at 10% 80%, rgb(212 160 23 / 0.15), transparent)',
-          }}
-        />
-        <div className="relative max-w-3xl mx-auto px-5 md:px-8 text-center space-y-7">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            Pare de precificar no improviso
-          </h2>
-          <p className="text-sm sm:text-base text-slate-300 max-w-lg mx-auto leading-relaxed">
-            Use {APP_CONFIG.name} para orcar com metodo, enviar propostas profissionais e manter o
-            historico de cada cliente organizado.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-1">
-            <Link
-              to={ROUTES.auth.register}
-              className="h-11 px-6 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors shadow-lg shadow-indigo-500/25"
-            >
-              Comecar gratis
-              <KoboyoIcon name="arrow-right" size={16} />
+      <section id="como-funciona" className="bg-[#e9e5dd] py-16 sm:py-20 lg:py-28">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+          <div className="mb-10 flex items-center gap-3 sm:mb-14">
+            <span className="flex size-7 items-center justify-center rounded-full bg-[#171614] text-[10px] font-semibold text-white">2</span>
+            <span className="rounded-full border border-black/10 px-3 py-1 text-[11px] font-medium text-black/55">O produto em uso</span>
+          </div>
+
+          <div className="grid gap-10 lg:grid-cols-[.82fr_1.18fr] lg:items-end">
+            <div>
+              <h2 className="max-w-[11ch] text-[clamp(2.2rem,5vw,4.5rem)] font-medium leading-[0.98] tracking-[-0.055em] text-[#171614]">Da conversa ao fechamento, sem trocar de ferramenta.</h2>
+              <p className="mt-5 max-w-lg text-sm leading-7 text-black/47 sm:text-base sm:leading-8">O mesmo contexto acompanha o cliente enquanto a negociação avança. Você não precisa reconstruir a história a cada etapa.</p>
+            </div>
+
+            <div className="relative overflow-hidden rounded-[30px] bg-[#171614] p-4 shadow-[0_35px_90px_rgba(35,29,22,.16)] sm:p-5 lg:p-6">
+              <img src={APP_CONFIG.brand.product} alt="Workspace comercial do Áurea" className="aspect-[16/10] w-full rounded-[22px] object-cover object-top opacity-90" loading="lazy" />
+              <div className="mt-5 flex flex-col gap-3 px-1 pb-1 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#f6a576]">Workspace comercial</p>
+                  <p className="mt-1 text-xl font-semibold tracking-[-0.04em] text-white">Tudo que importa para decidir o próximo passo.</p>
+                </div>
+                <Link to={ROUTES.auth.login} className="inline-flex items-center gap-2 text-xs font-semibold text-white/55 transition hover:text-white">Explorar produto <ArrowUpRight className="size-3.5" /></Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#f26522] py-16 text-white sm:py-20 lg:py-24">
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-9 px-5 sm:px-8 lg:flex-row lg:items-end lg:justify-between lg:px-12">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/65">Comece pelo próximo projeto</p>
+            <h2 className="mt-4 max-w-[11ch] text-[clamp(2.4rem,5vw,4.7rem)] font-medium leading-[0.96] tracking-[-0.055em] text-white">Precifique com método. Apresente com clareza.</h2>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link to={ROUTES.auth.register} className="group inline-flex h-12 items-center justify-between gap-6 rounded-full bg-white pl-6 pr-2 text-[13px] font-semibold text-[#171614]">
+              Criar conta
+              <span className="flex size-8 items-center justify-center rounded-full bg-[#171614] text-white"><ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" /></span>
             </Link>
-            <Link
-              to={ROUTES.auth.login}
-              className="h-11 px-6 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-sm inline-flex items-center justify-center border border-white/20 transition-colors"
-            >
-              Ja tenho conta
-            </Link>
+            <Link to={ROUTES.auth.login} className="inline-flex h-12 items-center justify-center rounded-full px-5 text-[13px] font-semibold text-white/80 transition hover:bg-white/10 hover:text-white">Já tenho conta</Link>
           </div>
         </div>
       </section>
