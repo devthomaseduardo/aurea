@@ -127,7 +127,7 @@ export function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f1eb] text-[#1b1a18] lg:p-3">
+    <div className="bg-[#f4f1eb] text-[#1b1a18] lg:h-screen lg:overflow-hidden lg:p-3">
       {sidebarMobileOpen && (
         <button
           type="button"
@@ -137,10 +137,10 @@ export function DashboardLayout() {
         />
       )}
 
-      <div className="mx-auto flex min-h-screen max-w-[1800px] overflow-hidden lg:min-h-[calc(100vh-1.5rem)] lg:rounded-[28px] lg:bg-white/50 lg:shadow-[0_26px_90px_rgba(40,34,26,.08)]">
+      <div className="mx-auto flex min-h-screen max-w-[1800px] overflow-hidden lg:h-full lg:min-h-0 lg:rounded-[28px] lg:bg-white/50 lg:shadow-[0_26px_90px_rgba(40,34,26,.08)]">
         <aside
           className={cn(
-            'fixed left-0 top-0 z-50 flex h-svh flex-col bg-[#121110] text-white transition-[width,transform] duration-300 ease-out lg:sticky lg:h-[calc(100vh-1.5rem)]',
+            'fixed left-0 top-0 z-50 flex h-svh flex-col bg-[#121110] text-white transition-[width,transform] duration-300 ease-out lg:static lg:h-full',
             sidebarCollapsed ? 'w-[76px]' : 'w-[252px]',
             sidebarMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           )}
@@ -191,30 +191,32 @@ export function DashboardLayout() {
           </div>
         </aside>
 
-        <div className="flex min-h-svh min-w-0 flex-1 flex-col bg-[#f4f1eb] lg:min-h-0">
-          <header className="sticky top-0 z-30 px-3 pt-3 sm:px-5 sm:pt-4 lg:px-6">
-            <div className="mx-auto flex min-h-[58px] w-full max-w-[1500px] items-center gap-2 rounded-full border border-black/[0.06] bg-white/85 px-2.5 shadow-sm backdrop-blur-xl sm:gap-3 sm:px-4">
-              <button type="button" onClick={() => setSidebarMobileOpen(true)} className="rounded-full p-2 hover:bg-black/[0.05] lg:hidden" aria-label="Abrir menu">
-                <Menu className="size-4" />
-              </button>
+        <div className="flex min-h-svh min-w-0 flex-1 flex-col bg-[#f4f1eb] lg:h-full lg:min-h-0 lg:overflow-y-auto">
+          <header className="sticky top-0 z-30 pt-3 sm:pt-4">
+            <div className="mx-auto w-full max-w-[1500px] px-4 sm:px-6 lg:px-8">
+              <div className="flex min-h-[58px] w-full items-center gap-2 rounded-full border border-black/[0.06] bg-white/85 px-2.5 shadow-sm backdrop-blur-xl sm:gap-3 sm:px-4">
+                <button type="button" onClick={() => setSidebarMobileOpen(true)} className="rounded-full p-2 hover:bg-black/[0.05] lg:hidden" aria-label="Abrir menu">
+                  <Menu className="size-4" />
+                </button>
 
-              <div className="min-w-0 flex-1 pl-0.5 sm:pl-1">
-                <p className="hidden text-[9px] font-semibold uppercase tracking-[0.14em] text-black/35 sm:block">{activeTenant.name}</p>
-                <p className="truncate text-[12px] font-semibold text-[#171614] sm:text-[13px]">{pageTitle(location.pathname)}</p>
+                <div className="min-w-0 flex-1 pl-0.5 sm:pl-1">
+                  <p className="hidden text-[9px] font-semibold uppercase tracking-[0.14em] text-black/35 sm:block">{activeTenant.name}</p>
+                  <p className="truncate text-[12px] font-semibold text-[#171614] sm:text-[13px]">{pageTitle(location.pathname)}</p>
+                </div>
+
+                <Button asChild size="sm" variant="ghost" className="hidden rounded-full px-4 text-xs font-medium text-black/55 hover:bg-black/[0.04] hover:text-black md:inline-flex">
+                  <Link to={ROUTES.app.clients}>Clientes</Link>
+                </Button>
+
+                <Button asChild size="sm" className="rounded-full bg-[#171614] px-3 text-[11px] font-semibold text-white shadow-none hover:bg-[#f26522] sm:px-4 sm:text-xs">
+                  <Link to={ROUTES.app.calculator}>
+                    <Plus className="mr-1 size-3.5 sm:mr-1.5" />
+                    <span className="hidden sm:inline">Nova precificação</span>
+                    <span className="sm:hidden">Novo</span>
+                    <ArrowUpRight className="ml-1 size-3.5" />
+                  </Link>
+                </Button>
               </div>
-
-              <Button asChild size="sm" variant="ghost" className="hidden rounded-full px-4 text-xs font-medium text-black/55 hover:bg-black/[0.04] hover:text-black md:inline-flex">
-                <Link to={ROUTES.app.clients}>Clientes</Link>
-              </Button>
-
-              <Button asChild size="sm" className="rounded-full bg-[#171614] px-3 text-[11px] font-semibold text-white shadow-none hover:bg-[#f26522] sm:px-4 sm:text-xs">
-                <Link to={ROUTES.app.calculator}>
-                  <Plus className="mr-1 size-3.5 sm:mr-1.5" />
-                  <span className="hidden sm:inline">Nova precificação</span>
-                  <span className="sm:hidden">Novo</span>
-                  <ArrowUpRight className="ml-1 size-3.5" />
-                </Link>
-              </Button>
             </div>
           </header>
 
