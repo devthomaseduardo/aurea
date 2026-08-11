@@ -39,7 +39,7 @@ export default function DashboardPage() {
   return (
     <PageContainer className="space-y-6 sm:space-y-7">
       <PageHeader
-        title={`Comercial em movimento — ${activeTenant.name}`}
+        title={`Comercial em movimento | ${activeTenant.name}`}
         description="Veja o que entrou, o que precisa de retorno e onde existe receita esperando decisao."
         actions={
           <div className="flex items-center gap-2">
