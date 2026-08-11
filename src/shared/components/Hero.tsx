@@ -1,110 +1,76 @@
 import { Link } from 'react-router-dom';
-import { KoboyoIcon } from '@/design-system/icons';
+import { ArrowUpRight, Check, FileText, Calculator, Users } from 'lucide-react';
 import { ROUTES, APP_CONFIG } from '@/core/config/app.config';
 
-const workflow = [
-  { label: 'Cliente', detail: 'TechCorp Brasil', state: 'Contexto centralizado' },
-  { label: 'Precificacao', detail: 'R$ 28.400', state: 'Margem calculada' },
-  { label: 'Proposta', detail: 'Landing + Dashboard', state: 'Enviada' },
-  { label: 'Contrato', detail: 'Aguardando aceite', state: 'Proximo passo' },
+const stages = [
+  { icon: Users, label: 'Cliente', detail: 'TechCorp Brasil' },
+  { icon: Calculator, label: 'Precificacao', detail: 'R$ 28.400' },
+  { icon: FileText, label: 'Proposta', detail: 'Pronta para enviar' },
 ];
 
 const Hero = () => {
   return (
-    <section id="inicio" className="relative overflow-hidden bg-white border-b border-gray-200">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage:
-            'radial-gradient(ellipse 80% 60% at 50% -20%, rgb(79 70 229 / 0.12), transparent 60%), radial-gradient(ellipse 40% 40% at 100% 50%, rgb(212 160 23 / 0.08), transparent)',
-        }}
-      />
+    <section id="inicio" className="relative min-h-[100svh] overflow-hidden bg-[#efede8] pt-24 text-[#171614] sm:pt-28">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -right-[12%] -top-[15%] h-[72vw] max-h-[940px] w-[72vw] max-w-[940px] rounded-full bg-[#f26522] opacity-85 blur-[2px]" />
+        <div className="absolute right-[4%] top-[8%] h-[54vw] max-h-[720px] w-[54vw] max-w-[720px] rounded-[42%_58%_63%_37%/43%_45%_55%_57%] bg-[#f7f4ee] opacity-80 blur-[10px] [transform:rotate(18deg)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_38%,rgba(255,255,255,.9),transparent_18%),linear-gradient(120deg,transparent_40%,rgba(255,255,255,.26)_61%,transparent_78%)]" />
+        <div className="absolute inset-0 opacity-[0.035] [background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 180 180%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%22.65%22/%3E%3C/svg%3E')]" />
+      </div>
 
-      <div className="relative max-w-6xl mx-auto px-5 md:px-8 pt-16 pb-20 sm:pt-20 sm:pb-24">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          <div className="lg:col-span-6 space-y-7">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/80 px-3 py-1 text-xs font-medium text-indigo-700">
-              <span className="size-1.5 rounded-full bg-indigo-500" />
-              Operacao comercial para servicos B2B
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-slate-900 tracking-tight leading-[1.15]">
-              Do escopo ao contrato, sem perder margem nem contexto.
+      <div className="relative mx-auto flex min-h-[calc(100svh-6rem)] max-w-[1440px] flex-col justify-end px-5 pb-10 sm:px-8 sm:pb-14 lg:px-12 lg:pb-16">
+        <div className="grid items-end gap-10 lg:grid-cols-[1.04fr_.96fr] lg:gap-16">
+          <div className="max-w-[760px]">
+            <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-black/48 sm:text-xs">{APP_CONFIG.name} · Comercial para servicos B2B</p>
+            <h1 className="max-w-[11ch] text-[clamp(2.9rem,7vw,6rem)] font-medium leading-[0.94] tracking-[-0.055em] text-[#171614]">
+              Venda projetos com clareza antes mesmo de falar de preco.
             </h1>
-
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
-              {APP_CONFIG.name} conecta cliente, precificacao, proposta e contrato em um unico fluxo
-              para freelancers, consultores e pequenas agencias.
+            <p className="mt-6 max-w-xl text-sm leading-7 text-black/55 sm:text-base sm:leading-8">
+              Cliente, precificacao, proposta e contrato no mesmo fluxo. Menos improviso comercial, mais contexto para fechar melhor.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <Link
-                to={ROUTES.auth.register}
-                className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold shadow-sm shadow-indigo-600/20 transition-colors"
-              >
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Link to={ROUTES.auth.register} className="group inline-flex h-12 items-center justify-between gap-6 rounded-full bg-[#f26522] pl-6 pr-2 text-[13px] font-semibold text-white transition hover:bg-[#df5b1d] sm:w-auto">
                 Criar workspace
-                <KoboyoIcon name="arrow-right" size={16} />
+                <span className="flex size-8 items-center justify-center rounded-full bg-white text-[#f26522]">
+                  <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:rotate-45" />
+                </span>
               </Link>
-              <Link
-                to={ROUTES.auth.login}
-                className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-slate-800 text-sm font-semibold transition-colors"
-              >
-                Explorar demo
-              </Link>
+              <div className="inline-flex items-center gap-2 px-1 text-xs font-medium text-black/45">
+                <span className="flex size-6 items-center justify-center rounded-full bg-white/70"><Check className="size-3.5 text-[#f26522]" /></span>
+                Comece localmente ou conecte sua conta
+              </div>
             </div>
-
-            <p className="text-xs text-slate-500">
-              Use localmente para demonstracao ou conecte Firebase para persistencia em nuvem.
-            </p>
           </div>
 
-          <div className="lg:col-span-6">
-            <div className="relative">
-              <div className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-indigo-500/20 via-transparent to-amber-400/20 blur-2xl" />
-              <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/10">
-                <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-4 py-3">
-                  <div>
-                    <p className="text-xs font-semibold text-slate-900">Fluxo comercial</p>
-                    <p className="text-[11px] text-slate-500">Projeto Website B2B</p>
-                  </div>
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700">
-                    Em negociacao
-                  </span>
+          <div className="lg:justify-self-end lg:pb-1">
+            <div className="relative ml-auto max-w-[560px] rounded-[30px] bg-[#171614] p-4 text-white shadow-[0_35px_100px_rgba(45,35,25,.22)] sm:p-5">
+              <div className="flex items-center justify-between px-1 pb-5">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-white/35">Negociacao ativa</p>
+                  <p className="mt-1 text-base font-semibold">Website B2B</p>
                 </div>
+                <span className="rounded-full bg-[#f26522] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em]">Em andamento</span>
+              </div>
 
-                <div className="p-4 sm:p-5 space-y-2.5">
-                  {workflow.map((item, index) => (
-                    <div
-                      key={item.label}
-                      className="grid grid-cols-[28px_1fr_auto] items-center gap-3 rounded-xl border border-slate-200 px-3 py-3"
-                    >
-                      <span className="flex size-7 items-center justify-center rounded-full bg-indigo-50 text-[10px] font-bold text-indigo-700">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-medium text-slate-500">{item.label}</p>
-                        <p className="truncate text-sm font-semibold text-slate-900">{item.detail}</p>
-                      </div>
-                      <span className="hidden sm:block text-[10px] font-medium text-slate-500">
-                        {item.state}
-                      </span>
+              <div className="rounded-[24px] bg-[#f6f2eb] p-3 text-[#171614] sm:p-4">
+                {stages.map(({ icon: Icon, label, detail }, index) => (
+                  <div key={label} className="flex items-center gap-3 rounded-[18px] px-3 py-3.5 transition hover:bg-white/70">
+                    <span className="flex size-9 items-center justify-center rounded-full bg-white shadow-sm"><Icon className="size-4 text-[#f26522]" /></span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-black/35">0{index + 1} · {label}</p>
+                      <p className="mt-0.5 truncate text-sm font-semibold">{detail}</p>
+                    </div>
+                    <ArrowUpRight className="size-4 text-black/25" />
+                  </div>
+                ))}
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  {[['Valor','R$ 28,4k'],['Margem','32%'],['Prazo','19 dias']].map(([label,value]) => (
+                    <div key={label} className="rounded-[16px] bg-[#eae4da] px-3 py-3">
+                      <p className="text-[9px] uppercase tracking-[0.1em] text-black/35">{label}</p>
+                      <p className="mt-1 text-sm font-semibold">{value}</p>
                     </div>
                   ))}
-                </div>
-
-                <div className="grid grid-cols-3 border-t border-slate-200 bg-slate-50/70">
-                  <div className="px-4 py-3 border-r border-slate-200">
-                    <p className="text-[10px] text-slate-500">Valor</p>
-                    <p className="text-sm font-semibold text-slate-900">R$ 28,4 mil</p>
-                  </div>
-                  <div className="px-4 py-3 border-r border-slate-200">
-                    <p className="text-[10px] text-slate-500">Margem</p>
-                    <p className="text-sm font-semibold text-slate-900">32%</p>
-                  </div>
-                  <div className="px-4 py-3">
-                    <p className="text-[10px] text-slate-500">Prazo</p>
-                    <p className="text-sm font-semibold text-slate-900">19 dias</p>
-                  </div>
                 </div>
               </div>
             </div>
