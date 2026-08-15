@@ -1,14 +1,9 @@
 import type { RequestHandler } from 'express';
 import { getAdminAuth } from '../lib/firebase.js';
 
-export interface AuthenticatedRequest extends Express.Request {
-  uid: string;
-  email?: string;
-}
-
 /**
  * Middleware: verifica o Firebase ID token no header Authorization.
- * Injeta req.uid e req.email no request.
+ * Injeta uid e email tipados no request do Express.
  */
 export const requireAuth: RequestHandler = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -18,15 +13,18 @@ export const requireAuth: RequestHandler = async (req, res, next) => {
     return;
   }
 
-  const idToken = authHeader.slice(7);
+  const idToken = authHeader.slice(7).trim();
+  if (!idToken) {
+    res.status(401).json({ error: 'Missing or invalid Authorization header' });
+    return;
+  }
 
   try {
     const decoded = await getAdminAuth().verifyIdToken(idToken);
-    // Attach to request
-    (req as unknown as { uid: string; email?: string }).uid = decoded.uid;
-    (req as unknown as { uid: string; email?: string }).email = decoded.email;
+    req.uid = decoded.uid;
+    req.email = decoded.email;
     next();
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('[auth] Token verification failed:', err);
     res.status(401).json({ error: 'Invalid or expired token' });
   }
