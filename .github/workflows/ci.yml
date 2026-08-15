@@ -10,10 +10,14 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   web:
     name: "Web — lint + typecheck + test + build"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -29,9 +33,8 @@ jobs:
         run: npm run lint
 
       - name: Typecheck
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
-      # Sem VITE_FIREBASE_* → isFirebaseConfigured() = false → auth/services locais + seed
       - name: Tests
         run: npm run test
 
@@ -49,6 +52,7 @@ jobs:
   api:
     name: "API — typecheck"
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     defaults:
       run:
         working-directory: apps/api
