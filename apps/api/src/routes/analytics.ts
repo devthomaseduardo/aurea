@@ -26,13 +26,20 @@ function ageInDays(value: unknown): number {
   return Math.max(0, Math.floor((Date.now() - timestamp) / 86_400_000));
 }
 
+function requireUid(uid: string | undefined): string {
+  if (!uid) {
+    throw new Error('Authenticated request is missing uid');
+  }
+  return uid;
+}
+
 /**
  * GET /api/analytics/dashboard
  * Server-side aggregation of KPIs for the authenticated user.
  */
 analyticsRouter.get('/dashboard', async (req, res) => {
   try {
-    const uid = (req as unknown as { uid: string }).uid;
+    const uid = requireUid(req.uid);
     const db = getAdminFirestore();
 
     const [proposalsSnap, clientsSnap, contractsSnap] = await Promise.all([
@@ -73,7 +80,7 @@ analyticsRouter.get('/dashboard', async (req, res) => {
         conversionRate,
       },
     });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('[analytics] Dashboard error:', err);
     res.status(500).json({ error: 'Failed to compute dashboard stats' });
   }
@@ -85,7 +92,7 @@ analyticsRouter.get('/dashboard', async (req, res) => {
  */
 analyticsRouter.get('/pipeline', async (req, res) => {
   try {
-    const uid = (req as unknown as { uid: string }).uid;
+    const uid = requireUid(req.uid);
     const db = getAdminFirestore();
 
     const snap = await db.collection(`users/${uid}/proposals`).get();
@@ -100,7 +107,7 @@ analyticsRouter.get('/pipeline', async (req, res) => {
     }
 
     res.json({ data: pipeline });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('[analytics] Pipeline error:', err);
     res.status(500).json({ error: 'Failed to compute pipeline' });
   }
@@ -112,7 +119,7 @@ analyticsRouter.get('/pipeline', async (req, res) => {
  */
 analyticsRouter.get('/workspace', async (req, res) => {
   try {
-    const uid = (req as unknown as { uid: string }).uid;
+    const uid = requireUid(req.uid);
     const db = getAdminFirestore();
 
     const [proposalsSnap, contractsSnap, clientsSnap] = await Promise.all([
@@ -224,7 +231,7 @@ analyticsRouter.get('/workspace', async (req, res) => {
         generatedAt: new Date().toISOString(),
       },
     });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('[analytics] Workspace error:', err);
     res.status(500).json({ error: 'Failed to compute workspace overview' });
   }
